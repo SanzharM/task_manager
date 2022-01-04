@@ -12,7 +12,7 @@ class AppTheme {
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.white),
         ),
-        fontFamily: 'Cuprum',
+        fontFamily: 'Montserrat',
         accentColorBrightness: Brightness.dark,
         primaryColorBrightness: Brightness.dark,
         inputDecorationTheme: InputDecorationTheme(
@@ -49,7 +49,7 @@ class AppTheme {
         ),
         accentColorBrightness: Brightness.light,
         primaryColorBrightness: Brightness.light,
-        fontFamily: 'Cuprum',
+        fontFamily: 'Montserrat',
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.darkGrey),
           labelStyle: TextStyle(color: AppColors.darkGrey),

@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
 
 import 'core/app_theme.dart';
+import 'pages/pin_page/pin_page.dart';
 
 void main() async {
-  StatefulWidget homeScreen = LoginPage();
+  // StatefulWidget homeScreen = LoginPage();
+  StatefulWidget homeScreen = PinPage();
   // if (await Application.isAuthorized()) homeScreen = PinPage();
 
   SystemChrome.setSystemUIOverlayStyle(
