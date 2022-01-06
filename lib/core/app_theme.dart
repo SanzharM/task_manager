@@ -58,6 +58,8 @@ class AppTheme {
           bodyColor: AppColors.darkGrey,
           displayColor: AppColors.darkGrey,
         ),
+        tabBarTheme:
+            TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,

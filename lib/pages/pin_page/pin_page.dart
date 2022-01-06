@@ -5,6 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:task_manager/core/app_icons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/pin_page/pin_widgets.dart';
+import 'package:task_manager/pages/navigation_bar.dart';
 
 class PinPage extends StatefulWidget {
   @override
@@ -51,6 +52,8 @@ class _PinPageState extends State<PinPage> {
       );
       if (didAuthenticate) {
         // Send login request
+        final route = CupertinoPageRoute(builder: (context) => NavigationBar());
+        Navigator.of(context).pushReplacement(route);
       }
     } catch (e) {
       print('Unable to local auth. Error: $e');
