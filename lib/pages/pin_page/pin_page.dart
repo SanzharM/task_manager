@@ -91,7 +91,7 @@ class _PinPageState extends State<PinPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if (!hasFaceId)
+                        if (hasFaceId)
                           IconButton(
                             icon: Image.asset(AppIcons.faceId, width: 48),
                             onPressed: () => _tryLoginWithBiometrics(),
