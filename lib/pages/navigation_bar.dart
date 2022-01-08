@@ -13,7 +13,10 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  List<Widget> pages = [TaskBoard(), QRScannerPage(), ProfilePage()];
+  final GlobalKey<TaskBoardState> _taskBoardKey = GlobalKey();
+  final GlobalKey<ProfilePageState> _profileKey = GlobalKey();
+
+  List<Widget> pages = [];
 
   int _currentIndex = 0;
 
@@ -23,6 +26,11 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   void initState() {
+    pages = [
+      TaskBoard(key: _taskBoardKey),
+      QRScannerPage(),
+      ProfilePage(key: _profileKey),
+    ];
     _currentIndex = pages.length - 1;
     super.initState();
   }
@@ -44,8 +52,13 @@ class _NavigationBarState extends State<NavigationBar> {
             : AppColors.darkGrey,
         currentIndex: _currentIndex,
         onTap: (index) {
-          _currentIndex = index;
-          _updateState();
+          if (_currentIndex == index) {
+            if (_currentIndex == 0) _taskBoardKey.currentState?.animateTabTo(0);
+            if (_currentIndex == 2) _profileKey.currentState?.scrollToTop();
+          } else {
+            _currentIndex = index;
+            _updateState();
+          }
           HapticFeedback.lightImpact();
         },
         backgroundColor: AppColors.transparent,

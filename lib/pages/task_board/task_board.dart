@@ -6,11 +6,12 @@ import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/task_card.dart';
 
 class TaskBoard extends StatefulWidget {
+  const TaskBoard({Key? key}) : super(key: key);
   @override
-  _TaskBoardState createState() => _TaskBoardState();
+  TaskBoardState createState() => TaskBoardState();
 }
 
-class _TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
+class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   late TabController _boardTabController;
 
   List<Task> _toDoTasks = [

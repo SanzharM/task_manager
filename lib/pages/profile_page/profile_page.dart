@@ -11,11 +11,13 @@ import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
+  final _scrollController = ScrollController();
   User? _user;
 
   void _toEditProfile() => Navigator.of(context).push(
@@ -26,6 +28,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _toTeamMembers() => Navigator.of(context).push(
       CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
+
+  void scrollToTop() => _scrollController.animateTo(
+        _scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeInOut,
+      );
 
   @override
   void initState() {
@@ -41,6 +49,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -48,6 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
+            controller: _scrollController,
             child: Column(
               children: [
                 // Profile Cells
