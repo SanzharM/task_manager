@@ -28,7 +28,10 @@ class AppTheme {
           primaryColor: AppColors.snow,
           scaffoldBackgroundColor: AppColors.darkGrey,
           brightness: Brightness.dark,
-          textTheme: CupertinoTextThemeData(primaryColor: AppColors.darkGrey),
+          textTheme: CupertinoTextThemeData(
+            primaryColor: AppColors.darkGrey,
+            textStyle: const TextStyle(fontFamily: 'Montserrat'),
+          ),
         ),
         primaryColor: AppColors.darkGrey,
         brightness: Brightness.dark,
@@ -64,7 +67,10 @@ class AppTheme {
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,
           brightness: Brightness.light,
-          textTheme: CupertinoTextThemeData(primaryColor: AppColors.darkGrey),
+          textTheme: CupertinoTextThemeData(
+            primaryColor: AppColors.darkGrey,
+            textStyle: const TextStyle(fontFamily: 'Montserrat'),
+          ),
         ),
         iconTheme: IconThemeData(color: AppColors.darkGrey, size: 24),
         primaryColor: AppColors.darkGrey,

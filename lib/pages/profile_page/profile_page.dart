@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/models/organization.dart';
@@ -42,16 +43,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Профиль',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Column(
@@ -61,7 +55,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       ClipOval(
-                        child: const Icon(CupertinoIcons.person),
+                        child: _user?.imageUrl != null
+                            ? CachedNetworkImage(
+                                imageUrl: _user!.imageUrl!,
+                                fit: BoxFit.cover,
+                                height: 48,
+                                width: 48,
+                                errorWidget: (context, url, error) =>
+                                    const Text('Не удалось загрузить фото'),
+                              )
+                            : const Icon(CupertinoIcons.person, size: 48),
                       ),
                       EmptyBox(height: 12),
                       Text(

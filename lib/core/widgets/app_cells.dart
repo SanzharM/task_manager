@@ -84,12 +84,16 @@ class ArrowedCell extends StatelessWidget {
         child: Row(
           children: [
             if (icon != null) icon!,
-            if (icon != null) EmptyBox(width: 4.0),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            if (icon != null) EmptyBox(width: 8.0),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-            Spacer(),
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Icon(CupertinoIcons.forward),
