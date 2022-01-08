@@ -23,4 +23,18 @@ class Utils {
         return '';
     }
   }
+
+  static String formattedPhone(String? phone) {
+    if (phone == null || phone.length < 11) return '';
+    return '+7 (${phone.substring(1, 4)})'
+        ' ${phone.substring(4, 7)}'
+        ' ${phone.substring(7, 9)}'
+        '-${phone.substring(9, phone.length)}';
+  }
+
+  static String? numbersOnly(String? value) {
+    if (value == null) return null;
+    String temp = value.replaceAll(RegExp(r'[^0-9]'), '');
+    return temp;
+  }
 }

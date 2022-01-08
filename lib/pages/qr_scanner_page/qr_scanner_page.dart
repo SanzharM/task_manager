@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:task_manager/core/app_colors.dart';
 
@@ -91,10 +92,14 @@ class _QRScannerPageState extends State<QRScannerPage> {
             )
           : Center(
               child: GestureDetector(
-                // onTap: () async => await openAppSettings(),
-                child: const Text(
-                  'Предоставьте доступ к камере, чтобы сканировать QR-коды',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                onTap: () async => await openAppSettings(),
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Предоставьте доступ к камере в настройках, чтобы сканировать QR-коды.\nНажмите, чтобы перейти в Настройки',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
             ),

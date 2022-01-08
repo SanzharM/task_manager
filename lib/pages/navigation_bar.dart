@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
-import 'package:task_manager/pages/main_page/main_page.dart';
+import 'package:task_manager/pages/profile_page/profile_page.dart';
 import 'package:task_manager/pages/qr_scanner_page/qr_scanner_page.dart';
 import 'package:task_manager/pages/task_board/task_board.dart';
 
@@ -13,7 +13,7 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  List<Widget> pages = [TaskBoard(), QRScannerPage(), MainPage()];
+  List<Widget> pages = [TaskBoard(), QRScannerPage(), ProfilePage()];
 
   int _currentIndex = 0;
 
