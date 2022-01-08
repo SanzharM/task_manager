@@ -104,3 +104,40 @@ class ArrowedCell extends StatelessWidget {
     );
   }
 }
+
+class SwitchCell extends StatelessWidget {
+  final String title;
+  final bool value;
+  final void Function(bool) onChanged;
+  final Widget? icon;
+
+  const SwitchCell({
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (icon != null) icon!,
+        if (icon != null) EmptyBox(width: 8),
+        Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
+        CupertinoSwitch(
+          value: value,
+          onChanged: onChanged,
+          trackColor: Application.isDarkMode(context)
+              ? AppColors.switchOffDark
+              : AppColors.switchOffLight,
+          activeColor: Application.isDarkMode(context)
+              ? AppColors.switchOnDark
+              : AppColors.switchOnLight,
+        ),
+      ],
+    );
+  }
+}
