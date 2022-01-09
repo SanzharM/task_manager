@@ -69,10 +69,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           ChangeModeButton(
                             icon: CupertinoIcons.sun_max_fill,
                             mode: ThemeMode.light,
+                            onTap: () => setState(() {}),
                           ),
                           ChangeModeButton(
                             icon: Icons.nightlight_round_outlined,
                             mode: ThemeMode.dark,
+                            onTap: () => setState(() {}),
                           ),
                         ],
                       ),
@@ -91,7 +93,13 @@ class _SettingsPageState extends State<SettingsPage> {
 class ChangeModeButton extends StatelessWidget {
   final IconData icon;
   final ThemeMode mode;
-  const ChangeModeButton({required this.icon, required this.mode});
+  final void Function() onTap;
+
+  const ChangeModeButton({
+    required this.icon,
+    required this.mode,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +110,10 @@ class ChangeModeButton extends StatelessWidget {
 
         await Application.saveThemeMode(mode);
         Application.setThemeMode(context, mode);
+        onTap();
       },
       child: Container(
+        padding: const EdgeInsets.all(4.0),
         width: MediaQuery.of(context).size.width / 3,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25.0),

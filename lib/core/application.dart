@@ -57,7 +57,7 @@ class Application {
   }
 
   static void setThemeMode(BuildContext context, ThemeMode mode) {
-    Provider.of<ThemeNotifier>(context).setThemeMode(mode);
+    Provider.of<ThemeNotifier>(context, listen: false).setThemeMode(mode);
   }
 
   static Future<bool> getNotifications() async {

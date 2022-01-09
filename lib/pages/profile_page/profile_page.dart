@@ -9,6 +9,7 @@ import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
+import 'package:task_manager/pages/settings_page/settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -28,6 +29,9 @@ class ProfilePageState extends State<ProfilePage> {
 
   void _toTeamMembers() => Navigator.of(context).push(
       CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
+
+  void _toSettings() => Navigator.of(context)
+      .push(CupertinoPageRoute(builder: (context) => SettingsPage()));
 
   void scrollToTop() => _scrollController.animateTo(
         _scrollController.position.minScrollExtent,
@@ -142,7 +146,7 @@ class ProfilePageState extends State<ProfilePage> {
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.settings_solid),
                         title: 'Настройки',
-                        onTap: () => print('to settings'),
+                        onTap: _toSettings,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.question_circle_fill),
