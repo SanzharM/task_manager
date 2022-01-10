@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -8,11 +7,12 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:task_manager/core/app_colors.dart';
 
 class QRScannerPage extends StatefulWidget {
+  const QRScannerPage({Key? key}) : super(key: key);
   @override
-  _QRScannerPageState createState() => _QRScannerPageState();
+  QRScannerPageState createState() => QRScannerPageState();
 }
 
-class _QRScannerPageState extends State<QRScannerPage> {
+class QRScannerPageState extends State<QRScannerPage> {
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? _qrController;
 
@@ -37,20 +37,15 @@ class _QRScannerPageState extends State<QRScannerPage> {
     super.dispose();
   }
 
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (Platform.isAndroid) {
-      _qrController?.pauseCamera();
-    } else if (Platform.isIOS) {
-      _qrController?.resumeCamera();
-    }
+  void stopCamera() async => await _qrController?.stopCamera();
+  void resumeCamera() async {
+    await _qrController?.resumeCamera();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      resizeToAvoidBottomInset: false,
       body: _qrController?.hasPermissions ?? true
           ? SafeArea(
               child: Stack(

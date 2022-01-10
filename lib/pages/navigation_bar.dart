@@ -14,6 +14,7 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar> {
   final GlobalKey<TaskBoardState> _taskBoardKey = GlobalKey();
+  final GlobalKey<QRScannerPageState> _qrKey = GlobalKey();
   final GlobalKey<ProfilePageState> _profileKey = GlobalKey();
 
   List<Widget> pages = [];
@@ -28,7 +29,7 @@ class _NavigationBarState extends State<NavigationBar> {
   void initState() {
     pages = [
       TaskBoard(key: _taskBoardKey),
-      QRScannerPage(),
+      QRScannerPage(key: _qrKey),
       ProfilePage(key: _profileKey),
     ];
     _currentIndex = pages.length - 1;
@@ -59,6 +60,12 @@ class _NavigationBarState extends State<NavigationBar> {
             _currentIndex = index;
             _updateState();
           }
+          // Resume or Pause camera if it is or is not QR page
+          if (_currentIndex == 1)
+            _qrKey.currentState?.resumeCamera();
+          else
+            _qrKey.currentState?.stopCamera();
+
           HapticFeedback.lightImpact();
         },
         backgroundColor: AppColors.transparent,
