@@ -7,6 +7,7 @@ import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/pages/organization_page/organization_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
@@ -32,6 +33,12 @@ class ProfilePageState extends State<ProfilePage> {
 
   void _toSettings() => Navigator.of(context)
       .push(CupertinoPageRoute(builder: (context) => SettingsPage()));
+
+  void _toOrganization() {
+    if (_user?.organization == null) return;
+    Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) => OrganizationPage(_user!.organization!)));
+  }
 
   void scrollToTop() => _scrollController.animateTo(
         _scrollController.position.minScrollExtent,
@@ -106,6 +113,7 @@ class ProfilePageState extends State<ProfilePage> {
                   InfoCell(
                     title: 'Организация:',
                     value: _user?.organization?.name,
+                    onTap: _toOrganization,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 EmptyBox(height: 16),

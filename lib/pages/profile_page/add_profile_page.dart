@@ -18,8 +18,6 @@ class AddProfilePage extends StatefulWidget {
 }
 
 class _AddProfilePageState extends State<AddProfilePage> {
-  static const _appBarStyle =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w700);
   late User _user;
   late bool _isEditing;
 
@@ -43,8 +41,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
       child: Scaffold(
         appBar: AppBar(
           title: _isEditing
-              ? const Text('Редактирование профиля', style: _appBarStyle)
-              : const Text('Создание профиля', style: _appBarStyle),
+              ? const Text('Редактирование профиля')
+              : const Text('Создание профиля'),
           centerTitle: true,
           leading: AppBackButton(
             onBack: () {

@@ -15,6 +15,7 @@ class InfoCell extends StatelessWidget {
   final EdgeInsets padding;
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
+  final void Function()? onTap;
 
   const InfoCell({
     required this.title,
@@ -27,6 +28,7 @@ class InfoCell extends StatelessWidget {
     this.padding = const EdgeInsets.all(2.0),
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.onTap,
   });
 
   factory InfoCell.reversed(String title, String value) {
@@ -37,17 +39,20 @@ class InfoCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final _titleStyle = TextStyle(fontSize: titleSize, fontWeight: titleWeight);
     final _valueStyle = TextStyle(fontSize: valueSize, fontWeight: valueWeight);
-    return Container(
-      padding: padding,
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        children: [
-          Text(title, style: _titleStyle),
-          EmptyBox(height: sizeBetween),
-          Text(value ?? '-', style: _valueStyle),
-        ],
+    return CupertinoButton(
+      onPressed: onTap,
+      child: Container(
+        padding: padding,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: mainAxisAlignment,
+          crossAxisAlignment: crossAxisAlignment,
+          children: [
+            Text(title, style: _titleStyle),
+            EmptyBox(height: sizeBetween),
+            Text(value ?? '-', style: _valueStyle),
+          ],
+        ),
       ),
     );
   }

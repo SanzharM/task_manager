@@ -35,10 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          'Настройки',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-        ),
+        title: const Text('Настройки'),
         leading: AppBackButton(),
       ),
       body: SafeArea(

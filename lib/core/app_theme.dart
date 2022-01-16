@@ -11,6 +11,8 @@ class AppTheme {
           color: AppColors.darkGrey,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.white),
+          titleTextStyle:
+              const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
         fontFamily: 'Montserrat',
         accentColorBrightness: Brightness.dark,
@@ -49,6 +51,8 @@ class AppTheme {
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
+          titleTextStyle:
+              const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
         ),
         accentColorBrightness: Brightness.light,
         primaryColorBrightness: Brightness.light,
