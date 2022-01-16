@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
 
 import 'core/app_theme.dart';
@@ -36,7 +37,7 @@ class App extends StatelessWidget {
       theme: AppTheme().lightTheme,
       darkTheme: AppTheme().darkTheme,
       themeMode: Provider.of<ThemeNotifier>(context).getThemeMode(),
-      home: homeScreen,
+      home: AppManager(child: homeScreen),
     );
   }
 }
