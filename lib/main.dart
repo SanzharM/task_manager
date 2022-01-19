@@ -31,13 +31,15 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TaskManager',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme().lightTheme,
-      darkTheme: AppTheme().darkTheme,
-      themeMode: Provider.of<ThemeNotifier>(context).getThemeMode(),
-      home: AppManager(child: homeScreen),
+    return AppManager(
+      child: MaterialApp(
+        title: 'TaskManager',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme().lightTheme,
+        darkTheme: AppTheme().darkTheme,
+        themeMode: Provider.of<ThemeNotifier>(context).getThemeMode(),
+        home: homeScreen,
+      ),
     );
   }
 }
