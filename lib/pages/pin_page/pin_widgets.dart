@@ -37,7 +37,7 @@ class PinDots extends StatelessWidget {
     for (int i = 0; i < length; i++) {
       dots.add(
         Container(
-          constraints: BoxConstraints(minWidth: 12, minHeight: 12),
+          constraints: BoxConstraints(minWidth: 14, minHeight: 14),
           decoration: BoxDecoration(
             color: pin.length > i ? AppColors.darkGrey : AppColors.transparent,
             shape: BoxShape.circle,

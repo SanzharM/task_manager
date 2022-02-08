@@ -8,6 +8,17 @@ class TaskCard extends StatelessWidget {
   final Task task;
   const TaskCard(this.task);
 
+  static Widget getCardContainer(BuildContext context, {double opacity = 0.5}) {
+    return Container(
+      constraints: BoxConstraints(minHeight: 60, minWidth: 90),
+      height: MediaQuery.of(context).size.height * 128 / 1000,
+      width: MediaQuery.of(context).size.width - 16.0,
+      margin: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
+      color: AppColors.metal.withOpacity(opacity),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

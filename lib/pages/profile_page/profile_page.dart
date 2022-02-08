@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/organization.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
@@ -8,7 +9,9 @@ import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/organization_page/organization_page.dart';
+import 'package:task_manager/pages/pin_page/pin_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
+import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
 
@@ -27,6 +30,9 @@ class ProfilePageState extends State<ProfilePage> {
           builder: (context) => AddProfilePage(user: _user, isEditing: true),
         ),
       );
+
+  void _toPersonalAccount() => Navigator.of(context).push(
+      CupertinoPageRoute(builder: (context) => PersonalAccount(user: _user!)));
 
   void _toTeamMembers() => Navigator.of(context).push(
       CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
@@ -50,11 +56,11 @@ class ProfilePageState extends State<ProfilePage> {
   void initState() {
     _user = User(
       name: 'Sanzhar',
-      surname: 'Bigdickbekov',
-      email: 'abc@mail.ru',
+      surname: 'Predzashitnikov',
+      email: 'abc@gmail.com',
       phone: '77015557402',
-      position: 'Senior-super-puper-dohuya-molodec',
-      organization: Organization(name: 'Google LLC'),
+      position: 'Senior-super-puper-molodec',
+      organization: Organization(name: 'Yandex LLC'),
     );
     super.initState();
   }
@@ -130,7 +136,7 @@ class ProfilePageState extends State<ProfilePage> {
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.chart_bar_alt_fill),
                         title: 'Личный кабинет',
-                        onTap: () => print('to personal data'),
+                        onTap: _toPersonalAccount,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.person_3_fill),
@@ -172,7 +178,11 @@ class ProfilePageState extends State<ProfilePage> {
                 EmptyBox(height: 8.0),
                 AppButton(
                   title: 'Выйти из аккаунта',
-                  onTap: () => print('logout'),
+                  onTap: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(builder: (context) => PinPage()));
+                  },
                 ),
                 EmptyBox(height: 16.0),
               ],

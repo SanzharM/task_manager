@@ -20,27 +20,55 @@ class _PinPageState extends State<PinPage> {
   bool hasTouchId = false;
   bool hasFaceId = false;
 
-  // ignore: unused_element
+  String _currentMessage = 'Установите пин-код';
+  int _retryCounter = 0;
+
   void _vibrate() {
     try {
       HapticFeedback.lightImpact();
     } catch (e) {}
   }
 
+  void _toMainPage() {
+    final route = CupertinoPageRoute(builder: (context) => NavigationBar());
+    Navigator.of(context).pushReplacement(route);
+  }
+
   void _numberPressed(String value) {
-    if (_pin.length < 4) {
-      _pin += value;
+    if (_tempPin.length < 4) {
+      _tempPin += value;
       setState(() {});
     }
-    if (_pin.length == 4) {
-      // validate pins
-      print('$_tempPin == $_pin');
+    if (_tempPin.length == 4 && _pin.isEmpty) {
+      _pin = _tempPin;
+      _tempPin = '';
+      _currentMessage = 'Повторите пин-код';
+      setState(() {});
+      return;
+    }
+    if (_tempPin.length == 4 && _pin.length == 4) {
+      if (_tempPin == _pin) {
+        _toMainPage();
+        return;
+      } else if (_retryCounter < 3) {
+        _tempPin = '';
+        _currentMessage = 'Повторный пин-код неверный';
+        _retryCounter++;
+        setState(() {});
+      } else {
+        _currentMessage = 'Установите пин-код';
+        _tempPin = '';
+        _pin = '';
+        _retryCounter = 0;
+        setState(() {});
+      }
+      _vibrate();
     }
   }
 
   void _onDelete() {
-    if (_pin.isNotEmpty) {
-      _pin = _pin.substring(0, _pin.length - 1);
+    if (_tempPin.isNotEmpty) {
+      _tempPin = _tempPin.substring(0, _tempPin.length - 1);
       setState(() {});
     }
   }
@@ -52,8 +80,7 @@ class _PinPageState extends State<PinPage> {
       );
       if (didAuthenticate) {
         // Send login request
-        final route = CupertinoPageRoute(builder: (context) => NavigationBar());
-        Navigator.of(context).pushReplacement(route);
+        _toMainPage();
       }
     } catch (e) {
       print('Unable to local auth. Error: $e');
@@ -81,8 +108,12 @@ class _PinPageState extends State<PinPage> {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            EmptyBox(height: 12),
+            Text(_currentMessage, style: const TextStyle(fontSize: 20)),
             EmptyBox(height: 24),
             hasFaceId || hasTouchId
                 ? Padding(
@@ -106,10 +137,13 @@ class _PinPageState extends State<PinPage> {
                   )
                 : EmptyBox(),
             EmptyBox(height: 48),
-            PinDots(length: 4, pin: _pin),
-            EmptyBox(height: 48),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 48.0),
+              child: PinDots(length: 4, pin: _tempPin),
+            ),
+            EmptyBox(height: 56),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48.0),
               child: PinNumbers(onPressed: _numberPressed, onDelete: _onDelete),
             ),
           ],
