@@ -3,6 +3,7 @@ import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TaskPage extends StatefulWidget {
   final Task task;
@@ -28,7 +29,7 @@ class _TaskPageState extends State<TaskPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_task.title ?? 'Задача'),
+        title: Text(_task.title ?? 'task'.tr()),
         centerTitle: true,
         leading: AppBackButton(),
       ),
@@ -36,31 +37,31 @@ class _TaskPageState extends State<TaskPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 EmptyBox(height: 16),
-                TaskRow(title: 'Назначено: ', value: _task.creator?.name),
+                TaskRow(title: 'creator'.tr() + ': ', value: _task.creator?.name),
                 EmptyBox(height: 12),
-                TaskRow(title: 'Исполнитель: ', value: _task.performer?.name),
+                TaskRow(title: 'performer'.tr() + ': ', value: _task.performer?.name),
                 EmptyBox(height: 12),
                 TaskRow(
-                  title: 'Статус: ',
+                  title: 'status'.tr() + ': ',
                   value: Utils.taskStatusToString(_task.status),
                 ),
                 EmptyBox(height: 12),
                 TaskRow(
-                  title: 'Дата создания: ',
+                  title: 'created_date'.tr() + ': ',
                   value: Utils.dateToString(_task.createdAt),
                 ),
                 EmptyBox(height: 12),
-                TaskRow(title: 'Крайний срок выполнения: ', value: deadline),
+                TaskRow(title: 'deadline'.tr() + ': ', value: deadline),
                 EmptyBox(height: 16),
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Описание:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    'description'.tr() + ':',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
                 EmptyBox(height: 8),
@@ -82,10 +83,8 @@ class TaskRow extends StatelessWidget {
   final String? value;
   const TaskRow({required this.title, required this.value});
 
-  static const _titleStyle =
-      TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
-  static const _valueStyle =
-      TextStyle(fontWeight: FontWeight.w600, fontSize: 16);
+  static const _titleStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+  static const _valueStyle = TextStyle(fontWeight: FontWeight.w600, fontSize: 16);
 
   @override
   Widget build(BuildContext context) {

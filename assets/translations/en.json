@@ -29,5 +29,13 @@
   "job_position": "Job position",
   "save": "Save",
   "delete": "Delete",
-  "add": "Add"
+  "add": "Add",
+  "task": "Task",
+  "tasks": "Tasks",
+  "creator": "Creator",
+  "performer": "Performer",
+  "status": "Status",
+  "created_date": "Created date",
+  "deadline": "Deadline",
+  "description": "Description"
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
@@ -50,17 +51,17 @@ class QRScannerPageState extends State<QRScannerPage> {
           ? SafeArea(
               child: Stack(
                 children: [
-                  QRView(key: _qrKey, onQRViewCreated: _onQRViewCreated),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      height: MediaQuery.of(context).size.width / 1.5,
-                      decoration: BoxDecoration(
-                        color: AppColors.transparent,
-                        border: Border.all(width: 2.0, color: AppColors.yellow),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+                  QRView(
+                    key: _qrKey,
+                    onQRViewCreated: _onQRViewCreated,
+                    overlay: QrScannerOverlayShape(
+                      borderColor: Application.isDarkMode(context) ? AppColors.defaultGrey : AppColors.grey,
+                      borderRadius: 2,
+                      overlayColor: const Color.fromRGBO(0, 0, 0, 60),
+                      borderLength: 60,
+                      borderWidth: 10,
+                      cutOutWidth: MediaQuery.of(context).size.width - 90,
+                      cutOutHeight: MediaQuery.of(context).size.width - 90,
                     ),
                   ),
                   Align(
@@ -70,12 +71,9 @@ class QRScannerPageState extends State<QRScannerPage> {
                       child: IconButton(
                         color: AppColors.defaultGrey.withOpacity(0.5),
                         padding: EdgeInsets.zero,
-                        icon: isFlashOn
-                            ? const Icon(Icons.flashlight_on, size: 32)
-                            : const Icon(Icons.flashlight_off, size: 32),
+                        icon: isFlashOn ? const Icon(Icons.flashlight_on, size: 32) : const Icon(Icons.flashlight_off, size: 32),
                         onPressed: () async {
-                          isFlashOn =
-                              await _qrController?.getFlashStatus() ?? false;
+                          isFlashOn = await _qrController?.getFlashStatus() ?? false;
                           await _qrController?.toggleFlash();
                           setState(() {});
                         },
