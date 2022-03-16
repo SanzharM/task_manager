@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:task_manager/core/app_manager.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
 
 import 'core/app_theme.dart';
 import 'pages/pin_page/pin_page.dart';
 
 void main() async {
-  // StatefulWidget homeScreen = LoginPage();
-  StatefulWidget homeScreen = PinPage();
-  // if (await Application.isAuthorized()) homeScreen = PinPage();
+  WidgetsFlutterBinding.ensureInitialized();
+  StatefulWidget homeScreen = LoginPage();
+  if (await Application.isAuthorized()) homeScreen = PinPage();
 
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   ThemeMode _themeMode = ThemeMode.light;

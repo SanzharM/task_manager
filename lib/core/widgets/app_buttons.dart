@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class AppBackButton extends StatelessWidget {
   final Function? onBack;
@@ -24,7 +25,14 @@ class AppButton extends StatelessWidget {
   final String title;
   final void Function() onTap;
   final Color? color;
-  const AppButton({required this.title, required this.onTap, this.color});
+  final bool isLoading;
+
+  const AppButton({
+    required this.title,
+    required this.onTap,
+    this.color,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +47,13 @@ class AppButton extends StatelessWidget {
       child: CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: onTap,
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        ),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator.adaptive())
+            : Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
       ),
     );
   }

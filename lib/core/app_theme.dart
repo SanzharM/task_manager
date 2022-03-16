@@ -11,8 +11,7 @@ class AppTheme {
           color: AppColors.darkGrey,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.white),
-          titleTextStyle:
-              const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
         fontFamily: 'Montserrat',
         accentColorBrightness: Brightness.dark,
@@ -32,7 +31,10 @@ class AppTheme {
           brightness: Brightness.dark,
           textTheme: CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
-            textStyle: const TextStyle(fontFamily: 'Montserrat'),
+            textStyle: const TextStyle(
+              fontFamily: 'Montserrat',
+              color: AppColors.metal,
+            ),
           ),
         ),
         primaryColor: AppColors.darkGrey,
@@ -44,6 +46,7 @@ class AppTheme {
 
   get lightTheme => ThemeData(
         scaffoldBackgroundColor: AppColors.snow,
+        // snackBarTheme: SnackBarThemeData(),
         bottomAppBarColor: AppColors.snow,
         backgroundColor: AppColors.snow,
         appBarTheme: AppBarTheme(
@@ -51,8 +54,7 @@ class AppTheme {
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
-          titleTextStyle:
-              const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
         ),
         accentColorBrightness: Brightness.light,
         primaryColorBrightness: Brightness.light,
@@ -65,15 +67,18 @@ class AppTheme {
           bodyColor: AppColors.darkGrey,
           displayColor: AppColors.darkGrey,
         ),
-        tabBarTheme:
-            TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
+        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,
           brightness: Brightness.light,
           textTheme: CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
-            textStyle: const TextStyle(fontFamily: 'Montserrat'),
+            textStyle: const TextStyle(
+              fontFamily: 'Montserrat',
+              color: AppColors.darkGrey,
+              fontSize: 16,
+            ),
           ),
         ),
         iconTheme: IconThemeData(color: AppColors.darkGrey, size: 24),

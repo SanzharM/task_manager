@@ -8,8 +8,8 @@ import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/pages/login_page/login_page.dart';
 import 'package:task_manager/pages/organization_page/organization_page.dart';
-import 'package:task_manager/pages/pin_page/pin_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
@@ -31,19 +31,15 @@ class ProfilePageState extends State<ProfilePage> {
         ),
       );
 
-  void _toPersonalAccount() => Navigator.of(context).push(
-      CupertinoPageRoute(builder: (context) => PersonalAccount(user: _user!)));
+  void _toPersonalAccount() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PersonalAccount(user: _user!)));
 
-  void _toTeamMembers() => Navigator.of(context).push(
-      CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
+  void _toTeamMembers() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
 
-  void _toSettings() => Navigator.of(context)
-      .push(CupertinoPageRoute(builder: (context) => SettingsPage()));
+  void _toSettings() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SettingsPage()));
 
   void _toOrganization() {
     if (_user?.organization == null) return;
-    Navigator.of(context).push(CupertinoPageRoute(
-        builder: (context) => OrganizationPage(_user!.organization!)));
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => OrganizationPage(_user!.organization!)));
   }
 
   void scrollToTop() => _scrollController.animateTo(
@@ -93,8 +89,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 fit: BoxFit.cover,
                                 height: 48,
                                 width: 48,
-                                errorWidget: (context, url, error) =>
-                                    const Text('Не удалось загрузить фото'),
+                                errorWidget: (context, url, error) => const Text('Не удалось загрузить фото'),
                               )
                             : const Icon(CupertinoIcons.person, size: 48),
                       ),
@@ -178,10 +173,10 @@ class ProfilePageState extends State<ProfilePage> {
                 EmptyBox(height: 8.0),
                 AppButton(
                   title: 'Выйти из аккаунта',
-                  onTap: () {
+                  onTap: () async {
+                    await Application.setToken(null);
                     Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.of(context).pushReplacement(
-                        CupertinoPageRoute(builder: (context) => PinPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => LoginPage()));
                   },
                 ),
                 EmptyBox(height: 16.0),

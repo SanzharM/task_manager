@@ -117,12 +117,10 @@ class _AppTextFieldState extends State<AppTextField> {
       height: widget.maxLines == 1 ? 54 : null,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Application.isDarkMode(context)
-              ? AppColors.snow.withOpacity(0.5)
-              : AppColors.darkGrey.withOpacity(0.5),
-          width: 1,
+          color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
+          width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: TextFormField(
         focusNode: focus,
@@ -164,16 +162,12 @@ class _AppTextFieldState extends State<AppTextField> {
 
   Widget readonly() {
     final hasInitial = widget.text != null ? widget.text!.length > 0 : false;
-    final padding = hasInitial
-        ? EdgeInsets.symmetric(vertical: 8, horizontal: 16)
-        : EdgeInsets.symmetric(vertical: 17, horizontal: 16);
+    final padding = hasInitial ? EdgeInsets.symmetric(vertical: 8, horizontal: 16) : EdgeInsets.symmetric(vertical: 17, horizontal: 16);
     return Container(
       height: widget.maxLines == 1 ? 54 : null,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Application.isDarkMode(context)
-              ? AppColors.snow.withOpacity(0.5)
-              : AppColors.darkGrey.withOpacity(0.5),
+          color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.5) : AppColors.darkGrey.withOpacity(0.5),
           width: 1,
         ),
         borderRadius: BorderRadius.circular(4),

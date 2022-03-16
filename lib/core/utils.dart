@@ -1,6 +1,7 @@
 import 'package:task_manager/core/models/task.dart';
 
 class Utils {
+  static String phoneMask = '+7 (###) ### ####';
   static String dateToString(DateTime? datetime) {
     if (datetime == null) return '';
     return '${datetime.day}-${datetime.month}-${datetime.year} ${datetime.hour}:${datetime.minute}:${datetime.second}';

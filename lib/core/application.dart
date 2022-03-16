@@ -8,9 +8,11 @@ class Application {
   static const _notificationsToken = 'TaskManagerNotificationsToken';
   static const _themeToken = 'TaskManagerThemeToken';
 
+  static String getBaseUrl() => 'http://10.10.80.238:8000';
+
   static Future<bool> isAuthorized() async {
     final _prefs = await SharedPreferences.getInstance();
-    return _prefs.getString(_taskManagerToken) == null;
+    return _prefs.getString(_taskManagerToken) != null;
   }
 
   static Future<void> setToken(String? token) async {
@@ -29,8 +31,7 @@ class Application {
 
   static bool isDarkMode(BuildContext context) {
     try {
-      return Provider.of<ThemeNotifier>(context).getThemeMode() ==
-          ThemeMode.dark;
+      return Provider.of<ThemeNotifier>(context).getThemeMode() == ThemeMode.dark;
     } catch (e) {
       return false;
     }
