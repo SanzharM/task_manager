@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   mask_text_input_formatter: ^2.0.0
   pin_code_fields: ^7.3.0
+  easy_localization: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +35,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/translations/ru.json
+    - assets/translations/en.json
   
   fonts:
     - family: Montserrat

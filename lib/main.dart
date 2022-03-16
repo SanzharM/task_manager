@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
@@ -10,6 +12,7 @@ import 'pages/pin_page/pin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   StatefulWidget homeScreen = LoginPage();
   if (await Application.isAuthorized()) homeScreen = PinPage();
 
@@ -17,10 +20,18 @@ void main() async {
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   ThemeMode _themeMode = ThemeMode.light;
+  final _startLocale = await Application.getLocale() ?? AppLocales.russian;
+
   runApp(
-    ChangeNotifierProvider<ThemeNotifier>(
-      create: (BuildContext context) => ThemeNotifier(_themeMode),
-      child: App(homeScreen),
+    EasyLocalization(
+      path: 'assets/translations',
+      startLocale: _startLocale,
+      supportedLocales: [AppLocales.russian, AppLocales.english],
+      fallbackLocale: AppLocales.russian,
+      child: ChangeNotifierProvider<ThemeNotifier>(
+        create: (BuildContext context) => ThemeNotifier(_themeMode),
+        child: App(homeScreen),
+      ),
     ),
   );
 }
@@ -34,6 +45,9 @@ class App extends StatelessWidget {
     return AppManager(
       child: MaterialApp(
         title: 'TaskManager',
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         debugShowCheckedModeBanner: false,
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:task_manager/core/app_colors.dart';
@@ -10,6 +11,7 @@ import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
 import 'package:task_manager/pages/login_page/verify_code_page.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -33,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.initState();
   }
 
@@ -83,24 +86,24 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       EmptyBox(height: 20),
-                      const Align(
+                      Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          'Логин',
-                          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+                          'login'.tr(),
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
                         ),
                       ),
                       EmptyBox(height: 12),
-                      const Align(
+                      Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          'Авторизуйтесь и пользуйтесь приложением',
-                          style: TextStyle(fontSize: 14),
+                          'please_authorize'.tr(),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                       EmptyBox(height: 24),
                       AppTextField(
-                        label: 'Номер телефона',
+                        label: 'phone_number'.tr(),
                         initialText: '+7',
                         text: inputFormatter.getMaskedText(),
                         onTap: () => setState(() {}),
@@ -115,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: MediaQuery.of(context).size.width,
                         child: AppButton(
                           color: AppColors.yellow,
-                          title: 'Войти',
+                          title: 'sign_in/sign_up'.tr(),
                           onTap: () {
                             _bloc..add(GetAuth(phone: _phone));
                             print('phone: $_phone');

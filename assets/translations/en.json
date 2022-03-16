@@ -1,0 +1,9 @@
+{
+  "login": "Log in",
+  "please_authorize": "Authorize and get amazing service",
+  "phone_number": "Phone number",
+  "sign_in/sign_up": "Sign in / Sign up",
+  "invalid_phone_number": "Invalid phone number",
+  "login_error": "Error occured during signing in",
+  "invalid_code": "Invalid code"
+}
