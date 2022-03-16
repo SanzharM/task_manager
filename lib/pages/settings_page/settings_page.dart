@@ -5,8 +5,12 @@ import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({Key? key, required this.changeLanguage}) : super(key: key);
+
+  final void Function(Locale) changeLanguage;
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -35,51 +39,57 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Настройки'),
+        title: Text('settings'.tr()),
         leading: AppBackButton(),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                SwitchCell(
-                  title: 'Уведомления',
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SwitchCell(
+                  title: 'notifications'.tr(),
                   value: _notifications,
                   onChanged: onNotification,
                 ),
-                EmptyBox(height: 12),
-                Column(
-                  children: [
-                    Text('Внешний вид'),
-                    EmptyBox(height: 4),
-                    Container(
-                      height: 72,
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      constraints: BoxConstraints(maxHeight: 72),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ChangeModeButton(
-                            icon: CupertinoIcons.sun_max_fill,
-                            mode: ThemeMode.light,
-                            onTap: () => setState(() {}),
-                          ),
-                          ChangeModeButton(
-                            icon: Icons.nightlight_round_outlined,
-                            mode: ThemeMode.dark,
-                            onTap: () => setState(() {}),
-                          ),
-                        ],
-                      ),
+              ),
+              EmptyBox(height: 12),
+              Column(
+                children: [
+                  Text('theme_mode'.tr()),
+                  EmptyBox(height: 4),
+                  Container(
+                    height: 72,
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    constraints: BoxConstraints(maxHeight: 72),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ChangeModeButton(
+                          icon: CupertinoIcons.sun_max_fill,
+                          mode: ThemeMode.light,
+                          onTap: () => setState(() {}),
+                        ),
+                        ChangeModeButton(
+                          icon: Icons.nightlight_round_outlined,
+                          mode: ThemeMode.dark,
+                          onTap: () => setState(() {}),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              for (int i = 0; i < context.supportedLocales.length; i++)
+                CountryCell(
+                  isSelected: context.locale == context.supportedLocales[i],
+                  locale: context.supportedLocales[i],
+                  onTap: () => widget.changeLanguage(context.supportedLocales[i]),
                 ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
@@ -112,17 +122,12 @@ class ChangeModeButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(4.0),
         width: MediaQuery.of(context).size.width / 3,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25.0),
-            color: Application.isDarkMode(context)
-                ? AppColors.snow
-                : AppColors.darkGrey),
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.circular(25.0), color: Application.isDarkMode(context) ? AppColors.snow : AppColors.darkGrey),
         child: Icon(
           icon,
           size: 32,
-          color: Application.isDarkMode(context)
-              ? AppColors.darkGrey
-              : AppColors.snow,
+          color: Application.isDarkMode(context) ? AppColors.darkGrey : AppColors.snow,
         ),
       ),
     );

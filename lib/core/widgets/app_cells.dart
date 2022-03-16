@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 
@@ -82,9 +83,7 @@ class ArrowedCell extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
-          color: Application.isDarkMode(context)
-              ? AppColors.grey
-              : AppColors.defaultGrey,
+          color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
         ),
         child: Row(
           children: [
@@ -135,14 +134,80 @@ class SwitchCell extends StatelessWidget {
         CupertinoSwitch(
           value: value,
           onChanged: onChanged,
-          trackColor: Application.isDarkMode(context)
-              ? AppColors.switchOffDark
-              : AppColors.switchOffLight,
-          activeColor: Application.isDarkMode(context)
-              ? AppColors.switchOnDark
-              : AppColors.switchOnLight,
+          trackColor: Application.isDarkMode(context) ? AppColors.switchOffDark : AppColors.switchOffLight,
+          activeColor: Application.isDarkMode(context) ? AppColors.switchOnDark : AppColors.switchOnLight,
         ),
       ],
+    );
+  }
+}
+
+class CountryCell extends StatelessWidget {
+  const CountryCell({
+    Key? key,
+    required this.locale,
+    required this.onTap,
+    this.backgroundColor,
+    this.padding,
+    this.isSelected = false,
+  }) : super(key: key);
+
+  final Locale locale;
+  final void Function() onTap;
+  final Color? backgroundColor;
+  final bool isSelected;
+  final EdgeInsets? padding;
+
+  String _getFlagPath() {
+    if (AppLocales.isEng(locale)) return 'assets/flags/en.png';
+    if (AppLocales.isRus(locale)) return 'assets/flags/ru.png';
+    return 'assets/flags/global.png';
+  }
+
+  String _getLanguage() {
+    if (AppLocales.isEng(locale)) return 'English';
+    if (AppLocales.isRus(locale)) return 'Русский';
+    return 'Unkownn';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      onPressed: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: isSelected ? Border.all(color: AppColors.defaultGrey) : null,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: padding ?? const EdgeInsets.all(16.0),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    _getFlagPath(),
+                    alignment: Alignment.center,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(_getLanguage()),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

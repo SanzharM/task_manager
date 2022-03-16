@@ -8,5 +8,17 @@
   "invalid_code": "Invalid code",
   "enter_code": "Enter SMS-code",
   "send": "Send",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "edit_profile": "Edit profile",
+  "personal_account": "Personal account",
+  "your_colleagues": "Your colleagues",
+  "shift_history": "Shift history",
+  "settings": "Settings",
+  "contact_us": "Contact us",
+  "about_us": "About us",
+  "logout": "Log out",
+  "notifications": "Notifications",
+  "theme_mode": "Theme mode",
+  "language": "Language",
+  "languages": "Languages"
 }

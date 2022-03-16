@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:task_manager/core/api/api_client.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/application.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -37,9 +38,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(Loading());
       final response = await ApiClient.verifySmsCode(event.phone, event.code!);
 
-      if (response.token != null)
+      if (response.token != null) {
+        await Application.setToken(response.token);
         emit(AuthVerifySuccess(response.token!));
-      else
+      } else
         emit(ErrorState(response.error ?? 'login_error'.tr()));
     });
   }

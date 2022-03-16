@@ -6,6 +6,7 @@ import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/profile_page/profile_page.dart';
 import 'package:task_manager/pages/qr_scanner_page/qr_scanner_page.dart';
 import 'package:task_manager/pages/task_board/task_board.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -25,12 +26,18 @@ class _NavigationBarState extends State<NavigationBar> {
     setState(() {});
   }
 
+  void _updateLanguage(Locale locale) async {
+    if (!context.supportedLocales.contains(locale)) return print('\nUnsupport locale. Returning.');
+    await context.setLocale(locale);
+    await Application.setLocale(locale);
+  }
+
   @override
   void initState() {
     pages = [
       TaskBoard(key: _taskBoardKey),
       QRScannerPage(key: _qrKey),
-      ProfilePage(key: _profileKey),
+      ProfilePage(key: _profileKey, changeLanguage: _updateLanguage),
     ];
     _currentIndex = pages.length - 1;
     super.initState();
@@ -45,12 +52,8 @@ class _NavigationBarState extends State<NavigationBar> {
       ),
       bottomNavigationBar: CupertinoTabBar(
         border: null,
-        activeColor: Application.isDarkMode(context)
-            ? AppColors.snow
-            : AppColors.darkGrey,
-        inactiveColor: Application.isDarkMode(context)
-            ? AppColors.snow
-            : AppColors.darkGrey,
+        activeColor: Application.isDarkMode(context) ? AppColors.snow : AppColors.darkGrey,
+        inactiveColor: Application.isDarkMode(context) ? AppColors.snow : AppColors.darkGrey,
         currentIndex: _currentIndex,
         onTap: (index) {
           if (_currentIndex == index) {

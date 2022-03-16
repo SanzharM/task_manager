@@ -8,5 +8,17 @@
   "invalid_code": "Код должен состоять из 4 цифр",
   "enter_code": "Введите СМС-код",
   "send": "Отправить",
-  "cancel": "Отмена"
+  "cancel": "Отмена",
+  "edit_profile": "Редактировать профиль",
+  "personal_account": "Личный кабинет",
+  "your_colleagues": "Ваши коллеги",
+  "shift_history": "История ваших смен",
+  "settings": "Настройки",
+  "contact_us": "Обратная связь",
+  "about_us": "О приложении",
+  "logout": "Выйти из аккаунта",
+  "notifications": "Уведомления",
+  "theme_mode": "Внешний вид",
+  "language": "Язык",
+  "languages": "Языки"
 }

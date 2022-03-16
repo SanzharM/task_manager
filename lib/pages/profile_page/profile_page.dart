@@ -14,9 +14,15 @@ import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({
+    Key? key,
+    required this.changeLanguage,
+  }) : super(key: key);
+
+  final void Function(Locale locale) changeLanguage;
   @override
   ProfilePageState createState() => ProfilePageState();
 }
@@ -35,7 +41,9 @@ class ProfilePageState extends State<ProfilePage> {
 
   void _toTeamMembers() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
 
-  void _toSettings() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SettingsPage()));
+  void _toSettings() => Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) => SettingsPage(changeLanguage: widget.changeLanguage),
+      ));
 
   void _toOrganization() {
     if (_user?.organization == null) return;
@@ -125,22 +133,22 @@ class ProfilePageState extends State<ProfilePage> {
                     children: [
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.person_fill),
-                        title: 'Редактировать профиль',
+                        title: 'edit_profile'.tr(),
                         onTap: _toEditProfile,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.chart_bar_alt_fill),
-                        title: 'Личный кабинет',
+                        title: 'personal_account'.tr(),
                         onTap: _toPersonalAccount,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.person_3_fill),
-                        title: 'Ваши коллеги',
+                        title: 'your_colleagues'.tr(),
                         onTap: _toTeamMembers,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.calendar),
-                        title: 'История ваших смен',
+                        title: 'shift_history'.tr(),
                         onTap: () => print('to view schedule history'),
                       ),
                     ],
@@ -154,17 +162,17 @@ class ProfilePageState extends State<ProfilePage> {
                     children: [
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.settings_solid),
-                        title: 'Настройки',
+                        title: 'settings'.tr(),
                         onTap: _toSettings,
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.question_circle_fill),
-                        title: 'Обратная связь',
+                        title: 'contact_us'.tr(),
                         onTap: () => print('to contact us'),
                       ),
                       ArrowedCell(
                         icon: const Icon(CupertinoIcons.info_circle_fill),
-                        title: 'О приложении',
+                        title: 'about_us'.tr(),
                         onTap: () => print('to about app'),
                       ),
                     ],
@@ -172,7 +180,7 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
                 EmptyBox(height: 8.0),
                 AppButton(
-                  title: 'Выйти из аккаунта',
+                  title: 'logout'.tr(),
                   onTap: () async {
                     await Application.setToken(null);
                     Navigator.of(context).popUntil((route) => route.isFirst);

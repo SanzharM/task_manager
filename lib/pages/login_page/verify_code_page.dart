@@ -39,44 +39,46 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('enter_code'.tr()),
+          leading: AppBackButton(),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 200),
-                  child: PinCodeTextField(
-                    appContext: context,
-                    length: 4,
-                    controller: _textController,
-                    keyboardType: TextInputType.number,
-                    hapticFeedbackTypes: HapticFeedbackTypes.vibrate,
-                    autoDismissKeyboard: true,
-                    animationCurve: Curves.easeInOut,
-                    animationDuration: const Duration(milliseconds: 250),
-                    animationType: AnimationType.slide,
-                    autoFocus: !kIsWeb,
-                    enablePinAutofill: true,
-                    showCursor: false,
-                    pinTheme: PinTheme(
-                      activeColor: AppColors.orange,
-                      selectedColor: AppColors.orange,
-                      disabledColor: AppColors.defaultGrey,
-                      inactiveColor: AppColors.defaultGrey,
-                    ),
-                    onChanged: (value) {
-                      _code = value;
-                      if (_code.length == 4) widget.onVerify(_code);
-                    },
-                    onTap: () => setState(() {}),
-                    onSubmitted: (value) {
-                      if (_code.length == 4) widget.onVerify(_code);
-                    },
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 200),
+                child: PinCodeTextField(
+                  autoDisposeControllers: true,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  appContext: context,
+                  length: 4,
+                  controller: _textController,
+                  keyboardType: TextInputType.number,
+                  hapticFeedbackTypes: HapticFeedbackTypes.vibrate,
+                  autoDismissKeyboard: true,
+                  animationCurve: Curves.easeInOut,
+                  animationDuration: const Duration(milliseconds: 250),
+                  animationType: AnimationType.slide,
+                  autoFocus: !kIsWeb,
+                  enablePinAutofill: true,
+                  showCursor: false,
+                  pinTheme: PinTheme(
+                    activeColor: AppColors.orange,
+                    selectedColor: AppColors.orange,
+                    disabledColor: AppColors.defaultGrey,
+                    inactiveColor: AppColors.defaultGrey,
+                    fieldOuterPadding: EdgeInsets.symmetric(horizontal: 16.0),
                   ),
+                  onChanged: (value) {
+                    _code = value;
+                    if (_code.length == 4) widget.onVerify(_code);
+                  },
+                  onTap: () => setState(() {}),
+                  onSubmitted: (value) {
+                    if (_code.length == 4) widget.onVerify(_code);
+                  },
                 ),
               ),
             ),
