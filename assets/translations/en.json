@@ -20,5 +20,14 @@
   "notifications": "Notifications",
   "theme_mode": "Theme mode",
   "language": "Language",
-  "languages": "Languages"
+  "languages": "Languages",
+  "create_profile": "Create profile",
+  "creating_profile": "Profile creation",
+  "your_name": "Your name",
+  "your_surname": "Your surname",
+  "email": "E-mail",
+  "job_position": "Job position",
+  "save": "Save",
+  "delete": "Delete",
+  "add": "Add"
 }

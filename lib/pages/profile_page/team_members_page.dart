@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/user_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TeamMembersPage extends StatefulWidget {
   final User user;
@@ -44,7 +45,7 @@ class _TeamMembersPageState extends State<TeamMembersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Коллеги'),
+        title: Text('colleagues'.tr()),
         centerTitle: true,
         leading: AppBackButton(),
       ),
@@ -61,11 +62,11 @@ class _TeamMembersPageState extends State<TeamMembersPage> {
             ),
             if (isLoading && _teamMembers.isEmpty) CupertinoActivityIndicator(),
             if (!isLoading && _teamMembers.isEmpty)
-              const Center(
+              Center(
                 child: Text(
                   'У вас пока нет коллег.\nВы можете их пригласить по ссылке #K4JF3A',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
           ],

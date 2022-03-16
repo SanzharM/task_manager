@@ -5,6 +5,7 @@ import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddProfilePage extends StatefulWidget {
   final User? user;
@@ -35,14 +36,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        if (FocusScope.of(context).hasFocus) FocusScope.of(context).unfocus();
-      },
+      onTap: () => FocusScope.of(context).hasFocus ? FocusScope.of(context).unfocus() : null,
       child: Scaffold(
         appBar: AppBar(
-          title: _isEditing
-              ? const Text('Редактирование профиля')
-              : const Text('Создание профиля'),
+          title: _isEditing ? Text('editing_profile'.tr()) : Text('create_profile'.tr()),
           centerTitle: true,
           leading: AppBackButton(
             onBack: () {
@@ -64,7 +61,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,9 +77,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     ),
                     child: ClipOval(
                       child: CupertinoButton(
-                        child: _user.imageUrl != null
-                            ? Image.network(_user.imageUrl!)
-                            : const Icon(CupertinoIcons.camera_fill),
+                        child: _user.imageUrl != null ? Image.network(_user.imageUrl!) : const Icon(CupertinoIcons.camera_fill),
                         onPressed: () => _chooseImageFromLibrary(),
                       ),
                     ),
@@ -90,7 +85,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 24),
                 AppTextField(
-                  label: 'Ваше имя',
+                  label: 'your_name'.tr(),
                   text: _user.name,
                   onTap: () => setState(() {}),
                   onChanged: (value) {
@@ -101,7 +96,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 12),
                 AppTextField(
-                  label: 'Ваша фамилия',
+                  label: 'your_surname'.tr(),
                   text: _user.surname,
                   onTap: () => setState(() {}),
                   onChanged: (value) {
@@ -112,7 +107,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 12),
                 AppTextField(
-                  label: 'Email',
+                  label: 'email'.tr(),
                   text: _user.email,
                   keyboardType: TextInputType.emailAddress,
                   onTap: () => setState(() {}),
@@ -124,7 +119,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 12),
                 AppTextField(
-                  label: 'Номер телефона',
+                  label: 'phone_number'.tr(),
                   text: _user.phone,
                   keyboardType: TextInputType.number,
                   onTap: () => setState(() {}),
@@ -136,7 +131,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 12),
                 AppTextField(
-                  label: 'Позиция (Должность)',
+                  label: 'job_position'.tr(),
                   text: _user.position,
                   onTap: () => setState(() {}),
                   onChanged: (value) {
@@ -147,7 +142,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 EmptyBox(height: 16),
                 AppButton(
-                  title: _isEditing ? 'Сохранить' : 'Добавить',
+                  title: _isEditing ? 'save'.tr() : 'add'.tr(),
                   onTap: () => null,
                 ),
                 EmptyBox(height: 20),

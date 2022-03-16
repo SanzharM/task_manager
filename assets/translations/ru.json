@@ -10,8 +10,10 @@
   "send": "Отправить",
   "cancel": "Отмена",
   "edit_profile": "Редактировать профиль",
+  "editing_profile": "Редактирование профиля",
   "personal_account": "Личный кабинет",
   "your_colleagues": "Ваши коллеги",
+  "colleagues": "Коллеги",
   "shift_history": "История ваших смен",
   "settings": "Настройки",
   "contact_us": "Обратная связь",
@@ -20,5 +22,14 @@
   "notifications": "Уведомления",
   "theme_mode": "Внешний вид",
   "language": "Язык",
-  "languages": "Языки"
+  "languages": "Языки",
+  "create_profile": "Создать профиль",
+  "creating_profile": "Создание профиля",
+  "your_name": "Ваше имя",
+  "your_surname": "Ваша фамилия",
+  "email": "Электронная почта",
+  "job_position": "Позиция (Должность)",
+  "save": "Сохранить",
+  "delete": "Удалить",
+  "add": "Добавить"
 }
