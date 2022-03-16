@@ -50,6 +50,7 @@ class AppTheme {
         bottomAppBarColor: AppColors.snow,
         backgroundColor: AppColors.snow,
         appBarTheme: AppBarTheme(
+          centerTitle: true,
           brightness: Brightness.light,
           color: AppColors.snow,
           elevation: 0,

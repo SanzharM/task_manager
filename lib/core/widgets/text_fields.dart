@@ -24,6 +24,7 @@ class AppTextField extends StatefulWidget {
 
   final Function(String value)? onChanged;
   final Function onTap;
+  final void Function(String)? onSubmit;
 
   AppTextField({
     this.hint = '',
@@ -44,6 +45,7 @@ class AppTextField extends StatefulWidget {
     this.onChanged,
     this.textCapitalization = TextCapitalization.none,
     required this.onTap,
+    this.onSubmit,
   });
 
   @override
@@ -155,7 +157,9 @@ class _AppTextFieldState extends State<AppTextField> {
             widget.onTap();
           }
         },
-        onFieldSubmitted: (value) => widget.onTap(),
+        onFieldSubmitted: (value) {
+          if (widget.onSubmit != null) widget.onSubmit!(value);
+        },
       ),
     );
   }

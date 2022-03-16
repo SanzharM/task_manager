@@ -5,5 +5,8 @@
   "sign_in/sign_up": "Sign in / Sign up",
   "invalid_phone_number": "Invalid phone number",
   "login_error": "Error occured during signing in",
-  "invalid_code": "Invalid code"
+  "invalid_code": "Invalid code",
+  "enter_code": "Enter SMS-code",
+  "send": "Send",
+  "cancel": "Cancel"
 }

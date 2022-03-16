@@ -33,6 +33,10 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pushReplacement(route);
   }
 
+  void _tryGetAuth() {
+    if (_phone.isNotEmpty) _bloc.add(GetAuth(phone: _phone));
+  }
+
   @override
   void initState() {
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
@@ -110,6 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         onChanged: (value) {
                           _phone = Utils.numbersOnly(inputFormatter.getMaskedText()) ?? '';
                         },
+                        onSubmit: (value) => _tryGetAuth(),
                         inputFormatters: [inputFormatter],
                         keyboardType: TextInputType.number,
                       ),
@@ -119,10 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: AppButton(
                           color: AppColors.yellow,
                           title: 'sign_in/sign_up'.tr(),
-                          onTap: () {
-                            _bloc..add(GetAuth(phone: _phone));
-                            print('phone: $_phone');
-                          },
+                          onTap: _tryGetAuth,
                         ),
                       ),
                       EmptyBox(height: 20),

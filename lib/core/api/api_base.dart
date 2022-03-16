@@ -39,6 +39,7 @@ class ApiBase {
   static Future<Map<String, String>> getHeaders() async => {
         'Authorization': 'Token ${await Application.getToken() ?? ''}',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       };
 
   static String urlWithParams(String url, Map<String, dynamic>? urlParams) {
@@ -54,7 +55,7 @@ class ApiBase {
     if (!await hasConnection()) return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
 
     final baseUrl = Application.getBaseUrl();
-    final client = await _getClient();
+    final client = http.Client();
     final headers = await getHeaders();
 
     http.Response response;
