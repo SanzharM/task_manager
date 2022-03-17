@@ -10,10 +10,22 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_bloc: ^8.0.1
+  equatable: ^2.0.3
+  http: ^0.13.3
+  connectivity: ^3.0.6
   provider: ^6.0.1
   shared_preferences: ^2.0.7
   local_auth: ^1.1.7
+  qr_code_scanner: ^0.6.1
+  permission_handler: ^8.1.4+2
+  url_launcher: ^6.0.10
+  cached_network_image: ^3.2.0
+  charts_flutter: ^0.11.0
   cupertino_icons: ^1.0.2
+  mask_text_input_formatter: ^2.0.0
+  pin_code_fields: ^7.3.0
+  easy_localization: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +35,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/flags/
+    - assets/translations/ru.json
+    - assets/translations/en.json
   
   fonts:
     - family: Montserrat
