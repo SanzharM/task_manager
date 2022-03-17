@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      EmptyBox(height: 20),
+                      const EmptyBox(height: 20),
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
                         ),
                       ),
-                      EmptyBox(height: 12),
+                      const EmptyBox(height: 12),
                       Align(
                         alignment: Alignment.topLeft,
                         child: Text(
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: const TextStyle(fontSize: 14),
                         ),
                       ),
-                      EmptyBox(height: 24),
+                      const EmptyBox(height: 24),
                       AppTextField(
                         label: 'phone_number'.tr(),
                         initialText: '+7',
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                         inputFormatters: [inputFormatter],
                         keyboardType: TextInputType.number,
                       ),
-                      EmptyBox(height: 24),
+                      const EmptyBox(height: 24),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         child: AppButton(
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: _tryGetAuth,
                         ),
                       ),
-                      EmptyBox(height: 20),
+                      const EmptyBox(height: 20),
                     ],
                   ),
                 ),

@@ -88,7 +88,7 @@ class ArrowedCell extends StatelessWidget {
         child: Row(
           children: [
             if (icon != null) icon!,
-            if (icon != null) EmptyBox(width: 8.0),
+            if (icon != null) const EmptyBox(width: 8.0),
             Expanded(
               child: Text(
                 title,
@@ -129,7 +129,7 @@ class SwitchCell extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (icon != null) icon!,
-        if (icon != null) EmptyBox(width: 8),
+        if (icon != null) const EmptyBox(width: 8),
         Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
         CupertinoSwitch(
           value: value,

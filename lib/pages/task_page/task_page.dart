@@ -40,23 +40,23 @@ class _TaskPageState extends State<TaskPage> {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                EmptyBox(height: 16),
+                const EmptyBox(height: 16),
                 TaskRow(title: 'creator'.tr() + ': ', value: _task.creator?.name),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 TaskRow(title: 'performer'.tr() + ': ', value: _task.performer?.name),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 TaskRow(
                   title: 'status'.tr() + ': ',
                   value: Utils.taskStatusToString(_task.status),
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 TaskRow(
                   title: 'created_date'.tr() + ': ',
                   value: Utils.dateToString(_task.createdAt),
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 TaskRow(title: 'deadline'.tr() + ': ', value: deadline),
-                EmptyBox(height: 16),
+                const EmptyBox(height: 16),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -64,7 +64,7 @@ class _TaskPageState extends State<TaskPage> {
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
-                EmptyBox(height: 8),
+                const EmptyBox(height: 8),
                 Text(
                   _task.description ?? '-',
                   style: const TextStyle(fontSize: 16),
@@ -91,7 +91,7 @@ class TaskRow extends StatelessWidget {
     return Row(
       children: [
         Text(title, style: _titleStyle),
-        EmptyBox(width: 4.0),
+        const EmptyBox(width: 4.0),
         Text(
           value != null && value!.isNotEmpty ? value! : '-',
           style: _valueStyle,

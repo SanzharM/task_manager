@@ -16,22 +16,24 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
   List<Task> _toDoTasks = [
     Task(title: 'ToDo task 1'),
-    Task(title: 'ToDo task 2', description: 'delai kracuBo'),
-    Task(title: 'ToDo task 3'),
-    Task(title: 'ToDo task 4'),
+    Task(
+      title: 'Production bug fix',
+      description: '500 server error response on these APIs: ...',
+    ),
+    Task(title: 'Redesign of Application'),
+    Task(title: 'Connecting Firebase Analytics'),
   ];
   List<Task> _inWorkTasks = [
-    Task(title: 'in work task 1'),
-    Task(title: 'in work task 2'),
+    Task(title: 'Changing registration APIs from v1 to v2'),
+    Task(title: 'Back-end code refactoring'),
   ];
   List<Task> _toTestTasks = [
     // Task(title: 'toTest task 1'),
   ];
   List<Task> _doneTasks = [
-    Task(title: 'done task 1 '),
+    Task(title: 'done task 1'),
     Task(
-      title:
-          'done task 2 donedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedone',
+      title: 'done task 2',
       description:
           'donedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedone',
     ),
@@ -66,13 +68,12 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             constraints: constraints,
             child: Column(
               children: [
-                EmptyBox(height: 56),
+                const EmptyBox(height: 56),
                 TabBar(
                   controller: _boardTabController,
                   isScrollable: true,
                   physics: BouncingScrollPhysics(),
-                  labelStyle: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w500),
+                  labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   tabs: const [
                     Tab(text: 'К выполнению'),
                     Tab(text: 'В работе'),

@@ -12,18 +12,14 @@ class UserCard extends StatelessWidget {
   final User user;
   UserCard({required this.user});
 
-  String whatsappUrl(String? phone) =>
-      'https://api.whatsapp.com/send?phone=${Utils.numbersOnly(phone)}';
-  String telegramUrl(String? phone) =>
-      'https://t.me/${Utils.numbersOnly(phone)}';
+  String whatsappUrl(String? phone) => 'https://api.whatsapp.com/send?phone=${Utils.numbersOnly(phone)}';
+  String telegramUrl(String? phone) => 'https://t.me/${Utils.numbersOnly(phone)}';
 
   Future<void> _onPhoneCall(String? inputPhone) async {
     final String? phone = Utils.numbersOnly(inputPhone);
     if (phone == null || phone.length != 11) return;
 
-    await canLaunch('tel:$phone')
-        ? await launch('tel:$phone')
-        : _copyToClipBoard(phone);
+    await canLaunch('tel:$phone') ? await launch('tel:$phone') : _copyToClipBoard(phone);
   }
 
   Future<void> _copyToClipBoard(text) async {
@@ -44,20 +40,16 @@ class UserCard extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 56.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),
-        color: Application.isDarkMode(context)
-            ? AppColors.grey
-            : AppColors.defaultGrey,
+        color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipOval(
-            child: user.imageUrl != null
-                ? Image.network(user.imageUrl!, height: 48, width: 48)
-                : const Icon(CupertinoIcons.person_fill, size: 48),
+            child: user.imageUrl != null ? Image.network(user.imageUrl!, height: 48, width: 48) : const Icon(CupertinoIcons.person_fill, size: 48),
           ),
-          EmptyBox(width: 8),
+          const EmptyBox(width: 8),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -66,13 +58,11 @@ class UserCard extends StatelessWidget {
                 Text(
                   '${user.name} ${user.surname}',
                   maxLines: 1,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
-                EmptyBox(height: 4),
-                if (user.position != null && user.position!.isNotEmpty)
-                  Text(user.position!, style: const TextStyle(fontSize: 14)),
-                EmptyBox(height: 8),
+                const EmptyBox(height: 4),
+                if (user.position != null && user.position!.isNotEmpty) Text(user.position!, style: const TextStyle(fontSize: 14)),
+                const EmptyBox(height: 8),
                 CupertinoButton(
                   padding: const EdgeInsets.all(4.0),
                   onPressed: () => _onPhoneCall(user.phone),
@@ -80,9 +70,8 @@ class UserCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(CupertinoIcons.phone_fill_arrow_up_right,
-                          size: 28),
-                      EmptyBox(width: 8),
+                      const Icon(CupertinoIcons.phone_fill_arrow_up_right, size: 28),
+                      const EmptyBox(width: 8),
                       Expanded(child: Text(Utils.formattedPhone(user.phone))),
                     ],
                   ),
@@ -95,7 +84,7 @@ class UserCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset(AppIcons.whatsApp, height: 32),
-                      EmptyBox(width: 8),
+                      const EmptyBox(width: 8),
                       Expanded(child: Text('Чат WhatsApp', maxLines: 1)),
                     ],
                   ),
@@ -108,7 +97,7 @@ class UserCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image.asset(AppIcons.telegram, height: 32),
-                      EmptyBox(width: 8),
+                      const EmptyBox(width: 8),
                       Expanded(child: Text('Чат Telegram', maxLines: 1)),
                     ],
                   ),

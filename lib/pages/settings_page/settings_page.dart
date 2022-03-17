@@ -55,11 +55,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   onChanged: onNotification,
                 ),
               ),
-              EmptyBox(height: 12),
+              const EmptyBox(height: 12),
               Column(
                 children: [
                   Text('theme_mode'.tr()),
-                  EmptyBox(height: 4),
+                  const EmptyBox(height: 4),
                   Container(
                     height: 72,
                     width: MediaQuery.of(context).size.width,

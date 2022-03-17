@@ -66,7 +66,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                EmptyBox(height: 8),
+                const EmptyBox(height: 8),
                 Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -83,7 +83,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     ),
                   ),
                 ),
-                EmptyBox(height: 24),
+                const EmptyBox(height: 24),
                 AppTextField(
                   label: 'your_name'.tr(),
                   text: _user.name,
@@ -94,7 +94,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     setState(() {});
                   },
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 AppTextField(
                   label: 'your_surname'.tr(),
                   text: _user.surname,
@@ -105,7 +105,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     setState(() {});
                   },
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 AppTextField(
                   label: 'email'.tr(),
                   text: _user.email,
@@ -117,7 +117,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     setState(() {});
                   },
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 AppTextField(
                   label: 'phone_number'.tr(),
                   text: _user.phone,
@@ -129,7 +129,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     setState(() {});
                   },
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 AppTextField(
                   label: 'job_position'.tr(),
                   text: _user.position,
@@ -140,12 +140,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     setState(() {});
                   },
                 ),
-                EmptyBox(height: 16),
+                const EmptyBox(height: 16),
                 AppButton(
                   title: _isEditing ? 'save'.tr() : 'add'.tr(),
                   onTap: () => null,
                 ),
-                EmptyBox(height: 20),
+                const EmptyBox(height: 20),
               ],
             ),
           ),

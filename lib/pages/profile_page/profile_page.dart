@@ -101,7 +101,7 @@ class ProfilePageState extends State<ProfilePage> {
                               )
                             : const Icon(CupertinoIcons.person, size: 48),
                       ),
-                      EmptyBox(height: 12),
+                      const EmptyBox(height: 12),
                       Text(
                         '${_user?.name ?? ''} ${_user?.surname ?? ''}',
                         style: const TextStyle(
@@ -109,7 +109,7 @@ class ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      EmptyBox(height: 4),
+                      const EmptyBox(height: 4),
                       Text(
                         _user?.phone ?? '',
                         style: const TextStyle(fontSize: 16),
@@ -117,7 +117,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                if (_user?.organization != null) EmptyBox(height: 8),
+                if (_user?.organization != null) const EmptyBox(height: 8),
                 if (_user?.organization != null)
                   InfoCell(
                     title: 'Организация:',
@@ -125,7 +125,7 @@ class ProfilePageState extends State<ProfilePage> {
                     onTap: _toOrganization,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-                EmptyBox(height: 16),
+                const EmptyBox(height: 16),
                 AppCard(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -154,7 +154,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                EmptyBox(height: 12),
+                const EmptyBox(height: 12),
                 AppCard(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -178,7 +178,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                EmptyBox(height: 8.0),
+                const EmptyBox(height: 8.0),
                 AppButton(
                   title: 'logout'.tr(),
                   onTap: () async {
@@ -187,7 +187,7 @@ class ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => LoginPage()));
                   },
                 ),
-                EmptyBox(height: 16.0),
+                const EmptyBox(height: 16.0),
               ],
             ),
           ),

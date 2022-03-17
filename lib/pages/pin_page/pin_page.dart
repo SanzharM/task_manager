@@ -112,9 +112,9 @@ class _PinPageState extends State<PinPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            EmptyBox(height: 12),
+            const EmptyBox(height: 12),
             Text(_currentMessage, style: const TextStyle(fontSize: 20)),
-            EmptyBox(height: 24),
+            const EmptyBox(height: 24),
             hasFaceId || hasTouchId
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24.0),
@@ -135,13 +135,13 @@ class _PinPageState extends State<PinPage> {
                       ],
                     ),
                   )
-                : EmptyBox(),
-            EmptyBox(height: 48),
+                : const EmptyBox(),
+            const EmptyBox(height: 48),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48.0),
               child: PinDots(length: 4, pin: _tempPin),
             ),
-            EmptyBox(height: 56),
+            const EmptyBox(height: 56),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48.0),
               child: PinNumbers(onPressed: _numberPressed, onDelete: _onDelete),
