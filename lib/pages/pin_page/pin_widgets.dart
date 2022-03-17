@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 
 class PinNumber extends StatelessWidget {
@@ -39,9 +40,9 @@ class PinDots extends StatelessWidget {
         Container(
           constraints: BoxConstraints(minWidth: 14, minHeight: 14),
           decoration: BoxDecoration(
-            color: pin.length > i ? AppColors.darkGrey : AppColors.transparent,
+            color: pin.length > i ? (Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey) : AppColors.transparent,
             shape: BoxShape.circle,
-            border: Border.all(width: 2.0, color: AppColors.darkGrey),
+            border: Border.all(width: 2.0, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey),
           ),
         ),
       );

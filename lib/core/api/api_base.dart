@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
 import 'package:task_manager/core/api/api_endpoints.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:connectivity/connectivity.dart';
@@ -20,20 +19,6 @@ class ApiBase {
       return true;
     }
     return false;
-  }
-
-  static Future<IOClient> _getClient() async {
-    HttpClient httpClient = HttpClient();
-    httpClient.connectionTimeout = Duration(seconds: 15);
-    httpClient.badCertificateCallback = ((
-      X509Certificate cert,
-      String host,
-      int port,
-    ) {
-      return true;
-    });
-
-    return IOClient(httpClient);
   }
 
   static Future<Map<String, String>> getHeaders() async => {

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -28,7 +29,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
   @override
   void dispose() {
-    _textController.dispose();
+    // _textController.dispose();
     super.dispose();
   }
 
@@ -65,8 +66,8 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   enablePinAutofill: true,
                   showCursor: false,
                   pinTheme: PinTheme(
-                    activeColor: AppColors.orange,
-                    selectedColor: AppColors.orange,
+                    activeColor: AppColors.success,
+                    selectedColor: AppColors.success,
                     disabledColor: AppColors.defaultGrey,
                     inactiveColor: AppColors.defaultGrey,
                     fieldOuterPadding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -85,7 +86,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: AppButton(
-                color: AppColors.lightGrey,
+                color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
                 title: 'send'.tr(),
                 onTap: () {
                   if (_code.length == 4) widget.onVerify(_code);

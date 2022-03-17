@@ -2,16 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AlertController {
   static void showNativeDialog({
     required BuildContext context,
     required String title,
-    required String message,
-    String onYesTitle = 'Да',
-    String onNoTitle = 'Нет',
-    required Function onYes,
-    required Function onNo,
+    String? message,
+    String? onYesTitle,
+    String? onNoTitle,
+    required void Function() onYes,
+    required void Function() onNo,
     bool barrierDismissible = false,
   }) async {
     if (Platform.isIOS || Platform.isMacOS) {
@@ -20,15 +21,15 @@ class AlertController {
         barrierDismissible: barrierDismissible,
         builder: (context) => CupertinoAlertDialog(
           title: Text(title),
-          content: Text('\n$message'),
+          content: message == null || message.isEmpty ? null : Text('\n$message'),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text(onNoTitle),
-              onPressed: () => onNo(),
+              child: Text(onNoTitle ?? 'no'.tr()),
+              onPressed: onNo,
             ),
             CupertinoDialogAction(
-              child: Text(onYesTitle),
-              onPressed: () => onYes(),
+              child: Text(onYesTitle ?? 'yes'.tr()),
+              onPressed: onYes,
             ),
           ],
         ),
@@ -39,16 +40,10 @@ class AlertController {
       barrierDismissible: barrierDismissible,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: Text(message),
+        content: message == null || message.isEmpty ? null : Text('\n$message'),
         actions: [
-          TextButton(
-            child: Text(onNoTitle),
-            onPressed: () => onNo(),
-          ),
-          TextButton(
-            child: Text(onYesTitle),
-            onPressed: () => onYes(),
-          ),
+          TextButton(child: Text(onNoTitle ?? 'no'.tr()), onPressed: onNo),
+          TextButton(child: Text(onYesTitle ?? 'yes'.tr()), onPressed: onYes),
         ],
       ),
     );

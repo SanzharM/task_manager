@@ -1,6 +1,7 @@
 {
+  "app_slogan": "Secured Task-Management App",
   "login": "Логин",
-  "please_authorize": "Авторизуйтесь и пользуйтесь приложением",
+  "please_authorize": "Авторизовуйтесь или пройдите регистрацию",
   "phone_number": "Номер телефона",
   "sign_in/sign_up": "Вход / Регистрация",
   "invalid_phone_number": "Некорректный номер телефона",
@@ -42,6 +43,7 @@
   "description": "Описание",
   "organization": "Организация",
   "generate_qr_code": "Сгенерировать QR-код",
+  "enter_pin_code": "Введите пин-код",
   "setup_pin_code": "Установите пин-код",
   "repeat_pin_code": "Повторите пин-код",
   "incorrect_repeated_pin_code": "Повторный пин-код неверный",
@@ -49,5 +51,6 @@
   "attendence": "Посещаемость",
   "current_shift": "Текущий график работы",
   "allow_access_to_camera_error_msg": "Предоставьте доступ к камере в настройках, чтобы сканировать QR-коды.\nНажмите, чтобы перейти в Настройки",
-  "": ""
+  "yes": "Да",
+  "no": "Нет"
 }

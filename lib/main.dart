@@ -14,12 +14,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   StatefulWidget homeScreen = LoginPage();
-  if (await Application.isAuthorized()) homeScreen = PinPage();
+  if (await Application.isAuthorized()) homeScreen = PinPage(shouldSetupPin: false);
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  ThemeMode _themeMode = ThemeMode.light;
+  ThemeMode _themeMode = await Application.getSavedThemeMode() ?? ThemeMode.light;
   final _startLocale = await Application.getLocale() ?? AppLocales.russian;
 
   runApp(

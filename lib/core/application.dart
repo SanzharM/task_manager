@@ -10,6 +10,7 @@ class Application {
   static const _notificationsToken = 'TaskManagerNotificationsToken';
   static const _themeToken = 'TaskManagerThemeToken';
   static const _localeKey = 'TaskManagerLocaleToken';
+  static const _pinKey = 'TaskManagerPinToken';
 
   static String getBaseUrl() => 'http://10.10.80.238:8000';
 
@@ -73,5 +74,13 @@ class Application {
 
   static Future<void> setLocale(Locale locale) async {
     (await _prefs).setString(_localeKey, locale.languageCode);
+  }
+
+  static Future<String?> getPin() async {
+    return (await _prefs).getString(_pinKey);
+  }
+
+  static Future<void> setPin(String pin) async {
+    (await _prefs).setString(_pinKey, pin);
   }
 }
