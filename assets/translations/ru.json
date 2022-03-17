@@ -39,5 +39,15 @@
   "status": "Статус",
   "created_date": "Дата создания",
   "deadline": "Крайний срок выполнения",
-  "description": "Описание"
+  "description": "Описание",
+  "organization": "Организация",
+  "generate_qr_code": "Сгенерировать QR-код",
+  "setup_pin_code": "Установите пин-код",
+  "repeat_pin_code": "Повторите пин-код",
+  "incorrect_repeated_pin_code": "Повторный пин-код неверный",
+  "incorrect_pin_code": "Неверный пин-код",
+  "attendence": "Посещаемость",
+  "current_shift": "Текущий график работы",
+  "allow_access_to_camera_error_msg": "Предоставьте доступ к камере в настройках, чтобы сканировать QR-коды.\nНажмите, чтобы перейти в Настройки",
+  "": ""
 }

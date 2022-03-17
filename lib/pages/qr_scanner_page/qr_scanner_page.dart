@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
@@ -86,12 +87,12 @@ class QRScannerPageState extends State<QRScannerPage> {
           : Center(
               child: GestureDetector(
                 onTap: () async => await openAppSettings(),
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    'Предоставьте доступ к камере в настройках, чтобы сканировать QR-коды.\nНажмите, чтобы перейти в Настройки',
+                    'allow_access_to_camera_error_msg'.tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
               ),

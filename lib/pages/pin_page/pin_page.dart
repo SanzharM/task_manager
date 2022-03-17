@@ -6,6 +6,7 @@ import 'package:task_manager/core/app_icons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/pin_page/pin_widgets.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PinPage extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _PinPageState extends State<PinPage> {
   bool hasTouchId = false;
   bool hasFaceId = false;
 
-  String _currentMessage = 'Установите пин-код';
+  String _currentMessage = 'setup_pin_code'.tr();
   int _retryCounter = 0;
 
   void _vibrate() {
@@ -42,7 +43,7 @@ class _PinPageState extends State<PinPage> {
     if (_tempPin.length == 4 && _pin.isEmpty) {
       _pin = _tempPin;
       _tempPin = '';
-      _currentMessage = 'Повторите пин-код';
+      _currentMessage = 'repeat_pin_code'.tr();
       setState(() {});
       return;
     }
@@ -52,11 +53,11 @@ class _PinPageState extends State<PinPage> {
         return;
       } else if (_retryCounter < 3) {
         _tempPin = '';
-        _currentMessage = 'Повторный пин-код неверный';
+        _currentMessage = 'incorrect_repeated_pin_code'.tr();
         _retryCounter++;
         setState(() {});
       } else {
-        _currentMessage = 'Установите пин-код';
+        _currentMessage = 'setup_pin_code'.tr();
         _tempPin = '';
         _pin = '';
         _retryCounter = 0;
@@ -76,7 +77,7 @@ class _PinPageState extends State<PinPage> {
   void _tryLoginWithBiometrics() async {
     try {
       bool didAuthenticate = await _localAuth.authenticate(
-        localizedReason: 'Авторизуйтесь, чтобы пользоваться приложением',
+        localizedReason: 'please_authorize'.tr(),
       );
       if (didAuthenticate) {
         // Send login request

@@ -37,5 +37,15 @@
   "status": "Status",
   "created_date": "Created date",
   "deadline": "Deadline",
-  "description": "Description"
+  "description": "Description",
+  "organization": "Organization",
+  "generate_qr_code": "Generate QR-code",
+  "setup_pin_code": "Setup PIN-code",
+  "repeat_pin_code": "Repeat PIN-code",
+  "incorrect_repeated_pin_code": "Repeated PIN-code is incorrect",
+  "incorrect_pin_code": "Incorrect PIN-code",
+  "attendence": "Attendence",
+  "current_shift": "Current work schedule",
+  "allow_access_to_camera_error_msg": "Please, allow access to camera in Settings to scan QR-codes inside the app.\nPress here to open the Permission Settings.",
+  "": ""
 }

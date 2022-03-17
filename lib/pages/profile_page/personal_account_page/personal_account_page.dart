@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PersonalAccount extends StatefulWidget {
   final User user;
@@ -20,7 +20,7 @@ class _PersonalAccountState extends State<PersonalAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ваш личный кабинет'),
+        title: Text('personal_account'.tr()),
         leading: AppBackButton(),
         centerTitle: true,
       ),
@@ -30,12 +30,12 @@ class _PersonalAccountState extends State<PersonalAccount> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
-                'Посещаемость',
+                'attendence'.tr(),
                 textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 12),
@@ -49,7 +49,7 @@ class _PersonalAccountState extends State<PersonalAccount> {
               ),
             ),
             InfoCell(
-              title: 'Текущий график',
+              title: 'current_shift'.tr(),
               value: '10:00 - 19:00',
               crossAxisAlignment: CrossAxisAlignment.end,
             ),

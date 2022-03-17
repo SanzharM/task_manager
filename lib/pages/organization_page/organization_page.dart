@@ -4,6 +4,7 @@ import 'package:task_manager/core/models/organization.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class OrganizationPage extends StatefulWidget {
   final Organization? organization;
@@ -28,7 +29,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
       appBar: AppBar(
         centerTitle: true,
         leading: AppBackButton(),
-        title: Text(_organization.name ?? 'Организация'),
+        title: Text(_organization.name ?? 'organization'.tr()),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -43,7 +44,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
                   children: [
                     ArrowedCell(
                       icon: const Icon(CupertinoIcons.qrcode),
-                      title: 'Сгенерировать QR-код',
+                      title: 'generate_qr_code'.tr(),
                       onTap: () => null,
                     ),
                   ],
