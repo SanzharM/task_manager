@@ -7,6 +7,7 @@ class AppColors {
 
   static const snow = Color(0xfff5f6fa);
   static const metal = Color(0xffdcdde1);
+  static const vengence = Color(0xff1A1A1A);
   static const dark = Color(0xff2f3640);
 
   static const defaultGrey = Color(0xffced6e0);

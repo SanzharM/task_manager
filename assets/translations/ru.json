@@ -55,5 +55,6 @@
   "yes": "Да",
   "no": "Нет",
   "do_you_want_to_go_back": "Вы точно хотите вернуться?",
-  "you_have_unsaved_changes": "У вас остались несохраненные изменения"
+  "you_have_unsaved_changes": "У вас остались несохраненные изменения",
+  "error_unable_to_load_photo": "Не удалось загрузить фото"
 }

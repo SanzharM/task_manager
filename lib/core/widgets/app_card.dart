@@ -14,14 +14,12 @@ class AppCard extends StatelessWidget {
       constraints: BoxConstraints(minHeight: 24),
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
       child: child,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
         gradient: gradient,
-        color: color ??
-            (Application.isDarkMode(context)
-                ? AppColors.grey
-                : AppColors.defaultGrey),
+        color: color ?? (Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey),
       ),
     );
   }

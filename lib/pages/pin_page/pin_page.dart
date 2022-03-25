@@ -8,6 +8,7 @@ import 'package:task_manager/core/app_icons.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
 import 'package:task_manager/pages/pin_page/pin_widgets.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
@@ -22,6 +23,8 @@ class PinPage extends StatefulWidget {
 }
 
 class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
+  final _shakeKey = GlobalKey<ShakeWidgetState>();
+
   final _localAuth = LocalAuthentication();
   String _tempPin = '';
   String _pin = '';
@@ -30,7 +33,6 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
   bool hasFaceId = false;
 
   String _currentMessage = 'setup_pin_code'.tr();
-  int _retryCounter = 0;
 
   bool isLoading = false;
 
@@ -135,9 +137,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: AppBackButton(onBack: _onBack),
-      ),
+      appBar: AppBar(leading: AppBackButton(onBack: _onBack)),
       body: Stack(
         children: [
           Container(
@@ -191,16 +191,22 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                     const EmptyBox(height: 32),
                     Text(_currentMessage, style: const TextStyle(fontSize: 20)),
                     const EmptyBox(height: 32),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SlideTransition(position: _animation1, child: _dot(0)),
-                          SlideTransition(position: _animation2, child: _dot(1)),
-                          SlideTransition(position: _animation3, child: _dot(2)),
-                          SlideTransition(position: _animation4, child: _dot(3)),
-                        ],
+                    ShakeWidget(
+                      key: _shakeKey,
+                      shakeCount: 3,
+                      shakeOffset: 10,
+                      shakeDuration: const Duration(milliseconds: 350),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            AnimatedDot(animation: _animation1, isFilled: _tempPin.length > 0),
+                            AnimatedDot(animation: _animation2, isFilled: _tempPin.length > 1),
+                            AnimatedDot(animation: _animation3, isFilled: _tempPin.length > 2),
+                            AnimatedDot(animation: _animation4, isFilled: _tempPin.length > 3),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -213,17 +219,6 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _dot(int dotPosition) {
-    return Container(
-      constraints: BoxConstraints(minWidth: 14, minHeight: 14),
-      decoration: BoxDecoration(
-        color: _tempPin.length > dotPosition ? (Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey) : AppColors.transparent,
-        shape: BoxShape.circle,
-        border: Border.all(width: 2.0, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey),
       ),
     );
   }
@@ -261,19 +256,11 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
         await Future.delayed(const Duration(milliseconds: 200));
         _toMainPage();
         return;
-      } else if (_retryCounter < 3) {
-        _tempPin = '';
-        _currentMessage = 'incorrect_repeated_pin_code'.tr();
-        _retryCounter++;
-        setState(() {});
-      } else {
-        _currentMessage = 'setup_pin_code'.tr();
-        _tempPin = '';
-        _pin = '';
-        _retryCounter = 0;
-        setState(() {});
       }
+      _tempPin = '';
+      _currentMessage = 'incorrect_repeated_pin_code'.tr();
       _vibrate();
+      setState(() {});
     }
   }
 
@@ -286,7 +273,29 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   void _vibrate() {
     try {
-      HapticFeedback.lightImpact();
+      _shakeKey.currentState?.shake();
+      HapticFeedback.mediumImpact();
     } catch (e) {}
+  }
+}
+
+class AnimatedDot extends StatelessWidget {
+  final Animation<Offset> animation;
+  final bool isFilled;
+  const AnimatedDot({Key? key, required this.animation, required this.isFilled}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: animation,
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+        decoration: BoxDecoration(
+          color: isFilled ? (Application.isDarkMode(context) ? AppColors.metal : AppColors.grey) : AppColors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(width: 2.0, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.vengence),
+        ),
+      ),
+    );
   }
 }

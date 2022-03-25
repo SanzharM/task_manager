@@ -55,5 +55,6 @@
   "yes": "Yes",
   "no": "No",
   "do_you_want_to_go_back": "Return?",
-  "you_have_unsaved_changes": "You have unsaved changed"
+  "you_have_unsaved_changes": "You have unsaved changed",
+  "error_unable_to_load_photo": "Unable to load the photo"
 }
