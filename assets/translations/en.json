@@ -11,8 +11,10 @@
   "send": "Send",
   "cancel": "Cancel",
   "edit_profile": "Edit profile",
+  "editing_profile": "Editing profile",
   "personal_account": "Personal account",
   "your_colleagues": "Your colleagues",
+  "colleagues": "Colleagues",
   "shift_history": "Shift history",
   "settings": "Settings",
   "contact_us": "Contact us",
@@ -46,9 +48,13 @@
   "repeat_pin_code": "Repeat PIN-code",
   "incorrect_repeated_pin_code": "Repeated PIN-code is incorrect",
   "incorrect_pin_code": "Incorrect PIN-code",
+  "use_biometrics": "Use Biometrics",
   "attendence": "Attendence",
   "current_shift": "Current work schedule",
   "allow_access_to_camera_error_msg": "Please, allow access to camera in Settings to scan QR-codes inside the app.\nPress here to open the Permission Settings.",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "do_you_want_to_go_back": "Return?",
+  "you_have_unsaved_changes": "You have unsaved changed",
+  "error_unable_to_load_photo": "Unable to load the photo"
 }

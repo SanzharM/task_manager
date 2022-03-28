@@ -46,8 +46,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
               if (didChanges) {
                 return AlertController.showNativeDialog(
                   context: context,
-                  title: 'Вы точно хотите вернуться?',
-                  message: 'У вас остались несохраненные изменения',
+                  title: 'do_you_want_to_go_back'.tr(),
+                  message: 'you_have_unsaved_changes'.tr(),
                   onYes: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();

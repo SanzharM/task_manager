@@ -62,7 +62,7 @@ class InfoCell extends StatelessWidget {
 class ArrowedCell extends StatelessWidget {
   final Widget? icon;
   final String title;
-  final Function onTap;
+  final void Function() onTap;
   final Color? color;
 
   const ArrowedCell({
@@ -76,7 +76,7 @@ class ArrowedCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
-      onPressed: () => onTap(),
+      onPressed: onTap,
       child: Container(
         constraints: BoxConstraints(minHeight: 24),
         width: MediaQuery.of(context).size.width,
@@ -167,7 +167,7 @@ class CountryCell extends StatelessWidget {
   String _getLanguage() {
     if (AppLocales.isEng(locale)) return 'English';
     if (AppLocales.isRus(locale)) return 'Русский';
-    return 'Unkownn';
+    return 'Unknown';
   }
 
   @override

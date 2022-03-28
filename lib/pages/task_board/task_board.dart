@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/task_card.dart';
@@ -63,8 +62,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Container(
-            color: AppColors.metal,
+          return ConstrainedBox(
             constraints: constraints,
             child: Column(
               children: [

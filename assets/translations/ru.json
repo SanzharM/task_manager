@@ -48,9 +48,13 @@
   "repeat_pin_code": "Повторите пин-код",
   "incorrect_repeated_pin_code": "Повторный пин-код неверный",
   "incorrect_pin_code": "Неверный пин-код",
+  "use_biometrics": "Биометрическая аутентификация",
   "attendence": "Посещаемость",
   "current_shift": "Текущий график работы",
   "allow_access_to_camera_error_msg": "Предоставьте доступ к камере в настройках, чтобы сканировать QR-коды.\nНажмите, чтобы перейти в Настройки",
   "yes": "Да",
-  "no": "Нет"
+  "no": "Нет",
+  "do_you_want_to_go_back": "Вы точно хотите вернуться?",
+  "you_have_unsaved_changes": "У вас остались несохраненные изменения",
+  "error_unable_to_load_photo": "Не удалось загрузить фото"
 }
