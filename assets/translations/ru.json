@@ -8,6 +8,8 @@
   "login_error": "Возникла ошибка при авторизации",
   "invalid_code": "Код должен состоять из 4 цифр",
   "enter_code": "Введите СМС-код",
+  "submit": "Отправить",
+  "next": "Далее",
   "send": "Отправить",
   "cancel": "Отмена",
   "edit_profile": "Редактировать профиль",
@@ -56,5 +58,7 @@
   "no": "Нет",
   "do_you_want_to_go_back": "Вы точно хотите вернуться?",
   "you_have_unsaved_changes": "У вас остались несохраненные изменения",
-  "error_unable_to_load_photo": "Не удалось загрузить фото"
+  "error_unable_to_load_photo": "Не удалось загрузить фото",
+  "app_version": "Версия приложения",
+  "enter_company_code": "Введите код компании"
 }

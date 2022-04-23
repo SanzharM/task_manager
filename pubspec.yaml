@@ -16,6 +16,7 @@ dependencies:
   connectivity: ^3.0.6
   provider: ^6.0.1
   shared_preferences: ^2.0.7
+  flutter_secure_storage: 
   local_auth: ^1.1.7
   qr_code_scanner: ^0.6.1
   permission_handler: ^8.1.4+2
@@ -26,6 +27,13 @@ dependencies:
   mask_text_input_formatter: ^2.0.0
   pin_code_fields: ^7.3.0
   easy_localization: ^3.0.0
+  
+  package_info_plus: ^1.4.0
+  # flutter_sound: ^9.1.9
+  flutter_sound_lite: ^8.5.0
+  avatar_glow: ^2.0.2
+  path_provider: any
+  audio_session: ^0.1.6+1
 
 dev_dependencies:
   flutter_test:

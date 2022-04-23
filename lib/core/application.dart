@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/core/app_locales.dart';
@@ -6,28 +7,41 @@ import 'package:task_manager/core/app_theme.dart';
 
 class Application {
   static Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  static const _storage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
   static const _taskManagerToken = 'TaskManagerToken';
   static const _notificationsToken = 'TaskManagerNotificationsToken';
   static const _themeToken = 'TaskManagerThemeToken';
   static const _localeKey = 'TaskManagerLocaleToken';
   static const _pinKey = 'TaskManagerPinToken';
+  static const _phoneKey = 'TaskManagerPhoneToken';
+  static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
 
-  static String getBaseUrl() => 'http://10.10.80.238:8000';
+  static String getBaseUrl() => 'http://192.168.1.106:8000';
 
   static Future<bool> isAuthorized() async {
-    return (await _prefs).getString(_taskManagerToken) != null;
+    return await getToken() != null;
   }
 
   static Future<void> setToken(String? token) async {
-    if (token == null) {
-      (await _prefs).remove(_taskManagerToken);
-      return;
-    }
-    (await _prefs).setString(_taskManagerToken, token);
+    if (token == null) return _storage.delete(key: _taskManagerToken);
+
+    return await _storage.write(key: _taskManagerToken, value: token);
   }
 
   static Future<String?> getToken() async {
-    return (await _prefs).getString(_taskManagerToken);
+    return await _storage.read(key: _taskManagerToken);
+  }
+
+  static Future<String?> getPhone() async {
+    return await _storage.read(key: _phoneKey);
+  }
+
+  static Future<void> setPhone(String? phone) async {
+    if (phone == null || phone.isEmpty) {
+      await _storage.delete(key: _phoneKey);
+    } else {
+      await _storage.write(key: _phoneKey, value: phone);
+    }
   }
 
   static bool isDarkMode(BuildContext context) {
@@ -77,10 +91,18 @@ class Application {
   }
 
   static Future<String?> getPin() async {
-    return (await _prefs).getString(_pinKey);
+    return await _storage.read(key: _pinKey);
   }
 
   static Future<void> setPin(String pin) async {
-    (await _prefs).setString(_pinKey, pin);
+    await _storage.write(key: _pinKey, value: pin);
+  }
+
+  static Future<void> saveCompanyCode(String code) async {
+    await _storage.write(key: _companyCodeKey, value: code);
+  }
+
+  static Future<String?> getCompanyCode() async {
+    return await _storage.read(key: _companyCodeKey);
   }
 }

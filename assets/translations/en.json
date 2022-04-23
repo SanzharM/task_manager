@@ -8,6 +8,8 @@
   "login_error": "Error occured during signing in",
   "invalid_code": "Invalid code",
   "enter_code": "Enter SMS-code",
+  "submit": "Submit",
+  "next": "Next",
   "send": "Send",
   "cancel": "Cancel",
   "edit_profile": "Edit profile",
@@ -56,5 +58,7 @@
   "no": "No",
   "do_you_want_to_go_back": "Return?",
   "you_have_unsaved_changes": "You have unsaved changed",
-  "error_unable_to_load_photo": "Unable to load the photo"
+  "error_unable_to_load_photo": "Unable to load the photo",
+  "app_version": "Application Version",
+  "enter_company_code": "Enter a company code"
 }
