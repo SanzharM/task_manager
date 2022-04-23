@@ -70,7 +70,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 TabBar(
                   controller: _boardTabController,
                   isScrollable: true,
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   tabs: const [
                     Tab(text: 'К выполнению'),
@@ -82,7 +82,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 Expanded(
                   child: TabBarView(
                     controller: _boardTabController,
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     children: [
                       TaskCards(tasks: _toDoTasks),
                       TaskCards(tasks: _inWorkTasks),
@@ -114,7 +114,7 @@ class TaskCards extends StatelessWidget {
       );
 
     return ListView.builder(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       itemCount: tasks.length,
       itemBuilder: (context, index) {

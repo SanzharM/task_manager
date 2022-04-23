@@ -43,3 +43,10 @@ class PhoneAuthSuccess extends LoginState {
   @override
   List<Object?> get props => [];
 }
+
+class CodeCompanyVerified extends LoginState {
+  final String code;
+  CodeCompanyVerified(this.code);
+  @override
+  List<Object?> get props => [];
+}

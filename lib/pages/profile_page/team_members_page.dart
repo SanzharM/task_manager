@@ -54,7 +54,7 @@ class _TeamMembersPageState extends State<TeamMembersPage> {
           children: [
             ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               itemCount: _teamMembers.length,
               itemBuilder: (context, index) {
                 return UserCard(user: _teamMembers[index]);

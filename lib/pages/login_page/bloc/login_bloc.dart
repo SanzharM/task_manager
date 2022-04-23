@@ -9,19 +9,24 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  getAuth(String phone) => add(GetAuth());
+  getAuth(String phone, String companyCode) => add(GetAuth(phone: phone, companyCode: companyCode));
   verifySMS(String phone, String? code) => add(VerifySMSCode(phone: phone, code: code));
+  verifyCodeCompany(String code) => add(VerifyCompany(code));
 
   LoginBloc() : super(LoginInitial()) {
     on<GetAuth>(
       (event, emit) async {
-        if (event.phone == null || event.phone == null || event.phone!.length != 11) {
+        if (event.phone == null || event.phone!.length != 11) {
           emit(ErrorState('invalid_phone_number'.tr()));
+          return emit(EmptyState());
+        }
+        if (event.companyCode == null || event.companyCode!.length != 6) {
+          emit(ErrorState('invalid_code'.tr()));
           return emit(EmptyState());
         }
 
         emit(Loading());
-        final response = await ApiClient.getAuth(event.phone!);
+        final response = await ApiClient.getAuth(event.phone!, event.companyCode!);
 
         if (response.success)
           emit(PhoneAuthSuccess(event.phone!));
@@ -43,6 +48,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(AuthVerifySuccess(response.token!));
       } else
         emit(ErrorState(response.error ?? 'login_error'.tr()));
+    });
+    on<VerifyCompany>((event, emit) async {
+      if (event.code.length != 6) {
+        emit(ErrorState('invalid_code'.tr()));
+        return emit(EmptyState());
+      }
+
+      emit(Loading());
+
+      await Future.delayed(const Duration(seconds: 3));
+      final verified = await ApiClient.verifyCompanyCode(event.code);
+      if (verified)
+        emit(CodeCompanyVerified(event.code));
+      else
+        emit(ErrorState('invalid_code'.tr()));
     });
   }
 }

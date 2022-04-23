@@ -16,10 +16,10 @@ class Application {
   static const _phoneKey = 'TaskManagerPhoneToken';
   static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
 
-  static String getBaseUrl() => 'http://192.168.1.106:8000';
+  static String getBaseUrl() => 'http://192.168.1.102:8000';
 
   static Future<bool> isAuthorized() async {
-    return await getToken() != null;
+    return (await getToken()) != null;
   }
 
   static Future<void> setToken(String? token) async {
@@ -94,12 +94,13 @@ class Application {
     return await _storage.read(key: _pinKey);
   }
 
-  static Future<void> setPin(String pin) async {
-    await _storage.write(key: _pinKey, value: pin);
+  static Future<void> setPin(String? pin) async {
+    if (pin == null) return await _storage.delete(key: _pinKey);
+    return await _storage.write(key: _pinKey, value: pin);
   }
 
   static Future<void> saveCompanyCode(String code) async {
-    await _storage.write(key: _companyCodeKey, value: code);
+    return await _storage.write(key: _companyCodeKey, value: code);
   }
 
   static Future<String?> getCompanyCode() async {

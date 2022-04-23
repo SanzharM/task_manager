@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -61,6 +63,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             physics: const BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -142,6 +145,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 ),
                 const EmptyBox(height: 16),
                 AppButton(
+                  color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
                   title: _isEditing ? 'save'.tr() : 'add'.tr(),
                   onTap: () => null,
                 ),

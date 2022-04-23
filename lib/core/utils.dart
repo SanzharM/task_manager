@@ -1,3 +1,4 @@
+import 'package:task_manager/core/api/api_endpoints.dart';
 import 'package:task_manager/core/models/task.dart';
 
 class Utils {
@@ -70,5 +71,18 @@ class Utils {
     if (value == null) return null;
     String temp = value.replaceAll(RegExp(r'[^0-9]'), '');
     return temp;
+  }
+
+  static String getRequestMethod(RequestMethod method) {
+    switch (method) {
+      case RequestMethod.get:
+        return 'GET';
+      case RequestMethod.post:
+        return 'POST';
+      case RequestMethod.put:
+        return 'PUT';
+      case RequestMethod.delete:
+        return 'DELETE';
+    }
   }
 }

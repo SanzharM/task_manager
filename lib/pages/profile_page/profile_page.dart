@@ -9,11 +9,13 @@ import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/pages/login_page/login_page.dart';
+import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
+import 'package:task_manager/pages/login_page/intro_page.dart';
 import 'package:task_manager/pages/organization_page/organization_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
+import 'package:task_manager/pages/settings_page/about_app_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -82,7 +84,7 @@ class ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(top: 16.0),
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           controller: _scrollController,
           child: Column(
             children: [
@@ -173,7 +175,9 @@ class ProfilePageState extends State<ProfilePage> {
                     ArrowedCell(
                       icon: const Icon(CupertinoIcons.info_circle_fill),
                       title: 'about_us'.tr(),
-                      onTap: () => print('to about app'),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AboutAppPage(),
+                      )),
                     ),
                   ],
                 ),
@@ -184,7 +188,7 @@ class ProfilePageState extends State<ProfilePage> {
                 onTap: () async {
                   await Application.setToken(null);
                   Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => LoginPage()));
+                  Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
                 },
               ),
               const EmptyBox(height: 16.0),

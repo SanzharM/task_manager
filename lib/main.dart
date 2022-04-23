@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
-import 'package:task_manager/pages/login_page/login_page.dart';
+import 'package:task_manager/pages/login_page/intro_page.dart';
 
 import 'core/app_theme.dart';
 import 'pages/pin_page/pin_page.dart';
@@ -13,11 +14,11 @@ import 'pages/pin_page/pin_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  StatefulWidget homeScreen = LoginPage();
+  StatefulWidget homeScreen = IntroPage();
   if (await Application.isAuthorized()) homeScreen = PinPage(shouldSetupPin: false);
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  // await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   ThemeMode _themeMode = await Application.getSavedThemeMode() ?? ThemeMode.light;
   final _startLocale = await Application.getLocale() ?? AppLocales.russian;
@@ -26,7 +27,7 @@ void main() async {
     EasyLocalization(
       path: 'assets/translations',
       startLocale: _startLocale,
-      supportedLocales: [AppLocales.russian, AppLocales.english],
+      supportedLocales: const [AppLocales.russian, AppLocales.english],
       fallbackLocale: AppLocales.russian,
       child: ChangeNotifierProvider<ThemeNotifier>(
         create: (BuildContext context) => ThemeNotifier(_themeMode),
