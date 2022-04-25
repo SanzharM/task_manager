@@ -18,23 +18,27 @@ dependencies:
   shared_preferences: ^2.0.7
   flutter_secure_storage: 
   local_auth: ^1.1.7
-  qr_code_scanner: ^0.6.1
   permission_handler: ^8.1.4+2
   url_launcher: ^6.0.10
+  easy_localization: ^3.0.0
+  
+  qr_code_scanner: ^0.6.1
   cached_network_image: ^3.2.0
   charts_flutter: ^0.11.0
   cupertino_icons: ^1.0.2
   mask_text_input_formatter: ^2.0.0
   pin_code_fields: ^7.3.0
-  easy_localization: ^3.0.0
   
   package_info_plus: ^1.4.0
+
+  # Voice Auth dependencies
   # flutter_sound: ^9.1.9
   flutter_sound_lite: ^8.5.0
-  avatar_glow: ^2.0.2
+  assets_audio_player: ^3.0.3+7
   path_provider: any
   audio_session: ^0.1.6+1
-
+  avatar_glow: ^2.0.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

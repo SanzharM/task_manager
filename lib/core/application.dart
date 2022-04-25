@@ -4,10 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_theme.dart';
+import 'package:task_manager/core/supporting/app_router.dart';
 
 class Application {
   static Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   static const _storage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
+
   static const _taskManagerToken = 'TaskManagerToken';
   static const _notificationsToken = 'TaskManagerNotificationsToken';
   static const _themeToken = 'TaskManagerThemeToken';
@@ -16,7 +18,7 @@ class Application {
   static const _phoneKey = 'TaskManagerPhoneToken';
   static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
 
-  static String getBaseUrl() => 'http://192.168.1.102:8000';
+  static String getBaseUrl() => 'http://192.168.0.110:8000';
 
   static Future<bool> isAuthorized() async {
     return (await getToken()) != null;
@@ -105,5 +107,10 @@ class Application {
 
   static Future<String?> getCompanyCode() async {
     return await _storage.read(key: _companyCodeKey);
+  }
+
+  static Future<void> clearStorage({BuildContext? context}) async {
+    _storage.deleteAll();
+    if (context != null) return AppRouter.toIntroPage(context);
   }
 }

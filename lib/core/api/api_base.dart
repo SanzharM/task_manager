@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:task_manager/core/api/api_endpoints.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:task_manager/core/utils.dart';
+import 'package:http_parser/http_parser.dart';
 
 import 'api_response.dart';
 
@@ -22,12 +24,14 @@ class ApiBase {
   }
 
   static Future<Map<String, String>> getHeaders() async => {
-        'Authorization': 'Token ${await Application.getToken() ?? ''}',
+        'Authorization': 'Bearer ${await Application.getToken() ?? ''}',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       };
 
   static String urlWithParams(String url, Map<String, dynamic>? urlParams) {
+    if (urlParams == null) return url;
+    urlParams.forEach((key, value) => url = url.replaceAll(key, value));
     return url;
   }
 
@@ -97,8 +101,63 @@ class ApiBase {
     }
 
     print('\n-----------------------');
-    print('URL: ${endpoint.url}');
+    print('URL: ${endpoint.url} ${urlWithParams(baseUrl + endpoint.url, urlParams)}');
+    print('HEADERS: $headers');
     print('STATUS CODE: ${response.statusCode}');
+    print('PARAMS: $params');
+    print('URL PARAMS: $urlParams');
+    print('BODY: ${response.body}');
+    print('-----------------------\n');
+
+    return ApiResponse(
+      body: response.body,
+      bodyBytes: response.bodyBytes,
+      isSuccess: response.statusCode == endpoint.statusCode,
+      statusCode: response.statusCode,
+    );
+  }
+
+  static Future<ApiResponse> multipartFormdata({
+    required ApiEndpoint endpoint,
+    Map<String, String>? params,
+    Map<String, String>? urlParams,
+    Map<String, String>? inputHeaders,
+    List<File>? files,
+    bool encoded = true,
+    String? filesKey,
+  }) async {
+    if (endpoint.method != RequestMethod.post) throw Exception(['\nOnly POST method allowed!\n']);
+
+    final url = urlWithParams(Application.getBaseUrl() + endpoint.url, urlParams);
+
+    http.MultipartRequest request = http.MultipartRequest(
+      Utils.getRequestMethod(endpoint.method),
+      Uri.parse(url),
+    );
+
+    request.headers.addAll(inputHeaders ?? {'Content-Type': 'multipart/form-data'});
+    if (params != null && params.isNotEmpty) {
+      request.fields.addAll(params);
+    }
+    if (files != null && files.isNotEmpty) {
+      for (int i = 0; i < files.length; i++) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            filesKey ?? 'files',
+            files[i].path,
+            contentType: MediaType('application', 'x-tar'),
+          ),
+        );
+      }
+    }
+    final response = await http.Response.fromStream(await request.send());
+
+    print('\n-----------------------');
+    print('URL: $url');
+    print('HEADERS: ${inputHeaders ?? await ApiBase.getHeaders()}');
+    print('STATUS CODE: ${response.statusCode}');
+    print('PARAMS: $params');
+    print('URL PARAMS: $urlParams');
     print('BODY: ${response.body}');
     print('-----------------------\n');
 

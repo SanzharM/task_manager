@@ -10,7 +10,7 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   getAuth(String phone, String companyCode) => add(GetAuth(phone: phone, companyCode: companyCode));
-  verifySMS(String phone, String? code) => add(VerifySMSCode(phone: phone, code: code));
+  verifySMS(String phone, String? code, String companyCode) => add(VerifySMSCode(phone: phone, code: code, companyCode: companyCode));
   verifyCodeCompany(String code) => add(VerifyCompany(code));
 
   LoginBloc() : super(LoginInitial()) {
@@ -41,7 +41,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
 
       emit(Loading());
-      final response = await ApiClient.verifySmsCode(event.phone, event.code!);
+      final response = await ApiClient.verifySmsCode(event.phone, event.code!, event.companyCode);
 
       if (response.token != null) {
         await Application.setToken(response.token);
@@ -50,6 +50,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(ErrorState(response.error ?? 'login_error'.tr()));
     });
     on<VerifyCompany>((event, emit) async {
+      print('code: ${event.code}');
       if (event.code.length != 6) {
         emit(ErrorState('invalid_code'.tr()));
         return emit(EmptyState());
@@ -57,12 +58,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       emit(Loading());
 
-      await Future.delayed(const Duration(seconds: 3));
       final verified = await ApiClient.verifyCompanyCode(event.code);
       if (verified)
         emit(CodeCompanyVerified(event.code));
       else
-        emit(ErrorState('invalid_code'.tr()));
+        emit(ErrorState('invalid_company_code'));
     });
   }
 }

@@ -175,12 +175,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               selectedColor: AppColors.success,
                               disabledColor: AppColors.defaultGrey,
                               inactiveColor: AppColors.defaultGrey,
-                              fieldOuterPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                              fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                             ),
                             onChanged: (value) => _code = value,
                             onTap: () => setState(() {}),
                             onCompleted: (value) {
-                              if (_code.length == 4) _bloc.verifySMS(_phone, _code);
+                              if (_code.length == 4) _bloc.verifySMS(_phone, _code, widget.companyCode!);
                             },
                           ),
                         ),
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           isLoading: isLoading,
                           title: 'send'.tr(),
                           onTap: () {
-                            if (_code.length == 4) _bloc.verifySMS(_phone, _code);
+                            if (_code.length == 4) _bloc.verifySMS(_phone, _code, widget.companyCode!);
                           },
                         ),
                       ],

@@ -6,13 +6,14 @@ import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/app_icons.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/supporting/app_router.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/shake_widget.dart';
-import 'package:task_manager/pages/login_page/login_page.dart';
 import 'package:task_manager/pages/pin_page/pin_widgets.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class PinPage extends StatefulWidget {
   final bool shouldSetupPin;
@@ -50,10 +51,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     if (controller.isCompleted) Future.delayed(const Duration(milliseconds: 1), () => controller.reverse());
   }
 
-  void _toMainPage() {
-    final route = CupertinoPageRoute(builder: (context) => NavigationBar());
-    Navigator.of(context).pushReplacement(route);
-  }
+  void _toMainPage() => AppRouter.toMainPage(context);
 
   void _tryLoginWithBiometrics() async {
     try {
@@ -82,14 +80,13 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       title: 'logout'.tr(),
       onYes: () async {
         await Application.setToken(null);
-        Navigator.of(context).pop();
-        Navigator.of(context).pushReplacement(CupertinoPageRoute(
-          builder: (context) => LoginPage(),
-        ));
+        AppRouter.toIntroPage(context);
       },
       onNo: () => Navigator.of(context).pop(),
     );
   }
+
+  void _goToVoiceAuth() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage()));
 
   void _setupControllers() {
     _contoller1 = AnimationController(vsync: this, duration: _duration);
@@ -154,20 +151,24 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (hasFaceId || hasTouchId)
-                      Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          'use_biometrics'.tr(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 20),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'use_biometrics'.tr(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 20),
                       ),
+                    ),
                     if (hasFaceId || hasTouchId)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.mic_rounded),
+                            onPressed: _goToVoiceAuth,
+                          ),
                           if (hasFaceId)
                             IconButton(
                               onPressed: _tryLoginWithBiometrics,

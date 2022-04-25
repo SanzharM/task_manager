@@ -9,8 +9,6 @@ class Utils {
   }
 
   static String getMonth(int month) {
-    if (month == 0) month = 12;
-    if (month == 13) month = 1;
     switch (month) {
       case 1:
         return 'Январь';
@@ -83,6 +81,19 @@ class Utils {
         return 'PUT';
       case RequestMethod.delete:
         return 'DELETE';
+    }
+  }
+
+  static bool isUnauthorizedStatusCode(String error) {
+    switch (error.toLowerCase()) {
+      case 'not authenticated':
+        return true;
+      case 'not authorized':
+        return true;
+      case '401':
+        return true;
+      default:
+        return false;
     }
   }
 }

@@ -1,4 +1,5 @@
 {
+  "app_name": "BOTA",
   "app_slogan": "Secured Task-Management App",
   "login": "Log in",
   "please_authorize": "Authorize or register",
@@ -60,5 +61,6 @@
   "you_have_unsaved_changes": "You have unsaved changed",
   "error_unable_to_load_photo": "Unable to load the photo",
   "app_version": "Application Version",
-  "enter_company_code": "Enter a company code"
+  "enter_company_code": "Enter a company code",
+  "error": "Error"
 }

@@ -6,13 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/supporting/app_router.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
-
-import 'login_page.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({Key? key}) : super(key: key);
@@ -61,13 +59,11 @@ class _IntroPageState extends State<IntroPage> {
           listener: (context, state) async {
             isLoading = state is Loading;
             if (state is ErrorState) {
-              print(state.error);
+              print('Error state: ${state.error}');
             }
             if (state is CodeCompanyVerified) {
               await Application.saveCompanyCode(state.code);
-              Navigator.of(context).push(CustomPageRoute(
-                child: LoginPage(companyCode: _companyCodeController.text),
-              ));
+              AppRouter.toLoginPage(context, _companyCodeController.text);
             }
             setState(() {});
           },
@@ -80,7 +76,7 @@ class _IntroPageState extends State<IntroPage> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    'SIS-1811R',
+                    'BOTA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 32,

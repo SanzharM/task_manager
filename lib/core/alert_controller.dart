@@ -48,4 +48,40 @@ class AlertController {
       ),
     );
   }
+
+  static void showSimpleDialog({
+    required BuildContext context,
+    required String message,
+    bool barrierDismissible = true,
+    void Function()? onPressed,
+  }) async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      return await showCupertinoDialog(
+        context: context,
+        barrierDismissible: barrierDismissible,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text('done'.tr()),
+              onPressed: onPressed ?? () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    }
+    return await showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (context) => SimpleDialog(
+        title: Text(message),
+        children: [
+          TextButton(
+            child: Text('done'.tr()),
+            onPressed: onPressed ?? () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
+  }
 }

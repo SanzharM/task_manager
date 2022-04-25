@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/task.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/pages/task_board/bloc/task_board_bloc.dart';
 import 'package:task_manager/pages/task_board/task_card.dart';
 
 class TaskBoard extends StatefulWidget {
@@ -12,13 +17,11 @@ class TaskBoard extends StatefulWidget {
 
 class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   late TabController _boardTabController;
+  final _bloc = TaskBoardBloc();
 
   List<Task> _toDoTasks = [
     Task(title: 'ToDo task 1'),
-    Task(
-      title: 'Production bug fix',
-      description: '500 server error response on these APIs: ...',
-    ),
+    Task(title: 'Production bug fix', description: '500 server error response on these APIs: ...'),
     Task(title: 'Redesign of Application'),
     Task(title: 'Connecting Firebase Analytics'),
   ];
@@ -31,11 +34,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   ];
   List<Task> _doneTasks = [
     Task(title: 'done task 1'),
-    Task(
-      title: 'done task 2',
-      description:
-          'donedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedonedone',
-    ),
+    Task(title: 'done task 2', description: '1'),
     Task(title: 'done task 3'),
     Task(title: 'done task 3'),
     Task(title: 'done task 3'),
@@ -47,8 +46,9 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _boardTabController = TabController(length: 4, vsync: this);
     super.initState();
+    _boardTabController = TabController(length: 4, vsync: this);
+    _bloc.getBoards();
   }
 
   @override
@@ -60,18 +60,43 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return ConstrainedBox(
-            constraints: constraints,
-            child: Column(
-              children: [
-                const EmptyBox(height: 56),
-                TabBar(
+      body: SafeArea(
+        child: BlocListener(
+          bloc: _bloc,
+          listener: (context, state) {
+            print('state is $state');
+            if (state is BoardsLoaded) {}
+
+            if (state is ErrorState) {
+              if (Utils.isUnauthorizedStatusCode(state.error)) {
+                AlertController.showSimpleDialog(
+                  context: context,
+                  message: state.error,
+                  barrierDismissible: false,
+                  onPressed: () => Application.clearStorage(context: context),
+                );
+              }
+            }
+
+            if (state is BoardCreated) _bloc.getBoards();
+
+            setState(() {});
+          },
+          child: Column(
+            children: [
+              const EmptyBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [IconButton(onPressed: () => _bloc.createBoard('test', 'asdasd'), icon: const Icon(CupertinoIcons.add))],
+              ),
+              Theme(
+                data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
+                child: TabBar(
                   controller: _boardTabController,
                   isScrollable: true,
                   physics: const BouncingScrollPhysics(),
                   labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  enableFeedback: true,
                   tabs: const [
                     Tab(text: 'К выполнению'),
                     Tab(text: 'В работе'),
@@ -79,22 +104,22 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                     Tab(text: 'Готово'),
                   ],
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _boardTabController,
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      TaskCards(tasks: _toDoTasks),
-                      TaskCards(tasks: _inWorkTasks),
-                      TaskCards(tasks: _toTestTasks),
-                      TaskCards(tasks: _doneTasks),
-                    ],
-                  ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _boardTabController,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    TaskCards(tasks: _toDoTasks),
+                    TaskCards(tasks: _inWorkTasks),
+                    TaskCards(tasks: _toTestTasks),
+                    TaskCards(tasks: _doneTasks),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

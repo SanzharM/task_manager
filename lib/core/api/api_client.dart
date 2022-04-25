@@ -1,18 +1,20 @@
-import 'dart:convert';
+import 'dart:convert' as convert;
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:task_manager/core/api/api_response.dart';
+import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/models/board.dart';
 
 import 'api_endpoints.dart';
 import 'api_base.dart';
 
 class ApiClient {
-  static Future<PhoneAuthResponse> getAuth(String phone) async {
-    print(phone);
+  static Future<PhoneAuthResponse> getAuth(String phone, String companyCode) async {
     final response = await ApiBase.request(
       endpoint: AuthEndpoint(),
-      params: {'phone': phone},
+      params: {'phone': phone, 'company_code': companyCode},
     );
 
     if (response.isSuccess)
@@ -21,32 +23,95 @@ class ApiClient {
       return PhoneAuthResponse(error: await compute(parseError, response.bodyBytes));
   }
 
-  static Future<VerifySmsAuthResponse> verifySmsCode(String phone, String code) async {
+  static Future<VerifySmsAuthResponse> verifySmsCode(String phone, String code, String companyCode) async {
     final response = await ApiBase.request(
       endpoint: AuthVerifyEndpoint(),
-      params: {'phone': phone, 'code': code},
+      params: {'phone': phone, 'code': code, 'company_code': companyCode},
     );
 
     if (response.isSuccess) {
+      await Application.setPhone(phone);
       final Map<String, dynamic>? json = await compute(parseVerifySmsAuth, response.bodyBytes);
       return VerifySmsAuthResponse(token: json?['access_token']);
     } else
       return VerifySmsAuthResponse(error: await compute(parseError, response.bodyBytes));
   }
+
+  static Future<VoiceAuthenticationResponse> authenticateByVoice(File file) async {
+    final response = await ApiBase.multipartFormdata(
+      endpoint: VoiceAuthenticationLoginEndPoint(),
+      urlParams: {'{phone}': (await Application.getPhone() ?? '')},
+      filesKey: 'voice',
+      files: [file],
+    );
+
+    if (response.isSuccess)
+      return VoiceAuthenticationResponse(successMessage: 'nice');
+    else
+      return VoiceAuthenticationResponse(error: 'Error');
+  }
+
+  static Future<bool> verifyCompanyCode(String code) async {
+    final response = await ApiBase.request(
+      endpoint: GetCompanyByCodeEndPoint(),
+      urlParams: {'{code}': code},
+    );
+
+    print(response.statusCode);
+
+    return response.isSuccess;
+  }
+
+  static Future<BoardsResponse> getBoards() async {
+    final response = await ApiBase.request(endpoint: GetBoardsEndpoint());
+
+    if (response.isSuccess) {
+      return BoardsResponse(boards: await compute(parseBoards, response.bodyBytes));
+    } else {
+      return BoardsResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<BooleanResponse> createBoard({required String name, String? description}) async {
+    final response = await ApiBase.request(
+      endpoint: CreateBoardEndpoint(),
+      params: {'name': name, 'description': description},
+    );
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: true);
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+    }
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {
   try {
-    return json.decode(utf8.decode(bodyBytes));
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes)) as Map<String, dynamic>?;
+    if (json?['detail'] != null) {
+      return json!['detail'].toString();
+    }
+    return convert.utf8.decode(bodyBytes);
   } catch (e) {
-    return utf8.decode(bodyBytes);
+    return convert.utf8.decode(bodyBytes);
   }
 }
 
 Future<Map<String, dynamic>?> parseVerifySmsAuth(Uint8List bodyBytes) async {
   try {
-    var a = json.decode(utf8.decode(bodyBytes));
-    print(a);
-    return a;
-  } catch (e) {}
+    return convert.json.decode(convert.utf8.decode(bodyBytes));
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Board>?> parseBoards(Uint8List bodyBytes) async {
+  try {
+    final value = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (value == null || value is! List || value.isNotEmpty) return null;
+    return value.map((e) => Board.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
 }

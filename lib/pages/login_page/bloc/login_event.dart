@@ -20,7 +20,8 @@ class GetAuth extends LoginEvent {
 class VerifySMSCode extends LoginEvent {
   final String phone;
   final String? code;
-  VerifySMSCode({required this.phone, required this.code});
+  final String companyCode;
+  VerifySMSCode({required this.phone, required this.code, required this.companyCode});
 
   @override
   List<Object?> get props => [];
