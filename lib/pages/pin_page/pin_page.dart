@@ -11,7 +11,6 @@ import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/pages/pin_page/pin_widgets.dart';
-import 'package:task_manager/pages/navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
