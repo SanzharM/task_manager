@@ -10,10 +10,11 @@ import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
-import 'package:task_manager/pages/navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/pages/pin_page/pin_page.dart';
 
 class LoginPage extends StatefulWidget {
   final String? companyCode;
@@ -25,6 +26,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final _bloc = LoginBloc();
+  final _shakeKey = GlobalKey<ShakeWidgetState>();
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   final inputFormatter = MaskTextInputFormatter(mask: Utils.phoneMask);
 
@@ -39,9 +41,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String _code = '';
   bool isLoading = false;
 
-  void _toMainPage() async {
+  void _toPinPage() async {
     await Application.setPin(null);
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => NavigationBar()));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(
+      builder: (context) => PinPage(shouldSetupPin: true),
+    ));
   }
 
   void _tryGetAuth() {
@@ -87,7 +91,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             bloc: _bloc,
             listener: (context, state) {
               isLoading = state is Loading;
-              if (state is AuthVerifySuccess) _toMainPage();
+              if (state is AuthVerifySuccess) _toPinPage();
               if (state is ErrorState) {
                 _scaffoldKey.currentState?.showSnackBar(
                   SnackBar(
@@ -100,6 +104,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                   ),
                 );
+              }
+              if (state is WrongSMS) {
+                _shakeKey.currentState?.shake();
               }
               if (state is PhoneAuthSuccess) {
                 _phone = state.phone;
@@ -153,35 +160,40 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     child: Column(
                       children: [
                         const EmptyBox(height: 56),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(minWidth: 200),
-                          child: PinCodeTextField(
-                            controller: _smsController,
-                            autoDisposeControllers: true,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            appContext: context,
-                            length: 4,
-                            keyboardType: TextInputType.number,
-                            hapticFeedbackTypes: HapticFeedbackTypes.vibrate,
-                            autoDismissKeyboard: true,
-                            animationCurve: Curves.easeInOut,
-                            animationDuration: const Duration(milliseconds: 250),
-                            animationType: AnimationType.slide,
-                            autoFocus: false,
-                            enablePinAutofill: true,
-                            showCursor: false,
-                            pinTheme: PinTheme(
-                              activeColor: AppColors.success,
-                              selectedColor: AppColors.success,
-                              disabledColor: AppColors.defaultGrey,
-                              inactiveColor: AppColors.defaultGrey,
-                              fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        ShakeWidget(
+                          key: _shakeKey,
+                          shakeCount: 3,
+                          shakeOffset: 10,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 200),
+                            child: PinCodeTextField(
+                              controller: _smsController,
+                              autoDisposeControllers: true,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              appContext: context,
+                              length: 4,
+                              keyboardType: TextInputType.number,
+                              hapticFeedbackTypes: HapticFeedbackTypes.vibrate,
+                              autoDismissKeyboard: true,
+                              animationCurve: Curves.easeInOut,
+                              animationDuration: const Duration(milliseconds: 250),
+                              animationType: AnimationType.slide,
+                              autoFocus: false,
+                              enablePinAutofill: true,
+                              showCursor: false,
+                              pinTheme: PinTheme(
+                                activeColor: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
+                                selectedColor: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
+                                disabledColor: AppColors.defaultGrey,
+                                inactiveColor: AppColors.defaultGrey,
+                                fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              ),
+                              onChanged: (value) => _code = value,
+                              onTap: () => setState(() {}),
+                              onCompleted: (value) {
+                                if (_code.length == 4) _bloc.verifySMS(_phone, _code, widget.companyCode!);
+                              },
                             ),
-                            onChanged: (value) => _code = value,
-                            onTap: () => setState(() {}),
-                            onCompleted: (value) {
-                              if (_code.length == 4) _bloc.verifySMS(_phone, _code, widget.companyCode!);
-                            },
                           ),
                         ),
                         AppButton(

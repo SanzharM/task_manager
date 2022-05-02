@@ -10,6 +10,7 @@ import 'package:task_manager/core/supporting/app_router.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
 
 class IntroPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class IntroPage extends StatefulWidget {
 
 class _IntroPageState extends State<IntroPage> {
   final _bloc = LoginBloc();
+  final _shakeKey = GlobalKey<ShakeWidgetState>();
 
   final _companyCodeController = TextEditingController();
   bool isLoading = false;
@@ -60,10 +62,11 @@ class _IntroPageState extends State<IntroPage> {
             isLoading = state is Loading;
             if (state is ErrorState) {
               print('Error state: ${state.error}');
+              _shakeKey.currentState?.shake();
             }
             if (state is CodeCompanyVerified) {
               await Application.saveCompanyCode(state.code);
-              AppRouter.toLoginPage(context, _companyCodeController.text);
+              AppRouter.toLoginPage(context, state.code);
             }
             setState(() {});
           },
@@ -73,7 +76,7 @@ class _IntroPageState extends State<IntroPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
+                const Align(
                   alignment: Alignment.center,
                   child: Text(
                     'BOTA',
@@ -81,7 +84,7 @@ class _IntroPageState extends State<IntroPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w700,
-                      color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
+                      color: AppColors.lightAction,
                     ),
                   ),
                 ),
@@ -111,27 +114,33 @@ class _IntroPageState extends State<IntroPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Flexible(
-                      child: PinCodeTextField(
-                        appContext: context,
-                        length: 6,
-                        controller: _companyCodeController,
-                        onChanged: (value) => _companyCodeController.text = value,
-                        onTap: () => setState(() {}),
-                        textCapitalization: TextCapitalization.characters,
-                        autoDismissKeyboard: true,
-                        onCompleted: (value) => _sendOnCompleted ? _bloc.verifyCodeCompany(_companyCodeController.text) : null,
-                        hapticFeedbackTypes: HapticFeedbackTypes.light,
-                        useHapticFeedback: true,
-                        animationCurve: Curves.easeInOut,
-                        animationType: AnimationType.slide,
-                        autoFocus: !kIsWeb,
-                        enablePinAutofill: false,
-                        showCursor: false,
-                        pinTheme: PinTheme(
-                          activeColor: AppColors.lightBlue,
-                          selectedColor: AppColors.defaultGrey,
-                          disabledColor: AppColors.defaultGrey,
-                          inactiveColor: AppColors.defaultGrey,
+                      child: ShakeWidget(
+                        key: _shakeKey,
+                        shakeCount: 3,
+                        shakeOffset: 10,
+                        child: PinCodeTextField(
+                          appContext: context,
+                          length: 6,
+                          controller: _companyCodeController,
+                          onChanged: (value) => _companyCodeController.text = value,
+                          onTap: () => setState(() {}),
+                          textCapitalization: TextCapitalization.characters,
+                          autoDismissKeyboard: true,
+                          onCompleted: (value) =>
+                              _sendOnCompleted ? _bloc.verifyCodeCompany(_companyCodeController.text.toUpperCase()) : null,
+                          hapticFeedbackTypes: HapticFeedbackTypes.light,
+                          useHapticFeedback: true,
+                          animationCurve: Curves.easeInOut,
+                          animationType: AnimationType.slide,
+                          autoFocus: !kIsWeb,
+                          enablePinAutofill: false,
+                          showCursor: false,
+                          pinTheme: PinTheme(
+                            activeColor: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.lightBlue,
+                            selectedColor: AppColors.defaultGrey,
+                            disabledColor: AppColors.defaultGrey,
+                            inactiveColor: AppColors.defaultGrey,
+                          ),
                         ),
                       ),
                     ),
@@ -141,7 +150,10 @@ class _IntroPageState extends State<IntroPage> {
                 AppButton(
                   title: 'next'.tr(),
                   isLoading: isLoading,
-                  onTap: () => isLoading ? null : _bloc.verifyCodeCompany(_companyCodeController.text),
+                  onTap: () {
+                    if (isLoading) return;
+                    _bloc.verifyCodeCompany(_companyCodeController.text.toUpperCase());
+                  },
                 ),
                 const Padding(padding: EdgeInsets.only(top: 48.0)),
               ],

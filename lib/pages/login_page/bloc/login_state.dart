@@ -50,3 +50,8 @@ class CodeCompanyVerified extends LoginState {
   @override
   List<Object?> get props => [];
 }
+
+class WrongSMS extends LoginState {
+  @override
+  List<Object?> get props => [];
+}

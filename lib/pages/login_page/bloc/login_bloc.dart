@@ -46,8 +46,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (response.token != null) {
         await Application.setToken(response.token);
         emit(AuthVerifySuccess(response.token!));
-      } else
+      } else if (response.error == 'wrong_sms') {
+        emit(WrongSMS());
+      } else {
         emit(ErrorState(response.error ?? 'login_error'.tr()));
+      }
     });
     on<VerifyCompany>((event, emit) async {
       print('code: ${event.code}');

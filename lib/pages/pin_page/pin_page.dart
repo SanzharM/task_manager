@@ -293,7 +293,7 @@ class AnimatedDot extends StatelessWidget {
         decoration: BoxDecoration(
           color: isFilled ? (Application.isDarkMode(context) ? AppColors.metal : AppColors.grey) : AppColors.transparent,
           shape: BoxShape.circle,
-          border: Border.all(width: 2.0, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.vengence),
+          border: Border.all(width: 2.0, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey),
         ),
       ),
     );
