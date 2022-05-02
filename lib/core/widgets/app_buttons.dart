@@ -48,7 +48,13 @@ class AppButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         onPressed: onTap,
         child: isLoading
-            ? Center(child: CircularProgressIndicator.adaptive())
+            ? const SizedBox(
+                height: 24.0,
+                width: 24.0,
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              )
             : Text(
                 title,
                 textAlign: TextAlign.center,

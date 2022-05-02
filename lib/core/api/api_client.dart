@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:task_manager/core/api/api_response.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/board.dart';
 
 import 'api_endpoints.dart';
@@ -67,6 +68,8 @@ class ApiClient {
 
     if (response.isSuccess) {
       return BoardsResponse(boards: await compute(parseBoards, response.bodyBytes));
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      return BoardsResponse(error: ErrorType.tokenExpired);
     } else {
       return BoardsResponse(error: await compute(parseError, response.bodyBytes));
     }
@@ -80,6 +83,8 @@ class ApiClient {
 
     if (response.isSuccess) {
       return BooleanResponse(success: true);
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      return BooleanResponse(success: false, error: 'Token expired');
     } else {
       return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
     }
@@ -109,7 +114,7 @@ Future<Map<String, dynamic>?> parseVerifySmsAuth(Uint8List bodyBytes) async {
 Future<List<Board>?> parseBoards(Uint8List bodyBytes) async {
   try {
     final value = convert.json.decode(convert.utf8.decode(bodyBytes));
-    if (value == null || value is! List || value.isNotEmpty) return null;
+    if (value == null || value is! List || value.isEmpty) return null;
     return value.map((e) => Board.fromJson(e)).toList();
   } catch (e) {
     return null;

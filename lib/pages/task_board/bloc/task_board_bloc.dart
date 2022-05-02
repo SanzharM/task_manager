@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:provider/provider.dart';
 import 'package:task_manager/core/api/api_client.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -19,8 +18,10 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
       final response = await ApiClient.getBoards();
 
       if (response.boards != null) {
+        print('returning boards');
         return emit(BoardsLoaded(response.boards!));
       } else {
+        print('returning error');
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }
     });

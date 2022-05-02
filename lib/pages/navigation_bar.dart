@@ -5,7 +5,7 @@ import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/profile_page/profile_page.dart';
 import 'package:task_manager/pages/qr_scanner_page/qr_scanner_page.dart';
-import 'package:task_manager/pages/task_board/task_board.dart';
+import 'package:task_manager/pages/task_board/task_board_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class NavigationBar extends StatefulWidget {
@@ -57,7 +57,7 @@ class _NavigationBarState extends State<NavigationBar> {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (_currentIndex == index) {
-            if (_currentIndex == 0) _taskBoardKey.currentState?.animateTabTo(0);
+            if (_currentIndex == 0) _taskBoardKey.currentState?.animateTabTo();
             if (_currentIndex == 2) _profileKey.currentState?.scrollToTop();
           } else {
             _currentIndex = index;

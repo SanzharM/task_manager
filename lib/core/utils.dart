@@ -1,4 +1,5 @@
 import 'package:task_manager/core/api/api_endpoints.dart';
+import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/task.dart';
 
 class Utils {
@@ -86,9 +87,13 @@ class Utils {
 
   static bool isUnauthorizedStatusCode(String error) {
     switch (error.toLowerCase()) {
+      case ErrorType.tokenExpired:
+        return true;
       case 'not authenticated':
         return true;
       case 'not authorized':
+        return true;
+      case 'unauthorized':
         return true;
       case '401':
         return true;

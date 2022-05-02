@@ -63,13 +63,15 @@ class ArrowedCell extends StatelessWidget {
   final Widget? icon;
   final String title;
   final void Function() onTap;
-  final Color? color;
+  final bool needBorder;
+  final Color? borderColor;
 
   const ArrowedCell({
     required this.title,
     this.icon,
     required this.onTap,
-    this.color,
+    this.needBorder = false,
+    this.borderColor,
   });
 
   @override
@@ -79,14 +81,20 @@ class ArrowedCell extends StatelessWidget {
       onPressed: onTap,
       child: Container(
         constraints: BoxConstraints(minHeight: 24),
-        width: MediaQuery.of(context).size.width,
+        width: double.infinity,
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
+          border: needBorder
+              ? Border.all(
+                  color: borderColor ?? (Application.isDarkMode(context) ? AppColors.snow : AppColors.grey),
+                )
+              : null,
           color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
         ),
         child: Row(
           children: [
+            const EmptyBox(width: 8.0),
             if (icon != null) icon!,
             if (icon != null) const EmptyBox(width: 8.0),
             Expanded(

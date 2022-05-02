@@ -36,6 +36,8 @@ dependencies:
   path_provider: any
   audio_session: ^0.1.6+1
   avatar_glow: ^2.0.2
+
+  share_extend: ^2.0.0
   
 dev_dependencies:
   flutter_test:

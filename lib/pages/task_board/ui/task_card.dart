@@ -53,3 +53,27 @@ class TaskCard extends StatelessWidget {
     );
   }
 }
+
+class TaskCards extends StatelessWidget {
+  final List<Task> tasks;
+  const TaskCards({required this.tasks});
+
+  static const _style = TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+
+  @override
+  Widget build(BuildContext context) {
+    if (tasks.isEmpty)
+      return const Center(
+        child: Text('Задач в этой секции нет', style: _style),
+      );
+
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        return TaskCard(tasks[index]);
+      },
+    );
+  }
+}
