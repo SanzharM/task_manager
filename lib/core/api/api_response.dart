@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/user.dart';
 
 class ApiResponse {
   final Uint8List bodyBytes;
@@ -49,4 +50,11 @@ class BooleanResponse {
   final String? error;
 
   BooleanResponse({this.success, this.error});
+}
+
+class UsersResponse {
+  final List<User>? users;
+  final String? error;
+
+  UsersResponse({this.users, this.error});
 }

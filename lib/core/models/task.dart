@@ -58,4 +58,13 @@ class Task {
       performer: performer ?? this.performer,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': this.pk,
+        'title': this.title,
+        'description': this.description,
+        'deadline': this.deadline?.toIso8601String(),
+        'board_id': this.boardId,
+        'status': 'TODO',
+      };
 }

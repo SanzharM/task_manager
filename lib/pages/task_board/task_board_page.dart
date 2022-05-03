@@ -5,13 +5,14 @@ import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
-import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/pages/task_board/bloc/task_board_bloc.dart';
 import 'package:task_manager/pages/task_board/ui/create_board_page.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_drawer.dart';
+import 'package:task_manager/pages/task_page/create_task_page.dart';
 
 class TaskBoard extends StatefulWidget {
   const TaskBoard({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
   int? _currentBoardIndex;
   List<Board> _boards = [];
+  List<User> _companyUsers = [];
 
   bool isLoading = false;
 
@@ -60,7 +62,22 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
           child: const Icon(Icons.menu_rounded),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
-        actions: [],
+        actions: [
+          if (_boards.isNotEmpty && _currentBoardIndex != null)
+            IconButton(
+              padding: EdgeInsets.zero,
+              icon: const Icon(CupertinoIcons.add_circled_solid),
+              onPressed: () => Navigator.of(context).push(
+                CustomPageRoute(
+                    child: CreateTaskPage(
+                  board: _boards[_currentBoardIndex!],
+                  task: null,
+                  onBack: () => _bloc.getBoards(), // getBoard(_currentBoardIndex!),
+                  users: _companyUsers,
+                )),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         child: BlocListener(
@@ -93,6 +110,10 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
               _bloc.getBoards();
             }
 
+            if (state is CompanyUsersLoaded) {
+              _companyUsers = state.users;
+            }
+
             setState(() {});
           },
           child: RefreshIndicator(
@@ -101,6 +122,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             color: Application.isDarkMode(context) ? AppColors.grey : AppColors.metal,
             child: TaskBoardBuilder(
               key: _boardBuilderKey,
+              onCreateBoard: _toCreateBoardPage,
               board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
             ),
           ),
@@ -116,6 +138,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   }
 
   Future<void> _onRefresh() async {
+    _bloc.getCompanyUsers();
     _bloc.getBoards();
     return Future.delayed(const Duration(milliseconds: 500));
   }

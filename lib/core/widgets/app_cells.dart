@@ -219,3 +219,99 @@ class CountryCell extends StatelessWidget {
     );
   }
 }
+
+class OneLineCell extends StatelessWidget {
+  final String title;
+  final void Function() onTap;
+  final Widget? icon;
+  final Widget? leading;
+  final String? header;
+  final bool needIcon;
+  final double? iconPadding;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final bool needBorder;
+  final BoxConstraints? constraints;
+  final Color? fillColor;
+  final bool centerTitle;
+  final BorderRadius? borderRadius;
+
+  const OneLineCell({
+    Key? key,
+    required this.title,
+    required this.onTap,
+    this.icon,
+    this.leading,
+    this.header,
+    this.needIcon = true,
+    this.iconPadding,
+    this.fontSize,
+    this.fontWeight,
+    this.needBorder = false,
+    this.constraints,
+    this.fillColor,
+    this.centerTitle = false,
+    this.borderRadius,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: onTap,
+      child: Container(
+        constraints: constraints,
+        padding: EdgeInsets.only(
+          left: 16.0,
+          top: 16.0,
+          right: iconPadding ?? 16.0,
+          bottom: 16.0,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: borderRadius ?? BorderRadius.circular(12),
+          color: fillColor ?? (Application.isDarkMode(context) ? AppColors.grey : AppColors.white),
+          border: needBorder ? Border.all(color: AppColors.defaultGrey) : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (leading != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: leading!,
+              ),
+            Expanded(
+              flex: 3,
+              child: SizedBox(
+                child: Text(
+                  title,
+                  textAlign: centerTitle ? TextAlign.center : TextAlign.left,
+                  style: TextStyle(
+                    fontSize: fontSize ?? 16,
+                    fontWeight: fontWeight ?? FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            if (needIcon)
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: icon ??
+                        const Icon(
+                          Icons.more_horiz,
+                          // color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
+                        ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

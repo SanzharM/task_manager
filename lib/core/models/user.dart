@@ -1,4 +1,5 @@
 import 'package:task_manager/core/models/organization.dart';
+import 'package:intl/intl.dart';
 
 class User {
   int? id;
@@ -29,8 +30,26 @@ class User {
     this.organization,
   });
 
+  static DateTime? parseDate(String? date) {
+    if (date == null || date.isEmpty) return null;
+    try {
+      return DateFormat('yyyy-MM-ddTHH:mm:ss').parse(date);
+    } catch (e) {
+      return null;
+    }
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
-    return User();
+    return User(
+      id: int.tryParse('${json['id']}'),
+      phone: '${json['phone']}',
+      role: json['role'],
+      position: json['position'],
+      name: json['name'],
+      imageUrl: json['image_url'],
+      registrationTime: parseDate('${json['created_at']}'),
+      lastVisitTime: parseDate('${json['updated_at']}'),
+    );
   }
 
   User copyWith({

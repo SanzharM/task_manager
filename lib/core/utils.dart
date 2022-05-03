@@ -1,6 +1,7 @@
 import 'package:task_manager/core/api/api_endpoints.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/task.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Utils {
   static String phoneMask = '+7 (###) ### ####';
@@ -9,32 +10,40 @@ class Utils {
     return '${datetime.day}-${datetime.month}-${datetime.year} ${datetime.hour}:${datetime.minute}:${datetime.second}';
   }
 
+  static String toDateString(DateTime? date, {bool includeMonthTitles = false}) {
+    if (date == null) return '';
+    if (includeMonthTitles) {
+      return '${getMonth(date.month)} ${date.day}, ${date.year}';
+    }
+    return '${date.day}.${date.month}.${date.year}';
+  }
+
   static String getMonth(int month) {
     switch (month) {
       case 1:
-        return 'Январь';
+        return 'january'.tr();
       case 2:
-        return 'Февраль';
+        return 'february'.tr();
       case 3:
-        return 'Март';
+        return 'march'.tr();
       case 4:
-        return 'Апрель';
+        return 'april'.tr();
       case 5:
-        return 'Май';
+        return 'may'.tr();
       case 6:
-        return 'Июнь';
+        return 'june'.tr();
       case 7:
-        return 'Июль';
+        return 'july'.tr();
       case 8:
-        return 'Август';
+        return 'august'.tr();
       case 9:
-        return 'Сентябрь';
+        return 'september'.tr();
       case 10:
-        return 'Октябрь';
+        return 'october'.tr();
       case 11:
-        return 'Ноябрь';
+        return 'november'.tr();
       case 12:
-        return 'Декабрь';
+        return 'december'.tr();
       default:
         return '';
     }

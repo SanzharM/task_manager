@@ -28,3 +28,11 @@ class ErrorState extends TaskBoardState {
 }
 
 class BoardCreated extends TaskBoardState {}
+
+class CompanyUsersLoaded extends TaskBoardState {
+  final List<User> users;
+  CompanyUsersLoaded(this.users);
+
+  @override
+  List<Object> get props => [users];
+}

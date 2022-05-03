@@ -20,3 +20,8 @@ class CreateBoard extends TaskBoardEvent {
   @override
   List<Object> get props => [];
 }
+
+class GetCompanyUsers extends TaskBoardEvent {
+  @override
+  List<Object> get props => [];
+}

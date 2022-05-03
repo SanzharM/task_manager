@@ -7,6 +7,8 @@ import 'package:task_manager/core/api/api_response.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/task.dart';
+import 'package:task_manager/core/models/user.dart';
 
 import 'api_endpoints.dart';
 import 'api_base.dart';
@@ -89,6 +91,29 @@ class ApiClient {
       return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
+
+  static Future<BooleanResponse> createTask(Task task) async {
+    final response = await ApiBase.request(
+      endpoint: CreateTaskEndpoint(),
+      params: task.toJson(),
+    );
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: true);
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<UsersResponse> getCompanyUsers() async {
+    final response = await ApiBase.request(endpoint: GetCompanyUsers());
+
+    if (response.isSuccess) {
+      return UsersResponse(users: await compute(parseUsers, response.bodyBytes));
+    } else {
+      return UsersResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {
@@ -116,6 +141,16 @@ Future<List<Board>?> parseBoards(Uint8List bodyBytes) async {
     final value = convert.json.decode(convert.utf8.decode(bodyBytes));
     if (value == null || value is! List || value.isEmpty) return null;
     return value.map((e) => Board.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<User>?> parseUsers(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null || json is! List) return null;
+    return json.map((e) => User.fromJson(e)).toList();
   } catch (e) {
     return null;
   }

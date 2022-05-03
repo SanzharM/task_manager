@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -38,34 +39,41 @@ class TaskBoardDrawer extends StatelessWidget {
             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
           Expanded(
-            child: ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-              itemCount: boards.length,
-              separatorBuilder: (context, index) => const EmptyBox(height: 8.0),
-              itemBuilder: (context, i) {
-                if (i == 0) {
-                  return Column(
-                    children: [
-                      ArrowedCell(
-                        title: '+ New Board',
-                        onTap: onCreateBoard,
-                      ),
-                      const EmptyBox(height: 8.0),
-                      ArrowedCell(
-                        title: boards[i]?.name ?? 'Board #$i',
-                        onTap: () => onChangeBoard(i),
-                        icon: currentBoard == i ? const Icon(CupertinoIcons.check_mark) : null,
-                      ),
-                    ],
+            child: CupertinoScrollbar(
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                itemCount: boards.length,
+                separatorBuilder: (context, index) => const EmptyBox(height: 8.0),
+                itemBuilder: (context, i) {
+                  if (i == 0) {
+                    return Column(
+                      children: [
+                        OneLineCell(
+                          title: '+ New Board',
+                          onTap: onCreateBoard,
+                          needIcon: false,
+                        ),
+                        const EmptyBox(height: 8.0),
+                        OneLineCell(
+                          title: boards[i]?.name ?? 'Board #$i',
+                          onTap: () => onChangeBoard(i),
+                          icon: currentBoard == i
+                              ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                              : const Icon(CupertinoIcons.forward),
+                        ),
+                      ],
+                    );
+                  }
+                  return OneLineCell(
+                    title: boards[i]?.name ?? 'Board #$i',
+                    onTap: () => onChangeBoard(i),
+                    icon: currentBoard == i
+                        ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                        : const Icon(CupertinoIcons.forward),
                   );
-                }
-                return ArrowedCell(
-                  title: boards[i]?.name ?? 'Board #$i',
-                  onTap: () => onChangeBoard(i),
-                  icon: currentBoard == i ? const Icon(CupertinoIcons.check_mark) : null,
-                );
-              },
+                },
+              ),
             ),
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AppTextField extends StatefulWidget {
   final String? hint;
@@ -21,10 +22,12 @@ class AppTextField extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final int maxLength;
   final int maxLines;
+  final bool needValidator;
 
   final Function(String value)? onChanged;
   final Function onTap;
   final void Function(String)? onSubmit;
+  final String? Function(String? value)? validator;
 
   AppTextField({
     this.hint = '',
@@ -46,6 +49,8 @@ class AppTextField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     required this.onTap,
     this.onSubmit,
+    this.validator,
+    this.needValidator = false,
   });
 
   @override
@@ -56,6 +61,11 @@ class _AppTextFieldState extends State<AppTextField> {
   final focus = FocusNode();
 
   late Color currentColor;
+
+  String? _defaultValidator(String? value) {
+    if (value == null || value.isEmpty) return 'field_cannot_be_empty'.tr();
+    return null;
+  }
 
   @override
   void initState() {
@@ -117,6 +127,7 @@ class _AppTextFieldState extends State<AppTextField> {
     );
     return Container(
       height: widget.maxLines == 1 ? 54 : null,
+      padding: widget.needValidator ? const EdgeInsets.only(top: 8.0, bottom: 8.0) : EdgeInsets.zero,
       decoration: BoxDecoration(
         border: Border.all(
           color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
@@ -139,12 +150,10 @@ class _AppTextFieldState extends State<AppTextField> {
           counterText: '',
           hintStyle: TextStyle(color: AppColors.grey),
           isDense: false,
-          contentPadding: EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 16,
-          ),
+          contentPadding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
         ),
+        validator: widget.needValidator ? (widget.validator ?? _defaultValidator) : null,
         maxLines: widget.maxLines,
         inputFormatters: widget.inputFormatters,
         keyboardType: widget.keyboardType,
@@ -171,10 +180,10 @@ class _AppTextFieldState extends State<AppTextField> {
       height: widget.maxLines == 1 ? 54 : null,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.5) : AppColors.darkGrey.withOpacity(0.5),
+          color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
           width: 1,
         ),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: TextFormField(
         readOnly: widget.readonly,
@@ -188,7 +197,8 @@ class _AppTextFieldState extends State<AppTextField> {
           border: InputBorder.none,
           counterText: '',
           isDense: true,
-          labelStyle: TextStyle(color: AppColors.grey),
+          hintStyle: TextStyle(color: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey),
+          labelStyle: TextStyle(color: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey),
           contentPadding: padding,
           floatingLabelBehavior: FloatingLabelBehavior.auto,
         ),

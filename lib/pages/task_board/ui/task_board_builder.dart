@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/models/board.dart';
-import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/ui/task_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TaskBoardBuilder extends StatefulWidget {
-  const TaskBoardBuilder({Key? key, required this.board}) : super(key: key);
+  const TaskBoardBuilder({Key? key, required this.board, required this.onCreateBoard}) : super(key: key);
 
   final Board? board;
+  final void Function() onCreateBoard;
 
   @override
   State<TaskBoardBuilder> createState() => TaskBoardBuilderState();
@@ -35,25 +36,42 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
+    if (widget.board == null) {
+      return ListView(
+        children: [
+          EmptyBox(height: MediaQuery.of(context).size.height * 0.33),
+          GestureDetector(
+            onTap: widget.onCreateBoard,
+            child: Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('create_new_board'.tr(), style: const TextStyle(fontSize: 18)),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          const EmptyBox(height: 16.0),
-          if (widget.board == null)
-            GestureDetector(
-              onTap: () => null,
-              child: const Center(child: Padding(padding: EdgeInsets.all(16.0), child: Text('create a new board'))),
-            ),
           Text(
-            widget.board?.name ?? widget.board?.description ?? 'board title',
+            widget.board?.name ?? widget.board?.description ?? 'title'.tr(),
             style: const TextStyle(fontSize: 18),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).viewPadding.top,
+              minWidth: MediaQuery.of(context).size.width,
+              maxHeight: MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).viewPadding.top,
+              maxWidth: MediaQuery.of(context).size.width,
+            ),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
               physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
               itemCount: widget.board?.tasks?.length ?? 0,
               itemBuilder: (context, i) {
@@ -70,35 +88,6 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
               },
             ),
           ),
-          // Theme(
-          //   data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory),
-          //   child: TabBar(
-          //     controller: _boardTabController,
-          //     isScrollable: true,
-          //     physics: const BouncingScrollPhysics(),
-          //     labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          //     enableFeedback: true,
-          //     tabs: const [
-          //       // Tab(text: 'К выполнению'),
-          //       // Tab(text: 'В работе'),
-          //       // Tab(text: 'На проверке'),
-          //       // Tab(text: 'Готово'),
-          //     ],
-          //   ),
-          // ),
-          // Container(
-          //   height: MediaQuery.of(context).size.height,
-          //   child: TabBarView(
-          //     controller: _boardTabController,
-          //     physics: const BouncingScrollPhysics(),
-          //     children: [
-          // TaskCards(tasks: _toDoTasks),
-          // TaskCards(tasks: _inWorkTasks),
-          // TaskCards(tasks: _toTestTasks),
-          // TaskCards(tasks: _doneTasks),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

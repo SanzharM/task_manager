@@ -6,7 +6,7 @@ class AppTheme {
   get darkTheme => ThemeData(
         scaffoldBackgroundColor: AppColors.darkGrey,
         bottomAppBarColor: AppColors.darkGrey,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           brightness: Brightness.dark,
           color: AppColors.darkGrey,
           elevation: 0,
@@ -16,9 +16,10 @@ class AppTheme {
         fontFamily: 'Montserrat',
         accentColorBrightness: Brightness.dark,
         primaryColorBrightness: Brightness.dark,
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.grey),
           labelStyle: TextStyle(color: AppColors.metal),
+          errorStyle: TextStyle(color: AppColors.darkRed),
         ),
         textTheme: TextTheme().apply(
           bodyColor: AppColors.metal,
@@ -29,7 +30,7 @@ class AppTheme {
           primaryColor: AppColors.snow,
           scaffoldBackgroundColor: AppColors.darkGrey,
           brightness: Brightness.dark,
-          textTheme: CupertinoTextThemeData(
+          textTheme: const CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
             textStyle: const TextStyle(
               fontFamily: 'Montserrat',
@@ -49,22 +50,23 @@ class AppTheme {
         // snackBarTheme: SnackBarThemeData(),
         bottomAppBarColor: AppColors.snow,
         backgroundColor: AppColors.snow,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           centerTitle: true,
           brightness: Brightness.light,
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
-          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
         ),
         accentColorBrightness: Brightness.light,
         primaryColorBrightness: Brightness.light,
         fontFamily: 'Montserrat',
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.darkGrey),
           labelStyle: TextStyle(color: AppColors.darkGrey),
+          errorStyle: TextStyle(color: AppColors.lightRed),
         ),
-        textTheme: TextTheme().apply(
+        textTheme: const TextTheme().apply(
           bodyColor: AppColors.darkGrey,
           displayColor: AppColors.darkGrey,
         ),
@@ -73,9 +75,9 @@ class AppTheme {
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,
           brightness: Brightness.light,
-          textTheme: CupertinoTextThemeData(
+          textTheme: const CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
-            textStyle: const TextStyle(
+            textStyle: TextStyle(
               fontFamily: 'Montserrat',
               color: AppColors.darkGrey,
               fontSize: 16,
