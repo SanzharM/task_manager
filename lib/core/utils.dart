@@ -110,4 +110,28 @@ class Utils {
         return false;
     }
   }
+
+  static DateTime? parseDate(String? date, {String dateFormat = 'yyyy-MM-ddTHH:mm:ss'}) {
+    if (date == null || date.isEmpty) return null;
+    try {
+      return DateFormat(dateFormat).parse(date);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static TaskStatus getStatusFromString(String status) {
+    switch (status.toLowerCase()) {
+      case 'todo':
+        return TaskStatus.to_do;
+      case 'in_work':
+        return TaskStatus.in_work;
+      case 'test':
+        return TaskStatus.test;
+      case 'done':
+        return TaskStatus.done;
+      default:
+        return TaskStatus.undetermined;
+    }
+  }
 }

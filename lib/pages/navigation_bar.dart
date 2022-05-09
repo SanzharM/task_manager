@@ -57,7 +57,7 @@ class _NavigationBarState extends State<NavigationBar> {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (_currentIndex == index) {
-            if (_currentIndex == 0) _taskBoardKey.currentState?.animateTabTo();
+            if (_currentIndex == 0) _taskBoardKey.currentState?.animateTabTo(0);
             if (_currentIndex == 2) _profileKey.currentState?.scrollToTop();
           } else {
             _currentIndex = index;

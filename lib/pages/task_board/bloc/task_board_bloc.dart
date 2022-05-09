@@ -13,6 +13,9 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
   createBoard(String name, String? description) => add(CreateBoard(name: name, description: description));
   getCompanyUsers() => add(GetCompanyUsers());
 
+  editBoard(Board board) => add(EditBoard(board));
+  deleteBoard(Board board) => add(DeleteBoard(board));
+
   TaskBoardBloc() : super(TaskBoardInitial()) {
     on<GetBoards>((event, emit) async {
       emit(TaskBoardInitial());
@@ -20,10 +23,8 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
       final response = await ApiClient.getBoards();
 
       if (response.boards != null) {
-        print('returning boards');
         return emit(BoardsLoaded(response.boards!));
       } else {
-        print('returning error');
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }
     });
@@ -48,6 +49,36 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
 
       if (response.users != null) {
         return emit(CompanyUsersLoaded(response.users!));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<EditBoard>((event, emit) async {
+      emit(TaskBoardInitial());
+      if (event.board.pk == null) return emit(ErrorState('unable_to_find_board_id'..tr()));
+
+      emit(Loading());
+
+      final response = await ApiClient.editBoard(event.board);
+
+      if (response.success == true) {
+        return emit(BoardEdited());
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<DeleteBoard>((event, emit) async {
+      emit(TaskBoardInitial());
+      if (event.board.pk == null) return emit(ErrorState('unable_to_find_board_id'..tr()));
+
+      emit(Loading());
+
+      final response = await ApiClient.deleteBoard(event.board);
+
+      if (response.success == true) {
+        return emit(BoardDeleted());
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

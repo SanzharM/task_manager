@@ -1,22 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/application.dart';
-import 'package:task_manager/core/models/organization.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:task_manager/core/supporting/app_router.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/pages/login_page/intro_page.dart';
-import 'package:task_manager/pages/organization_page/organization_page.dart';
-import 'package:task_manager/pages/profile_page/add_profile_page.dart';
-import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
-import 'package:task_manager/pages/profile_page/team_members_page.dart';
+import 'package:task_manager/pages/profile_page/bloc/profile_bloc.dart';
 import 'package:task_manager/pages/settings_page/about_app_page.dart';
-import 'package:task_manager/pages/settings_page/settings_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -31,27 +29,19 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  final _bloc = ProfileBloc();
   final _scrollController = ScrollController();
+
   User? _user;
 
-  void _toEditProfile() => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => AddProfilePage(user: _user, isEditing: true),
-        ),
-      );
+  bool isLoading = false;
 
-  void _toPersonalAccount() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PersonalAccount(user: _user!)));
-
-  void _toTeamMembers() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TeamMembersPage(user: _user!)));
-
-  void _toSettings() => Navigator.of(context).push(CupertinoPageRoute(
-        builder: (context) => SettingsPage(changeLanguage: widget.changeLanguage),
-      ));
-
-  void _toOrganization() {
-    if (_user?.organization == null) return;
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => OrganizationPage(_user!.organization!)));
-  }
+  void _toEditProfile() => AppRouter.toEditProfile(context: context, user: _user);
+  void _toPersonalAccount() => AppRouter.toPersonalAccount(context: context, user: _user!);
+  void _toTeamMembers() => _user == null ? null : AppRouter.toTeamMembers(context: context, user: _user!);
+  void _toSettings() => AppRouter.toSettings(context: context, changeLanguage: widget.changeLanguage);
+  void _toOrganization() =>
+      _user?.organization == null ? null : AppRouter.toOrganizationPage(context: context, organization: _user!.organization!);
 
   void scrollToTop() => _scrollController.animateTo(
         _scrollController.position.minScrollExtent,
@@ -59,140 +49,176 @@ class ProfilePageState extends State<ProfilePage> {
         curve: Curves.easeInOut,
       );
 
+  Future<void> _onRefresh() async {
+    _bloc.getProfile();
+    await Future.delayed(const Duration(milliseconds: 450));
+  }
+
   @override
   void initState() {
-    _user = User(
-      name: 'Sanzhar',
-      surname: 'Predzashitnikov',
-      email: 'abc@gmail.com',
-      phone: '77015557402',
-      position: 'Senior-super-puper-molodec',
-      organization: Organization(name: 'Yandex LLC'),
-    );
+    // _user = User(
+    //   name: 'Sanzhar',
+    //   surname: 'Sanzhar',
+    //   email: 'abc@gmail.com',
+    //   phone: '77015557402',
+    //   position: 'Senior-super-puper-molodec',
+    //   organization: Organization(name: 'Yandex LLC'),
+    // );
+    Application.getPhone().then((value) => setState(() => _user = User(phone: value)));
+    _bloc.getProfile();
     super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _bloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 16.0),
-          physics: const BouncingScrollPhysics(),
-          controller: _scrollController,
-          child: Column(
-            children: [
-              // Profile Cells
-              Center(
-                child: Column(
-                  children: [
-                    ClipOval(
-                      child: _user?.imageUrl != null
-                          ? CachedNetworkImage(
-                              imageUrl: _user!.imageUrl!,
-                              fit: BoxFit.cover,
-                              height: 48,
-                              width: 48,
-                              errorWidget: (context, url, error) => Text('error_unable_to_load_photo'.tr()),
-                            )
-                          : const Icon(CupertinoIcons.person, size: 48),
-                    ),
-                    const EmptyBox(height: 12),
-                    Text(
-                      '${_user?.name ?? ''} ${_user?.surname ?? ''}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+      body: BlocListener(
+        bloc: _bloc,
+        listener: (context, state) {
+          print('state is $state');
+          isLoading = state is ProfileLoading;
+
+          if (state is ErrorState) {}
+
+          if (state is ProfileLoaded) {
+            _user = state.user;
+          }
+
+          setState(() {});
+        },
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 16.0),
+              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  CustomShimmer(
+                    enabled: isLoading,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          // Avatar
+                          if (_user?.imageUrl != null)
+                            ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: _user!.imageUrl!,
+                                fit: BoxFit.cover,
+                                height: 48,
+                                width: 48,
+                                errorWidget: (context, url, error) => Text('error_unable_to_load_photo'.tr()),
+                              ),
+                            ),
+                          if (_user?.imageUrl == null) const Icon(CupertinoIcons.person, size: 48),
+
+                          // Name Surname
+                          const EmptyBox(height: 12),
+                          if (_user?.name != null)
+                            Text(
+                              _user!.fullName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          if (_user?.name != null) const EmptyBox(height: 4),
+
+                          // Phone Number
+                          Text(
+                            Utils.formattedPhone(_user?.phone ?? ''),
+                            style: _user?.name == null ? const TextStyle(fontSize: 18) : const TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
                     ),
-                    const EmptyBox(height: 4),
-                    Text(
-                      Utils.formattedPhone(_user?.phone ?? ''),
-                      style: const TextStyle(fontSize: 16),
+                  ),
+                  if (_user?.organization != null) const EmptyBox(height: 8),
+                  if (_user?.organization != null)
+                    InfoCell(
+                      title: 'organization'.tr() + ': ',
+                      value: _user?.organization?.name,
+                      onTap: _toOrganization,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                     ),
-                  ],
-                ),
+                  const EmptyBox(height: 16),
+                  // Profile cells
+                  if (_user != null)
+                    AppCard(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ArrowedCell(
+                            icon: const Icon(CupertinoIcons.person_fill),
+                            title: 'edit_profile'.tr(),
+                            onTap: _toEditProfile,
+                          ),
+                          ArrowedCell(
+                            icon: const Icon(CupertinoIcons.chart_bar_alt_fill),
+                            title: 'personal_account'.tr(),
+                            onTap: _toPersonalAccount,
+                          ),
+                          ArrowedCell(
+                            icon: const Icon(CupertinoIcons.person_3_fill),
+                            title: 'your_colleagues'.tr(),
+                            onTap: _toTeamMembers,
+                          ),
+                          ArrowedCell(
+                            icon: const Icon(CupertinoIcons.calendar),
+                            title: 'shift_history'.tr(),
+                            onTap: () => print('to view schedule history'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const EmptyBox(height: 12),
+                  AppCard(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ArrowedCell(
+                          icon: const Icon(CupertinoIcons.settings_solid),
+                          title: 'settings'.tr(),
+                          onTap: _toSettings,
+                        ),
+                        ArrowedCell(
+                          icon: const Icon(CupertinoIcons.question_circle_fill),
+                          title: 'contact_us'.tr(),
+                          onTap: () => print('to contact us'),
+                        ),
+                        ArrowedCell(
+                          icon: const Icon(CupertinoIcons.info_circle_fill),
+                          title: 'about_us'.tr(),
+                          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AboutAppPage(),
+                          )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const EmptyBox(height: 8.0),
+                  AppButton(
+                    title: 'logout'.tr(),
+                    onTap: () async {
+                      await Application.setToken(null);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
+                    },
+                  ),
+                  const EmptyBox(height: 16.0),
+                ],
               ),
-              if (_user?.organization != null) const EmptyBox(height: 8),
-              if (_user?.organization != null)
-                InfoCell(
-                  title: 'organization'.tr() + ': ',
-                  value: _user?.organization?.name,
-                  onTap: _toOrganization,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
-              const EmptyBox(height: 16),
-              AppCard(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.person_fill),
-                      title: 'edit_profile'.tr(),
-                      onTap: _toEditProfile,
-                    ),
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.chart_bar_alt_fill),
-                      title: 'personal_account'.tr(),
-                      onTap: _toPersonalAccount,
-                    ),
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.person_3_fill),
-                      title: 'your_colleagues'.tr(),
-                      onTap: _toTeamMembers,
-                    ),
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.calendar),
-                      title: 'shift_history'.tr(),
-                      onTap: () => print('to view schedule history'),
-                    ),
-                  ],
-                ),
-              ),
-              const EmptyBox(height: 12),
-              AppCard(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.settings_solid),
-                      title: 'settings'.tr(),
-                      onTap: _toSettings,
-                    ),
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.question_circle_fill),
-                      title: 'contact_us'.tr(),
-                      onTap: () => print('to contact us'),
-                    ),
-                    ArrowedCell(
-                      icon: const Icon(CupertinoIcons.info_circle_fill),
-                      title: 'about_us'.tr(),
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AboutAppPage(),
-                      )),
-                    ),
-                  ],
-                ),
-              ),
-              const EmptyBox(height: 8.0),
-              AppButton(
-                title: 'logout'.tr(),
-                onTap: () async {
-                  await Application.setToken(null);
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
-                },
-              ),
-              const EmptyBox(height: 16.0),
-            ],
+            ),
           ),
         ),
       ),

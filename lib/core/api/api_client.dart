@@ -1,7 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:task_manager/core/api/api_response.dart';
 import 'package:task_manager/core/application.dart';
@@ -106,12 +105,101 @@ class ApiClient {
   }
 
   static Future<UsersResponse> getCompanyUsers() async {
-    final response = await ApiBase.request(endpoint: GetCompanyUsers());
+    final response = await ApiBase.request(endpoint: GetCompanyUsersEndpoint());
 
     if (response.isSuccess) {
       return UsersResponse(users: await compute(parseUsers, response.bodyBytes));
     } else {
       return UsersResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<TaskResponse> getTask(int taskId) async {
+    final response = await ApiBase.request(
+      endpoint: GetTasksEndpoint(),
+      params: {'task_id': taskId},
+    );
+
+    if (response.isSuccess) {
+      return TaskResponse(task: await compute(parseTask, response.bodyBytes));
+    } else {
+      return TaskResponse(error: await parseError(response.bodyBytes));
+    }
+  }
+
+  static Future<TasksResponse> getTasks(int boardId) async {
+    final response = await ApiBase.request(endpoint: GetTasksEndpoint());
+
+    if (response.isSuccess) {
+      return TasksResponse(tasks: await compute(parseTasks, response.bodyBytes));
+    } else {
+      return TasksResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<BooleanResponse> editBoard(Board board) async {
+    final response = await ApiBase.request(
+      endpoint: EditBoardEndpoint(),
+      params: board.toJson(),
+    );
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: true);
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<BooleanResponse> deleteBoard(Board board) async {
+    final response = await ApiBase.request(
+      endpoint: DeleteBoardEndpoint(),
+      params: {'board_id': board.pk},
+    );
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: true);
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<dynamic> getSessions() async {
+    final response = await ApiBase.request(endpoint: GetSessionsEndpoint());
+
+    if (response.isSuccess) {
+      return null;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<dynamic> setSession() async {
+    final response = await ApiBase.request(endpoint: SetSessionEndpoint());
+
+    if (response.isSuccess) {
+      return null;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<UserResponse> getProfileData() async {
+    final response = await ApiBase.request(endpoint: GetProfileEndpoint());
+
+    if (response.isSuccess) {
+      return UserResponse(user: await compute(parseUser, response.bodyBytes));
+    } else {
+      return UserResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<BooleanResponse> editProfile(User user) async {
+    final response = await ApiBase.request(endpoint: EditProfileEndpoint(), params: user.toJson());
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: true);
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 }
@@ -151,6 +239,35 @@ Future<List<User>?> parseUsers(Uint8List bodyBytes) async {
     final json = convert.json.decode(convert.utf8.decode(bodyBytes));
     if (json == null || json is! List) return null;
     return json.map((e) => User.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<User?> parseUser(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null) return null;
+    return User.fromJson(json);
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<Task?> parseTask(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    return Task.fromJson(json);
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Task>?> parseTasks(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null || json is! List) return null;
+    return json.map((e) => Task.fromJson(e)).toList();
   } catch (e) {
     return null;
   }

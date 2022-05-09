@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 
 class InfoCell extends StatelessWidget {
@@ -84,7 +85,7 @@ class ArrowedCell extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0),
+          borderRadius: AppConstraints.borderRadius,
           border: needBorder
               ? Border.all(
                   color: borderColor ?? (Application.isDarkMode(context) ? AppColors.snow : AppColors.grey),
@@ -186,7 +187,7 @@ class CountryCell extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           border: isSelected ? Border.all(color: AppColors.defaultGrey) : null,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppConstraints.borderRadius,
         ),
         padding: padding ?? const EdgeInsets.all(16.0),
         child: Center(
@@ -197,7 +198,7 @@ class CountryCell extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppConstraints.borderRadius,
                   child: Image.asset(
                     _getFlagPath(),
                     alignment: Alignment.center,
@@ -268,7 +269,7 @@ class OneLineCell extends StatelessWidget {
           bottom: 16.0,
         ),
         decoration: BoxDecoration(
-          borderRadius: borderRadius ?? BorderRadius.circular(12),
+          borderRadius: borderRadius ?? AppConstraints.borderRadius,
           color: fillColor ?? (Application.isDarkMode(context) ? AppColors.grey : AppColors.white),
           border: needBorder ? Border.all(color: AppColors.defaultGrey) : null,
         ),

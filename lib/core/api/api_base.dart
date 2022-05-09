@@ -101,7 +101,8 @@ class ApiBase {
     }
 
     print('\n-----------------------');
-    print('URL: ${endpoint.url} ${urlWithParams(baseUrl + endpoint.url, urlParams)}');
+    print('URL: ${urlWithParams(baseUrl + endpoint.url, urlParams)}');
+    print('METHOD: ${endpoint.method}');
     print('HEADERS: $headers');
     print('STATUS CODE: ${response.statusCode}');
     print('PARAMS: $params');

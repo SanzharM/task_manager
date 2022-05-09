@@ -18,7 +18,8 @@ class Application {
   static const _phoneKey = 'TaskManagerPhoneToken';
   static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
 
-  static String getBaseUrl() => 'http://192.168.0.110:8000';
+  // static String getBaseUrl() => 'http://192.168.1.103:8000';
+  static String getBaseUrl() => 'https://app-bota.org';
 
   static Future<bool> isAuthorized() async {
     return (await getToken()) != null;

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
 
 class ApiResponse {
@@ -57,4 +58,25 @@ class UsersResponse {
   final String? error;
 
   UsersResponse({this.users, this.error});
+}
+
+class UserResponse {
+  final User? user;
+  final String? error;
+
+  UserResponse({this.user, this.error});
+}
+
+class TaskResponse {
+  final Task? task;
+  final String? error;
+
+  TaskResponse({this.task, this.error});
+}
+
+class TasksResponse {
+  final List<Task>? tasks;
+  final String? error;
+
+  TasksResponse({this.tasks, this.error});
 }

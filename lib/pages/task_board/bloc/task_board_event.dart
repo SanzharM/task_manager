@@ -25,3 +25,19 @@ class GetCompanyUsers extends TaskBoardEvent {
   @override
   List<Object> get props => [];
 }
+
+class DeleteBoard extends TaskBoardEvent {
+  final Board board;
+  DeleteBoard(this.board);
+
+  @override
+  List<Object> get props => [board];
+}
+
+class EditBoard extends TaskBoardEvent {
+  final Board board;
+  EditBoard(this.board);
+
+  @override
+  List<Object> get props => [board];
+}

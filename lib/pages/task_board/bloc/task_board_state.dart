@@ -36,3 +36,7 @@ class CompanyUsersLoaded extends TaskBoardState {
   @override
   List<Object> get props => [users];
 }
+
+class BoardEdited extends TaskBoardState {}
+
+class BoardDeleted extends TaskBoardState {}

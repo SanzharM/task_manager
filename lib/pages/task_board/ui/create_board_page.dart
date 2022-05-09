@@ -41,14 +41,19 @@ class CreateBoardPageState extends State<CreateBoardPage> {
             children: [
               const EmptyBox(height: 32.0),
               AppTextField(
-                label: 'Group Name',
+                label: 'group_name'.tr(),
                 text: groupName,
                 onTap: () => setState(() {}),
                 onChanged: (value) => groupName = value,
+                needValidator: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'field_cannot_be_empty'.tr();
+                  return null;
+                },
               ),
               const EmptyBox(height: 16.0),
               AppTextField(
-                label: 'Description',
+                label: 'description'.tr(),
                 text: description,
                 onTap: () => setState(() {}),
                 onChanged: (value) => description = value,
@@ -57,7 +62,10 @@ class CreateBoardPageState extends State<CreateBoardPage> {
               AppButton(
                 title: 'submit'.tr(),
                 isLoading: isLoading,
-                onTap: () => widget.onCreate(groupName, description),
+                onTap: () {
+                  if (FocusScope.of(context).hasFocus) FocusScope.of(context).unfocus();
+                  widget.onCreate(groupName, description);
+                },
               ),
             ],
           ),

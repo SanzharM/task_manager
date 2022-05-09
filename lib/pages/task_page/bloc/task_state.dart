@@ -19,7 +19,18 @@ class ErrorState extends TaskState {
   List<Object> get props => [error];
 }
 
-class TaskCreated extends TaskState {}
+class TaskCreated extends TaskState {
+  @override
+  List<Object> get props => [];
+}
+
+class TaskLoaded extends TaskState {
+  final Task task;
+  TaskLoaded(this.task);
+
+  @override
+  List<Object> get props => [task];
+}
 
 class TasksLoaded extends TaskState {
   final List<Task> tasks;

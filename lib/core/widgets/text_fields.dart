@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 
 class AppTextField extends StatefulWidget {
   final String? hint;
@@ -133,7 +134,7 @@ class _AppTextFieldState extends State<AppTextField> {
           color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppConstraints.borderRadius,
       ),
       child: TextFormField(
         focusNode: focus,
@@ -183,7 +184,7 @@ class _AppTextFieldState extends State<AppTextField> {
           color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
           width: 1,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppConstraints.borderRadius,
       ),
       child: TextFormField(
         readOnly: widget.readonly,

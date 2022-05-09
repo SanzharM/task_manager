@@ -84,5 +84,11 @@
   "title": "Title",
   "list_is_empty": "List is empty",
   "created_by": "Created by",
-  "create_new_board": "Create a new Board"
+  "create_new_board": "Create a new Board",
+  "board": "Board",
+  "your_board": "Your board",
+  "your_boards": "Your boards",
+  "unable_to_find_board_id": "Error. Unable to find such board",
+  "geolocation_denied_warning_message": "You have restricted permissions for geolocation. Application cannot find your location while scanning QR-codes.",
+  "choose_performer": "Choose Performer"
 }

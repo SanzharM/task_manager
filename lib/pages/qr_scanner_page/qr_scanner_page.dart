@@ -2,11 +2,16 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as permission;
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'bloc/qr_bloc.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
@@ -18,6 +23,11 @@ class QRScannerPageState extends State<QRScannerPage> {
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? _qrController;
 
+  final _bloc = QrBloc();
+
+  final _geocoding = geocoding.GeocodingPlatform.instance;
+  Location _location = Location();
+
   bool isFlashOn = false;
 
   void _onQRViewCreated(QRViewController qrViewController) {
@@ -28,9 +38,34 @@ class QRScannerPageState extends State<QRScannerPage> {
     });
   }
 
+  void _requestPermissions() async {
+    final status = await _location.requestPermission();
+    if (status == PermissionStatus.granted || status == PermissionStatus.grantedLimited) return;
+
+    WidgetsBinding.instance?.addPostFrameCallback(
+      (timeStamp) => AlertController.showSimpleDialog(
+        context: context,
+        message: '',
+      ),
+    );
+  }
+
+  void func() async {
+    // await ApiClient.setSession();
+    // await ApiClient.getSessions();
+  }
+
+  Future<geocoding.Placemark?> getCurrentLocation() async {
+    final data = await _location.getLocation();
+    if (data.latitude == null || data.longitude == null) return null;
+    return (await _geocoding.placemarkFromCoordinates(data.latitude!, data.longitude!)).first;
+  }
+
   @override
   void initState() {
     super.initState();
+    // _bloc.getSessions();
+    _requestPermissions();
   }
 
   @override
@@ -86,7 +121,7 @@ class QRScannerPageState extends State<QRScannerPage> {
             )
           : Center(
               child: GestureDetector(
-                onTap: () async => await openAppSettings(),
+                onTap: () async => await permission.openAppSettings(),
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(

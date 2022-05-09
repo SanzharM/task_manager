@@ -155,10 +155,15 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                     readonly: true,
                     needValidator: true,
                     onTap: () {
+                      if (FocusScope.of(context).hasFocus) {
+                        FocusScope.of(context).unfocus();
+                      }
                       setState(() {});
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
                         builder: (context) => DatePicker(
                           onPicked: (date) => _task = _task.copyWith(deadline: date),
                         ),

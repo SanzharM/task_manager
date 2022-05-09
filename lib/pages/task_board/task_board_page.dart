@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
-import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/pages/task_board/bloc/task_board_bloc.dart';
 import 'package:task_manager/pages/task_board/ui/create_board_page.dart';
@@ -60,32 +60,51 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(Icons.menu_rounded),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          onPressed: _boards.isEmpty ? null : () => _scaffoldKey.currentState?.openDrawer(),
         ),
-        actions: [
-          if (_boards.isNotEmpty && _currentBoardIndex != null)
-            IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(CupertinoIcons.add_circled_solid),
-              onPressed: () => Navigator.of(context).push(
-                CustomPageRoute(
-                    child: CreateTaskPage(
-                  board: _boards[_currentBoardIndex!],
-                  task: null,
-                  onBack: () => _bloc.getBoards(), // getBoard(_currentBoardIndex!),
-                  users: _companyUsers,
-                )),
-              ),
-            ),
-        ],
+        actions: (_boards.isNotEmpty && _currentBoardIndex != null)
+            ? [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: const Icon(CupertinoIcons.add_circled_solid),
+                  onPressed: () => Navigator.of(context).push(
+                    CustomPageRoute(
+                        child: CreateTaskPage(
+                      board: _boards[_currentBoardIndex!],
+                      task: null,
+                      onBack: () => _bloc.getBoards(), // getBoard(_currentBoardIndex!),
+                      users: _companyUsers,
+                    )),
+                  ),
+                ),
+                const EmptyBox(width: 16.0),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: const Icon(CupertinoIcons.refresh),
+                  onPressed: _onRefresh,
+                ),
+                const EmptyBox(width: 16.0),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: const Icon(CupertinoIcons.settings),
+                  onPressed: _onRefresh,
+                ),
+                const EmptyBox(width: 4.0),
+              ]
+            : null,
       ),
       body: SafeArea(
         child: BlocListener(
           bloc: _bloc,
-          listener: (context, state) {
+          listener: (context, state) async {
             print('state is $state');
 
             isLoading = state is Loading;
+
+            if (state is ErrorState && (_createBoardKey.currentState?.isLoading ?? false)) {
+              // await Future.delayed(const Duration(milliseconds: 450));
+              _createBoardKey.currentState?.setIsLoading(false);
+            }
 
             if (state is ErrorState) {
               if (Utils.isUnauthorizedStatusCode(state.error)) {
@@ -99,7 +118,6 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             }
 
             if (state is BoardsLoaded) {
-              print(state.boards);
               _boards = state.boards;
               if (_currentBoardIndex == null && _boards.isNotEmpty) _currentBoardIndex = 0;
             }
@@ -116,15 +134,11 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
             setState(() {});
           },
-          child: RefreshIndicator(
+          child: TaskBoardBuilder(
+            key: _boardBuilderKey,
+            onCreateBoard: _toCreateBoardPage,
             onRefresh: _onRefresh,
-            backgroundColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey,
-            color: Application.isDarkMode(context) ? AppColors.grey : AppColors.metal,
-            child: TaskBoardBuilder(
-              key: _boardBuilderKey,
-              onCreateBoard: _toCreateBoardPage,
-              board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
-            ),
+            board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
           ),
         ),
       ),
@@ -143,9 +157,11 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     return Future.delayed(const Duration(milliseconds: 500));
   }
 
-  void animateTabTo({double? to}) => _boardBuilderKey.currentState?.animateTabTo(to: to);
+  void animateTabTo(int i) => _boardBuilderKey.currentState?.animateTabTo(i);
 
-  void _toCreateBoardPage() => Navigator.of(context).push(CustomPageRoute(child: CreateBoardPage(onCreate: _onCreateBoard)));
+  void _toCreateBoardPage() => Navigator.of(context).push(CustomPageRoute(
+        child: CreateBoardPage(onCreate: _onCreateBoard, key: _createBoardKey),
+      ));
 
   void _onCreateBoard(String name, String? description) {
     if (name.isEmpty) return;

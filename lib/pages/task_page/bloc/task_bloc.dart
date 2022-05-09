@@ -9,13 +9,35 @@ part 'task_event.dart';
 part 'task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  getTasks() => add(GetTasks());
+  getTasks(int taskId) => add(GetTasks(taskId));
   validateTask(Task? task) => add(ValidateTask(task));
   createTask(Task task) => add(CreateTask(task));
 
   TaskBloc() : super(TaskInitial()) {
+    on<GetTask>((event, emit) async {
+      emit(TaskInitial());
+      emit(Loading());
+
+      final response = await ApiClient.getTask(event.id);
+
+      if (response.task != null) {
+        return emit(TaskLoaded(response.task!));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
     on<GetTasks>((event, emit) async {
-      print('get tasks');
+      emit(TaskInitial());
+      emit(Loading());
+
+      final response = await ApiClient.getTasks(event.boardId);
+
+      if (response.tasks != null) {
+        return emit(TasksLoaded(response.tasks!));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
     });
 
     on<ValidateTask>((event, emit) {

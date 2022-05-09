@@ -1,31 +1,39 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/ui/task_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class TaskBoardBuilder extends StatefulWidget {
-  const TaskBoardBuilder({Key? key, required this.board, required this.onCreateBoard}) : super(key: key);
+  const TaskBoardBuilder({
+    Key? key,
+    required this.board,
+    required this.onCreateBoard,
+    required this.onRefresh,
+  }) : super(key: key);
 
   final Board? board;
   final void Function() onCreateBoard;
+  final Future<void> Function() onRefresh;
 
   @override
   State<TaskBoardBuilder> createState() => TaskBoardBuilderState();
 }
 
 class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerProviderStateMixin {
-  final _boardTabController = ScrollController();
+  late TabController _boardTabController;
 
-  void animateTabTo({double? to}) => _boardTabController.animateTo(
-        to ?? _boardTabController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-      );
+  void animateTabTo(int index) =>
+      _boardTabController.animateTo(index, duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
 
   @override
   void initState() {
     super.initState();
+    _boardTabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -37,59 +45,64 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
   @override
   Widget build(BuildContext context) {
     if (widget.board == null) {
-      return ListView(
-        children: [
-          EmptyBox(height: MediaQuery.of(context).size.height * 0.33),
-          GestureDetector(
-            onTap: widget.onCreateBoard,
-            child: Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text('create_new_board'.tr(), style: const TextStyle(fontSize: 18)),
-              ),
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh,
+        backgroundColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey,
+        color: Application.isDarkMode(context) ? AppColors.grey : AppColors.metal,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          children: [
+            EmptyBox(height: MediaQuery.of(context).size.height * 0.33),
+            AppButton(
+              onTap: widget.onCreateBoard,
+              title: 'create_new_board'.tr(),
+              needBorder: true,
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          Text(
-            widget.board?.name ?? widget.board?.description ?? 'title'.tr(),
-            style: const TextStyle(fontSize: 18),
+
+    return Column(
+      children: [
+        TabBar(
+          physics: const BouncingScrollPhysics(),
+          controller: _boardTabController,
+          isScrollable: true,
+          tabs: [
+            for (int i = 0; i < 5; i++) Tab(text: getTaskColumnTitle(i)),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _boardTabController,
+            physics: const BouncingScrollPhysics(),
+            children: [
+              TaskCards(tasks: widget.board!.tasks!),
+              TaskCards(tasks: widget.board!.tasks!),
+              TaskCards(tasks: widget.board!.tasks!),
+              TaskCards(tasks: widget.board!.tasks!),
+              TaskCards(tasks: widget.board!.tasks!),
+            ],
           ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).viewPadding.top,
-              minWidth: MediaQuery.of(context).size.width,
-              maxHeight: MediaQuery.of(context).size.height - AppBar().preferredSize.height - MediaQuery.of(context).viewPadding.top,
-              maxWidth: MediaQuery.of(context).size.width,
-            ),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              physics: const PageScrollPhysics(parent: BouncingScrollPhysics()),
-              itemCount: widget.board?.tasks?.length ?? 0,
-              itemBuilder: (context, i) {
-                final _task = widget.board!.tasks![i];
-                return Column(
-                  children: [
-                    Text('${_task.title}'),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => TaskCard(_task),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+
+  String getTaskColumnTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'past_tasks'.tr();
+      case 1:
+        return 'week'.tr();
+      case 2:
+        return 'month'.tr();
+      case 3:
+        return 'month+'.tr();
+      default:
+        return 'out_of_deadline'.tr();
+    }
   }
 }

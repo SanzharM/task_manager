@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/app_icons.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -39,7 +40,7 @@ class UserCard extends StatelessWidget {
       width: MediaQuery.of(context).size.width - 32.0,
       constraints: const BoxConstraints(minHeight: 56.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: AppConstraints.borderRadius,
         color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
       ),
       child: Row(
@@ -47,7 +48,9 @@ class UserCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipOval(
-            child: user.imageUrl != null ? Image.network(user.imageUrl!, height: 48, width: 48) : const Icon(CupertinoIcons.person_fill, size: 48),
+            child: user.imageUrl != null
+                ? Image.network(user.imageUrl!, height: 48, width: 48)
+                : const Icon(CupertinoIcons.person_fill, size: 48),
           ),
           const EmptyBox(width: 8),
           Expanded(

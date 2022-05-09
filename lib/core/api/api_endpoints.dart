@@ -60,8 +60,14 @@ class DeleteBoardEndpoint extends ApiEndpoint {
   int statusCode = 200;
 }
 
-class GetTasksEndpoint extends ApiEndpoint {
+class GetTaskEndpoint extends ApiEndpoint {
   String url = '/tasks/';
+  RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
+class GetTasksEndpoint extends ApiEndpoint {
+  String url = '/tasks/my';
   RequestMethod method = RequestMethod.get;
   int statusCode = 200;
 }
@@ -84,8 +90,32 @@ class EditTaskEndpoint extends ApiEndpoint {
   int statusCode = 200;
 }
 
-class GetCompanyUsers extends ApiEndpoint {
+class GetCompanyUsersEndpoint extends ApiEndpoint {
   String url = '/users/all';
   RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
+class GetSessionsEndpoint extends ApiEndpoint {
+  String url = '/sessions';
+  RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
+class SetSessionEndpoint extends ApiEndpoint {
+  String url = '/sessions';
+  RequestMethod method = RequestMethod.post;
+  int statusCode = 200;
+}
+
+class GetProfileEndpoint extends ApiEndpoint {
+  String url = '/users/';
+  RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
+class EditProfileEndpoint extends ApiEndpoint {
+  String url = '/users/';
+  RequestMethod method = RequestMethod.put;
   int statusCode = 200;
 }

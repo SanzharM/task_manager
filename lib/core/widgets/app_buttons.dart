@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 
 class AppBackButton extends StatelessWidget {
   final Function? onBack;
@@ -26,12 +29,18 @@ class AppButton extends StatelessWidget {
   final void Function() onTap;
   final Color? color;
   final bool isLoading;
+  final bool needBorder;
+  final double? borderWidth;
+  final Color? borderColor;
 
   const AppButton({
     required this.title,
     required this.onTap,
     this.color,
     this.isLoading = false,
+    this.needBorder = false,
+    this.borderColor,
+    this.borderWidth,
   });
 
   @override
@@ -41,7 +50,13 @@ class AppButton extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 24.0),
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: AppConstraints.borderRadius,
+        border: needBorder
+            ? Border.all(
+                color: borderColor ?? (Application.isDarkMode(context) ? AppColors.metal : AppColors.vengence),
+                width: borderWidth ?? 0.5,
+              )
+            : null,
         color: color,
       ),
       child: CupertinoButton(

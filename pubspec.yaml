@@ -38,6 +38,12 @@ dependencies:
   avatar_glow: ^2.0.2
 
   share_extend: ^2.0.0
+  # Location
+  location: ^4.3.0
+  geocoding: ^2.0.4
+
+  shimmer: ^2.0.0
+
   
 dev_dependencies:
   flutter_test:

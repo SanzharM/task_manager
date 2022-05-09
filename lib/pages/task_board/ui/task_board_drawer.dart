@@ -4,6 +4,7 @@ import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TaskBoardDrawer extends StatelessWidget {
   const TaskBoardDrawer({
@@ -33,7 +34,7 @@ class TaskBoardDrawer extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Your Boards',
+            'your_boards'.tr(),
             textAlign: TextAlign.center,
             maxLines: 1,
             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -56,7 +57,7 @@ class TaskBoardDrawer extends StatelessWidget {
                         ),
                         const EmptyBox(height: 8.0),
                         OneLineCell(
-                          title: boards[i]?.name ?? 'Board #$i',
+                          title: boards[i]?.getTitle() ?? 'Board #${i + 1}',
                           onTap: () => onChangeBoard(i),
                           icon: currentBoard == i
                               ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
@@ -66,7 +67,7 @@ class TaskBoardDrawer extends StatelessWidget {
                     );
                   }
                   return OneLineCell(
-                    title: boards[i]?.name ?? 'Board #$i',
+                    title: boards[i]?.getTitle() ?? 'Board #${i + 1}',
                     onTap: () => onChangeBoard(i),
                     icon: currentBoard == i
                         ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)

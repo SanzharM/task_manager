@@ -6,15 +6,26 @@ class AppCard extends StatelessWidget {
   final Widget child;
   final Gradient? gradient;
   final Color? color;
-  const AppCard({required this.child, this.color, this.gradient});
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final BoxConstraints? constraints;
+
+  const AppCard({
+    required this.child,
+    this.color,
+    this.gradient,
+    this.padding,
+    this.margin,
+    this.constraints,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(minHeight: 24),
+      constraints: constraints ?? const BoxConstraints(minHeight: 24),
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(8.0),
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: padding ?? const EdgeInsets.all(8.0),
+      margin: margin ?? const EdgeInsets.symmetric(horizontal: 16.0),
       child: child,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),

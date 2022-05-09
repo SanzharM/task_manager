@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/pages/task_page/task_page.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -25,14 +26,14 @@ class TaskCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TaskPage(task))),
       child: Container(
-        constraints: BoxConstraints(minHeight: 60, minWidth: 90),
+        constraints: const BoxConstraints(minHeight: 60, minWidth: 90),
         height: MediaQuery.of(context).size.height * 128 / 1000,
         width: MediaQuery.of(context).size.width - 16.0,
         margin: const EdgeInsets.all(8.0),
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
+          borderRadius: AppConstraints.borderRadius,
+          color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -70,6 +71,7 @@ class TaskCards extends StatelessWidget {
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
+      shrinkWrap: true,
       itemCount: tasks.length,
       itemBuilder: (context, index) {
         return TaskCard(tasks[index]);

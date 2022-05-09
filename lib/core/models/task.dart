@@ -1,4 +1,5 @@
 import 'package:task_manager/core/models/user.dart';
+import 'package:task_manager/core/utils.dart';
 
 enum TaskStatus { to_do, in_work, test, done, undetermined }
 
@@ -30,7 +31,18 @@ class Task {
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    return Task();
+    return Task(
+      pk: int.tryParse('${json['id']}'),
+      title: json['title'],
+      description: json['description'],
+      status: Utils.getStatusFromString('${json['status'] ?? ''}'),
+      deadline: Utils.parseDate('${json['deadline']}'),
+      boardId: int.tryParse('${json['board_id']}'),
+      performer: User(id: int.tryParse('${json['performer_id']}')),
+      creator: User(id: int.tryParse('${json['creator_id']}')),
+      createdAt: Utils.parseDate('${json['created_at'] ?? ''}'),
+      lastUpdatedAt: Utils.parseDate('${json['updated_at']}'),
+    );
   }
 
   Task copyWith({

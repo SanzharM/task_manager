@@ -1,5 +1,5 @@
 import 'package:task_manager/core/models/organization.dart';
-import 'package:intl/intl.dart';
+import 'package:task_manager/core/utils.dart';
 
 class User {
   int? id;
@@ -12,7 +12,6 @@ class User {
   DateTime? lastVisitTime;
   String? imageUrl;
   String? position;
-  String? cityName;
   Organization? organization;
 
   User({
@@ -26,29 +25,21 @@ class User {
     this.lastVisitTime,
     this.imageUrl,
     this.position,
-    this.cityName,
     this.organization,
   });
 
-  static DateTime? parseDate(String? date) {
-    if (date == null || date.isEmpty) return null;
-    try {
-      return DateFormat('yyyy-MM-ddTHH:mm:ss').parse(date);
-    } catch (e) {
-      return null;
-    }
-  }
+  String get fullName => (this.name ?? '') + (this.surname ?? '');
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: int.tryParse('${json['id']}'),
-      phone: '${json['phone']}',
+      phone: '${json['phone'] ?? ''}',
       role: json['role'],
       position: json['position'],
       name: json['name'],
       imageUrl: json['image_url'],
-      registrationTime: parseDate('${json['created_at']}'),
-      lastVisitTime: parseDate('${json['updated_at']}'),
+      registrationTime: Utils.parseDate('${json['created_at']}'),
+      lastVisitTime: Utils.parseDate('${json['updated_at']}'),
     );
   }
 
@@ -63,7 +54,6 @@ class User {
     DateTime? lastVisitTime,
     String? imageUrl,
     String? position,
-    String? cityName,
     Organization? organization,
   }) {
     return User(
@@ -77,8 +67,24 @@ class User {
       lastVisitTime: lastVisitTime ?? this.lastVisitTime,
       imageUrl: imageUrl ?? this.imageUrl,
       position: position ?? this.position,
-      cityName: cityName ?? this.cityName,
       organization: organization ?? this.organization,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final now = DateTime.now();
+    return {
+      "id": this.id,
+      "phone": this.phone,
+      "role": this.role,
+      "position": this.position,
+      "name": this.name,
+      "image_url": this.imageUrl,
+      "company_id": this.organization?.id,
+      "total_money_in_kzt": null,
+      "last_visit_time": now.toIso8601String(),
+      "updated_at": now.toIso8601String(),
+      "created_at": null,
+    };
   }
 }
