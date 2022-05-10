@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/pages/task_board/bloc/task_board_bloc.dart';
@@ -87,7 +90,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 CupertinoButton(
                   padding: EdgeInsets.zero,
                   child: const Icon(CupertinoIcons.settings),
-                  onPressed: _onRefresh,
+                  onPressed: _showBoardSettings,
                 ),
                 const EmptyBox(width: 4.0),
               ]
@@ -134,11 +137,14 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
             setState(() {});
           },
-          child: TaskBoardBuilder(
-            key: _boardBuilderKey,
-            onCreateBoard: _toCreateBoardPage,
-            onRefresh: _onRefresh,
-            board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
+          child: CustomShimmer(
+            enabled: isLoading,
+            child: TaskBoardBuilder(
+              key: _boardBuilderKey,
+              onCreateBoard: _toCreateBoardPage,
+              onRefresh: _onRefresh,
+              board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
+            ),
           ),
         ),
       ),
@@ -168,4 +174,35 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     _createBoardKey.currentState?.setIsLoading(true);
     if (!isLoading) return _bloc.createBoard(name, description);
   }
+
+  void _showBoardSettings() => showModalBottomSheet(
+        context: context,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadiusTLR),
+        builder: (context) => SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Order by', textAlign: TextAlign.start),
+              const EmptyBox(height: 8.0),
+              OneLineCell(title: 'Time', onTap: () => null),
+              const EmptyBox(height: 16.0),
+              OneLineCell(title: 'Status', onTap: () => null),
+              const EmptyBox(height: 16.0),
+              Text('Actions', textAlign: TextAlign.start),
+              const EmptyBox(height: 8.0),
+              OneLineCell(title: 'delete board', onTap: () => null),
+              const EmptyBox(height: 24.0),
+              OneLineCell(
+                title: 'done',
+                centerTitle: true,
+                needIcon: false,
+                onTap: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      );
 }

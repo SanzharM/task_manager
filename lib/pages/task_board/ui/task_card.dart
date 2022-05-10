@@ -12,7 +12,7 @@ class TaskCard extends StatelessWidget {
 
   static Widget getCardContainer(BuildContext context, {double opacity = 0.5}) {
     return Container(
-      constraints: BoxConstraints(minHeight: 60, minWidth: 90),
+      constraints: const BoxConstraints(minHeight: 60, minWidth: 90),
       height: MediaQuery.of(context).size.height * 128 / 1000,
       width: MediaQuery.of(context).size.width - 16.0,
       margin: const EdgeInsets.all(8.0),
@@ -56,16 +56,15 @@ class TaskCard extends StatelessWidget {
 }
 
 class TaskCards extends StatelessWidget {
-  final List<Task> tasks;
-  const TaskCards({required this.tasks});
+  const TaskCards({Key? key, required this.tasks}) : super(key: key);
 
-  static const _style = TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+  final List<Task> tasks;
 
   @override
   Widget build(BuildContext context) {
     if (tasks.isEmpty)
-      return const Center(
-        child: Text('Задач в этой секции нет', style: _style),
+      return Center(
+        child: Text('no_tasks_in_section'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
       );
 
     return ListView.builder(
@@ -73,9 +72,7 @@ class TaskCards extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       shrinkWrap: true,
       itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        return TaskCard(tasks[index]);
-      },
+      itemBuilder: (context, index) => TaskCard(tasks[index]),
     );
   }
 }

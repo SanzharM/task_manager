@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/ui/task_card.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+enum SortOrder { time, status }
 
 class TaskBoardBuilder extends StatefulWidget {
   const TaskBoardBuilder({
@@ -26,6 +29,7 @@ class TaskBoardBuilder extends StatefulWidget {
 
 class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerProviderStateMixin {
   late TabController _boardTabController;
+  SortOrder order = SortOrder.time;
 
   void animateTabTo(int index) =>
       _boardTabController.animateTo(index, duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
@@ -33,7 +37,8 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    _boardTabController = TabController(length: 5, vsync: this);
+    Application.getBoardSortOrder().then((value) => setState(() => order = value));
+    _boardTabController = TabController(length: order == SortOrder.status ? TaskStatus.values.length : 5, vsync: this);
   }
 
   @override
@@ -61,6 +66,35 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
             ),
           ],
         ),
+      );
+    }
+
+    print(order);
+
+    if (order == SortOrder.status) {
+      return Column(
+        children: [
+          TabBar(
+            physics: const BouncingScrollPhysics(),
+            controller: _boardTabController,
+            isScrollable: true,
+            tabs: [
+              for (int i = 0; i < _boardTabController.length; i++)
+                Tab(
+                  text: TaskStatus.values[i].toString().split('.').last,
+                ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _boardTabController,
+              physics: const BouncingScrollPhysics(),
+              children: [
+                for (int i = 0; i < TaskStatus.values.length; i++) TaskCards(tasks: widget.board!.tasks!),
+              ],
+            ),
+          ),
+        ],
       );
     }
 
