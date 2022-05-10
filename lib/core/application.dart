@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_theme.dart';
 import 'package:task_manager/core/supporting/app_router.dart';
+import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 
 class Application {
   static Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -17,6 +18,7 @@ class Application {
   static const _pinKey = 'TaskManagerPinToken';
   static const _phoneKey = 'TaskManagerPhoneToken';
   static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
+  static const _boardSortOrder = 'TaskManagerBoardSortOrderToken';
 
   // static String getBaseUrl() => 'http://192.168.1.103:8000';
   static String getBaseUrl() => 'https://app-bota.org';
@@ -108,6 +110,17 @@ class Application {
 
   static Future<String?> getCompanyCode() async {
     return await _storage.read(key: _companyCodeKey);
+  }
+
+  static Future<void> setBoardSortOrder(SortOrder order) async {
+    (await _prefs).setString(_boardSortOrder, order.toString().split('.').last);
+    return;
+  }
+
+  static Future<SortOrder> getBoardSortOrder() async {
+    final value = (await _prefs).getString(_boardSortOrder);
+    if (value == 'status') return SortOrder.status;
+    return SortOrder.time;
   }
 
   static Future<void> clearStorage({BuildContext? context}) async {

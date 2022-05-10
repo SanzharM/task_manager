@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
 
