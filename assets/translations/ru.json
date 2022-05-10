@@ -90,5 +90,6 @@
   "your_boards": "Ваши доски",
   "unable_to_find_board_id": "Ошибка. Не удалось определить кассу",
   "geolocation_denied_warning_message": "Вы ограничили доступ к своей геолокации. Мы не сможем определять ваше местоположение во время сканирования QR-кодов",  
-  "choose_performer": "Выберите исполнителя"
+  "choose_performer": "Выберите исполнителя",
+  "no_tasks_in_section": "Section is empty"
 }
