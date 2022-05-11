@@ -134,4 +134,9 @@ class Utils {
         return TaskStatus.undetermined;
     }
   }
+
+  static String getTimerNumber(int number) {
+    if (number >= 0 && number <= 9) return '0$number';
+    return number.toString();
+  }
 }

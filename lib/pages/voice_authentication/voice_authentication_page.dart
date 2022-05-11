@@ -1,11 +1,22 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_session/audio_session.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
+import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/supporting/app_router.dart';
+import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/widgets/app_buttons.dart';
+import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/voice_authentication/bloc/voice_authentication_bloc.dart';
 
 typedef _Fn = void Function();
@@ -29,6 +40,32 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> {
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
+
+  Timer? _timer;
+  int _minutes = 0;
+  int _timerSeconds = 0;
+
+  bool isLoading = false;
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerSeconds >= 0 && _timerSeconds <= 59) {
+        setState(() => _timerSeconds++);
+      } else if (_timerSeconds == 60) {
+        setState(() {
+          _minutes++;
+          _timerSeconds = 0;
+        });
+      }
+    });
+  }
+
+  void _endTimer() => setState(() {
+        _timer?.cancel();
+        _timer = null;
+        _minutes = 0;
+        _timerSeconds = 0;
+      });
 
   @override
   void initState() {
@@ -55,6 +92,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> {
     _mRecorder = null;
 
     _bloc.close();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -96,6 +134,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> {
   // ----------------------  Here is the code for recording and playback -------
 
   void record() {
+    _startTimer();
     _mRecorder!
         .startRecorder(
       toFile: _mPath,
@@ -115,13 +154,10 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> {
         } catch (e) {
           print('$e');
         }
-      } else {
-        print('url is null or empty');
       }
-      setState(() {
-        _mplaybackReady = true;
-      });
+      setState(() => _mplaybackReady = true);
     });
+    _endTimer();
   }
 
   void play() {
@@ -163,65 +199,105 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
-      appBar: AppBar(
-        title: const Text('Simple Recorder'),
-      ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(3),
-            padding: const EdgeInsets.all(3),
-            height: 80,
-            width: double.infinity,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color(0xFFFAF0E6),
-              border: Border.all(
-                color: Colors.indigo,
-                width: 3,
-              ),
+      appBar: AppBar(leading: AppBackButton()),
+      body: BlocListener(
+        bloc: _bloc,
+        listener: (context, state) {
+          isLoading = state is AuthenticationProcessing;
+
+          if (state is ErrorState) {
+            AlertController.showSnackbar(context: context, message: state.error);
+          }
+
+          if (state is VoiceAuthenticationSucceeded) {
+            AppRouter.toMainPage(context);
+            AlertController.showSnackbar(context: context, message: state.message);
+          }
+
+          setState(() {});
+        },
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(16.0),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.end,
+                //       children: [
+                //         Text('Recording controller', style: const TextStyle(fontSize: 18.0)),
+                //         const EmptyBox(height: 12.0),
+                //         CupertinoButton(
+                //           padding: EdgeInsets.zero,
+                //           child: _mPlayer!.isPlaying
+                //               ? const Icon(CupertinoIcons.pause_circle, size: 32.0)
+                //               : const Icon(CupertinoIcons.play_circle, size: 32.0),
+                //           onPressed: getPlaybackFn(),
+                //         ),
+                //         Text(_mPlayer!.isPlaying ? 'Playback in progress' : 'Player is stopped'),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                Spacer(),
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Application.isDarkMode(context) ? AppColors.lightGrey : AppColors.darkGrey,
+                      border: Border.all(color: AppColors.lightAction, width: 0.5),
+                    ),
+                    child: AvatarGlow(
+                      endRadius: (Theme.of(context).iconTheme.size ?? 32.0) + 32.0,
+                      animate: _mRecorder!.isRecording,
+                      glowColor: AppColors.lightAction,
+                      repeatPauseDuration: Duration.zero,
+                      duration: const Duration(milliseconds: 1400),
+                      child: Text(
+                        '${Utils.getTimerNumber(_minutes)}:${Utils.getTimerNumber(_timerSeconds)}',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                          color: Application.isDarkMode(context) ? AppColors.darkGrey : AppColors.lightGrey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Center(
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: _mRecorder!.isRecording
+                        ? const Icon(CupertinoIcons.mic_off, size: 32.0)
+                        : const Icon(CupertinoIcons.mic_fill, size: 32.0),
+                    onPressed: getRecorderFn(),
+                  ),
+                ),
+                const EmptyBox(height: 32.0),
+              ],
             ),
-            child: Row(children: [
-              ElevatedButton(
-                onPressed: getRecorderFn(),
-                //color: Colors.white,
-                //disabledColor: Colors.grey,
-                child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
+            if (isLoading)
+              AnimatedOpacity(
+                opacity: isLoading ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 250),
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: double.maxFinite,
+                  alignment: Alignment.center,
+                  color: AppColors.metal.withOpacity(0.75),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 32, maxWidth: 32),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(_mRecorder!.isRecording ? 'Recording in progress' : 'Recorder is stopped'),
-            ]),
-          ),
-          Container(
-            margin: const EdgeInsets.all(3),
-            padding: const EdgeInsets.all(3),
-            height: 80,
-            width: double.infinity,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color(0xFFFAF0E6),
-              border: Border.all(
-                color: Colors.indigo,
-                width: 3,
-              ),
-            ),
-            child: Row(children: [
-              ElevatedButton(
-                onPressed: getPlaybackFn(),
-                //color: Colors.white,
-                //disabledColor: Colors.grey,
-                child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(_mPlayer!.isPlaying ? 'Playback in progress' : 'Player is stopped'),
-            ]),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
