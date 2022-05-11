@@ -97,5 +97,14 @@
   "invalid_company_code": "Invalid company code",
   "no_internet_connection": "No internet connection",
   "timeout_exception": "Connection timed out",
-  "socket_exception": "Connection error"
+  "socket_exception": "Connection error",
+  "invalid_email": "Invalid email address",
+  "status_to_do": "To Do",
+  "status_in_process": "In process",
+  "status_done": "Done",
+  "status_undetermined": "Undetermined",
+  "month": "Month",
+  "week": "Week",
+  "past_tasks": "Past tasks",
+  "out_of_deadline": "Out of deadline"
 }

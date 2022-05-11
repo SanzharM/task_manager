@@ -1,17 +1,20 @@
 import 'package:task_manager/core/models/task.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/models/user.dart';
 
 class Board {
   final int? pk;
   final String? name;
   final String? description;
   final List<Task>? tasks;
+  final List<User>? users;
 
   Board({
     this.pk,
     this.name,
     this.description,
     this.tasks,
+    this.users,
   });
 
   String getTitle() {
@@ -25,6 +28,7 @@ class Board {
       pk: int.tryParse('${json['id']}'),
       name: json['name'],
       description: json['description'],
+      users: json['users'] == null ? null : (json['users'] as List).map((e) => User.fromJson(e)).toList(),
       tasks: json['tasks'] == null ? null : (json['tasks'] as List).map((e) => Task.fromJson(e)).toList(),
     );
   }

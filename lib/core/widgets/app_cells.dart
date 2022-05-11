@@ -37,6 +37,16 @@ class InfoCell extends StatelessWidget {
     return InfoCell(title: value, value: title);
   }
 
+  factory InfoCell.task({required String title, required String? value, void Function()? onTap}) {
+    return InfoCell(
+      title: title,
+      value: value,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      padding: EdgeInsets.zero,
+      onTap: onTap ?? () {},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _titleStyle = TextStyle(fontSize: titleSize, fontWeight: titleWeight);

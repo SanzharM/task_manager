@@ -97,5 +97,14 @@
   "invalid_company_code": "Некорректный код компании",
   "no_internet_connection": "Нет подключения к интернету",
   "timeout_exception": "Превышено время ожидания ответа",
-  "socket_exception": "Ошибка соединения"
+  "socket_exception": "Ошибка соединения",
+  "invalid_email": "Некорректный электронный адрес",
+  "status_to_do": "К выполнению",
+  "status_in_process": "В процессе",
+  "status_done": "Готово",
+  "status_undetermined": "Неопределенный",
+  "month": "Месяц",
+  "week": "Неделя",
+  "past_tasks": "Прошедшие",
+  "out_of_deadline": "Без даты окончания"
 }

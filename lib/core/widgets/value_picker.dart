@@ -61,7 +61,8 @@ class ValuePicker {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
-                          child: ArrowedCell(
+                          child: OneLineCell(
+                            icon: const Icon(CupertinoIcons.forward),
                             title: values[index],
                             onTap: () {
                               if (onSelect != null) onSelect!(keys?[index] ?? values[index]);

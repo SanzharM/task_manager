@@ -4,12 +4,15 @@ import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/task.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/task_board/ui/task_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 enum SortOrder { time, status }
+
+enum TimeSort { week, month, past_tasks, out_of_deadline }
 
 class TaskBoardBuilder extends StatefulWidget {
   const TaskBoardBuilder({
@@ -31,14 +34,26 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
   late TabController _boardTabController;
   SortOrder order = SortOrder.time;
 
+  List<dynamic> tabList = [];
+
   void animateTabTo(int index) =>
       _boardTabController.animateTo(index, duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
+
+  Future<void> getSortOrder() async {
+    final value = await Application.getBoardSortOrder();
+    if (value == SortOrder.status) {
+      tabList = TaskStatus.values;
+    }
+    if (value == SortOrder.time) {
+      tabList = TimeSort.values;
+    }
+    setState(() => order = value);
+  }
 
   @override
   void initState() {
     super.initState();
-    Application.getBoardSortOrder().then((value) => setState(() => order = value));
-    _boardTabController = TabController(length: order == SortOrder.status ? TaskStatus.values.length : 5, vsync: this);
+    getSortOrder().then((value) => _boardTabController = TabController(vsync: this, length: tabList.length));
   }
 
   @override
@@ -69,7 +84,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
       );
     }
 
-    print(order);
+    print('\n\nSORT ORDER: $order');
 
     if (order == SortOrder.status) {
       return Column(
@@ -78,11 +93,9 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
             physics: const BouncingScrollPhysics(),
             controller: _boardTabController,
             isScrollable: true,
+            indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
             tabs: [
-              for (int i = 0; i < _boardTabController.length; i++)
-                Tab(
-                  text: TaskStatus.values[i].toString().split('.').last,
-                ),
+              for (var status in TaskStatus.values) Tab(text: Utils.taskStatusToString(status)),
             ],
           ),
           Expanded(
@@ -90,7 +103,13 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
               controller: _boardTabController,
               physics: const BouncingScrollPhysics(),
               children: [
-                for (int i = 0; i < TaskStatus.values.length; i++) TaskCards(tasks: widget.board!.tasks!),
+                for (var status in TaskStatus.values)
+                  TaskCards(
+                    tasks: widget.board!.tasks!,
+                    columnStatus: status,
+                    timeSort: TimeSort.month,
+                    orderByStatus: true,
+                  ),
               ],
             ),
           ),
@@ -104,8 +123,9 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
           physics: const BouncingScrollPhysics(),
           controller: _boardTabController,
           isScrollable: true,
+          indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
           tabs: [
-            for (int i = 0; i < 5; i++) Tab(text: getTaskColumnTitle(i)),
+            for (var time in TimeSort.values) Tab(text: Utils.getStringTimeSort(time)),
           ],
         ),
         Expanded(
@@ -113,30 +133,17 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
             controller: _boardTabController,
             physics: const BouncingScrollPhysics(),
             children: [
-              TaskCards(tasks: widget.board!.tasks!),
-              TaskCards(tasks: widget.board!.tasks!),
-              TaskCards(tasks: widget.board!.tasks!),
-              TaskCards(tasks: widget.board!.tasks!),
-              TaskCards(tasks: widget.board!.tasks!),
+              for (var time in TimeSort.values)
+                TaskCards(
+                  tasks: widget.board!.tasks!,
+                  columnStatus: TaskStatus.undetermined,
+                  timeSort: time,
+                  orderByStatus: false,
+                ),
             ],
           ),
         ),
       ],
     );
-  }
-
-  String getTaskColumnTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'past_tasks'.tr();
-      case 1:
-        return 'week'.tr();
-      case 2:
-        return 'month'.tr();
-      case 3:
-        return 'month+'.tr();
-      default:
-        return 'out_of_deadline'.tr();
-    }
   }
 }

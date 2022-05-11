@@ -13,6 +13,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   validateTask(Task? task) => add(ValidateTask(task));
   createTask(Task task) => add(CreateTask(task));
 
+  editTask(Task task) => add(EditTask(task));
+
   TaskBloc() : super(TaskInitial()) {
     on<GetTask>((event, emit) async {
       emit(TaskInitial());
@@ -68,6 +70,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       if (response.success == true) {
         return emit(TaskCreated());
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<EditTask>((event, emit) async {
+      emit(TaskInitial());
+      emit(Loading());
+
+      final response = await ApiClient.editTask(event.task);
+
+      if (response.success == true) {
+        return emit(TaskEdited(event.task));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

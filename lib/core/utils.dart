@@ -2,12 +2,13 @@ import 'package:task_manager/core/api/api_endpoints.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 
 class Utils {
   static String phoneMask = '+7 (###) ### ####';
   static String dateToString(DateTime? datetime) {
     if (datetime == null) return '';
-    return '${datetime.day}-${datetime.month}-${datetime.year} ${datetime.hour}:${datetime.minute}:${datetime.second}';
+    return DateFormat('yyyy-MM-dd').format(datetime);
   }
 
   static String toDateString(DateTime? date, {bool includeMonthTitles = false}) {
@@ -49,19 +50,16 @@ class Utils {
     }
   }
 
-  static String? taskStatusToString(TaskStatus? status) {
-    if (status == null) return null;
+  static String taskStatusToString(TaskStatus? status) {
     switch (status) {
       case TaskStatus.to_do:
-        return 'К выполнению';
-      case TaskStatus.in_work:
-        return 'В работе';
-      case TaskStatus.test:
-        return 'На проверке';
+        return 'status_to_do'.tr();
+      case TaskStatus.in_process:
+        return 'status_in_process'.tr();
       case TaskStatus.done:
-        return 'Выполнен';
+        return 'status_done'.tr();
       case TaskStatus.undetermined:
-        return 'Неизвестен';
+        return 'status_undetermined'.tr();
       default:
         return '';
     }
@@ -122,14 +120,14 @@ class Utils {
 
   static TaskStatus getStatusFromString(String status) {
     switch (status.toLowerCase()) {
-      case 'todo':
+      case 'to_do':
         return TaskStatus.to_do;
-      case 'in_work':
-        return TaskStatus.in_work;
-      case 'test':
-        return TaskStatus.test;
+      case 'in_process':
+        return TaskStatus.in_process;
       case 'done':
         return TaskStatus.done;
+      case 'undetermined':
+        return TaskStatus.undetermined;
       default:
         return TaskStatus.undetermined;
     }
@@ -138,5 +136,20 @@ class Utils {
   static String getTimerNumber(int number) {
     if (number >= 0 && number <= 9) return '0$number';
     return number.toString();
+  }
+
+  static String getStringTimeSort(TimeSort? time) {
+    switch (time) {
+      case TimeSort.week:
+        return 'week'.tr();
+      case TimeSort.month:
+        return 'month'.tr();
+      case TimeSort.past_tasks:
+        return 'past_tasks'.tr();
+      case TimeSort.out_of_deadline:
+        return 'out_of_deadline'.tr();
+      default:
+        return '';
+    }
   }
 }

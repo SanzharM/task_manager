@@ -3,6 +3,8 @@ import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/task.dart';
+import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_page/task_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -56,9 +58,18 @@ class TaskCard extends StatelessWidget {
 }
 
 class TaskCards extends StatelessWidget {
-  const TaskCards({Key? key, required this.tasks}) : super(key: key);
+  const TaskCards({
+    Key? key,
+    required this.tasks,
+    required this.columnStatus,
+    required this.timeSort,
+    this.orderByStatus = true,
+  }) : super(key: key);
 
   final List<Task> tasks;
+  final TaskStatus columnStatus;
+  final TimeSort timeSort;
+  final bool orderByStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +83,16 @@ class TaskCards extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       shrinkWrap: true,
       itemCount: tasks.length,
-      itemBuilder: (context, index) => TaskCard(tasks[index]),
+      itemBuilder: (context, index) {
+        if (orderByStatus) {
+          if (tasks[index].status != columnStatus) return const EmptyBox();
+          return TaskCard(tasks[index]);
+        }
+        // if (tasks[index].deadline == null) {
+        //   return const EmptyBox();
+        // }
+        return TaskCard(tasks[index]);
+      },
     );
   }
 }

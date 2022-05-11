@@ -25,6 +25,7 @@ class AppTheme {
           bodyColor: AppColors.metal,
           displayColor: AppColors.metal,
         ),
+        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
         iconTheme: IconThemeData(color: AppColors.snow, size: 24),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.snow,

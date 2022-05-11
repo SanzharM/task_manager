@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/user.dart';
@@ -74,7 +76,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                       board: _boards[_currentBoardIndex!],
                       task: null,
                       onBack: () => _bloc.getBoards(), // getBoard(_currentBoardIndex!),
-                      users: _companyUsers,
+                      users: _boards[_currentBoardIndex!].users ?? _companyUsers,
                     )),
                   ),
                 ),
@@ -166,11 +168,14 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     if (!isLoading) return _bloc.createBoard(name, description);
   }
 
-  void _showBoardSettings() => showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadiusTLR),
-        builder: (context) => SingleChildScrollView(
+  void _showBoardSettings() async {
+    SortOrder _sortOrder = await Application.getBoardSortOrder();
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadiusTLR),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -178,13 +183,36 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             children: [
               Text('Order by', textAlign: TextAlign.start),
               const EmptyBox(height: 8.0),
-              OneLineCell(title: 'Time', onTap: () => null),
+              OneLineCell(
+                title: 'Time',
+                icon: _sortOrder == SortOrder.time
+                    ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                    : const Icon(CupertinoIcons.circle),
+                onTap: () async {
+                  if (_sortOrder == SortOrder.time) return;
+                  await Application.setBoardSortOrder(SortOrder.time);
+                  setModalState(() => _sortOrder = SortOrder.time);
+                },
+              ),
               const EmptyBox(height: 16.0),
-              OneLineCell(title: 'Status', onTap: () => null),
+              OneLineCell(
+                title: 'Status',
+                icon: _sortOrder == SortOrder.status
+                    ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                    : const Icon(CupertinoIcons.circle),
+                onTap: () async {
+                  if (await Application.getBoardSortOrder() == SortOrder.status) return;
+                  await Application.setBoardSortOrder(SortOrder.status);
+                  setModalState(() => _sortOrder = SortOrder.status);
+                },
+              ),
               const EmptyBox(height: 16.0),
               Text('Actions', textAlign: TextAlign.start),
               const EmptyBox(height: 8.0),
-              OneLineCell(title: 'delete board', onTap: () => null),
+              OneLineCell(
+                title: 'delete board',
+                onTap: () => _bloc.deleteBoard(_boards[_currentBoardIndex!]),
+              ),
               const EmptyBox(height: 24.0),
               OneLineCell(
                 title: 'done',
@@ -195,5 +223,9 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             ],
           ),
         ),
-      );
+      ),
+    );
+    _boardBuilderKey.currentState?.getSortOrder();
+    setState(() {});
+  }
 }

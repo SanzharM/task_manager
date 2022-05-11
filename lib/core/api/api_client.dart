@@ -200,6 +200,18 @@ class ApiClient {
       return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
+
+  static Future<BooleanResponse> editTask(Task task) async {
+    final response = await ApiBase.request(
+      endpoint: EditTaskEndpoint(),
+      params: task.toJson(),
+    );
+
+    return BooleanResponse(
+      success: response.isSuccess,
+      error: await compute(parseError, response.bodyBytes),
+    );
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {

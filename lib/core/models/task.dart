@@ -1,7 +1,7 @@
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 
-enum TaskStatus { to_do, in_work, test, done, undetermined }
+enum TaskStatus { to_do, in_process, done, undetermined }
 
 class Task {
   int? pk;
@@ -38,8 +38,8 @@ class Task {
       status: Utils.getStatusFromString('${json['status'] ?? ''}'),
       deadline: Utils.parseDate('${json['deadline']}'),
       boardId: int.tryParse('${json['board_id']}'),
-      performer: User(id: int.tryParse('${json['performer_id']}')),
-      creator: User(id: int.tryParse('${json['creator_id']}')),
+      performer: json['performer'] == null ? null : User.fromJson(json['performer']),
+      creator: json['creator'] == null ? null : User.fromJson(json['creator']),
       createdAt: Utils.parseDate('${json['created_at'] ?? ''}'),
       lastUpdatedAt: Utils.parseDate('${json['updated_at']}'),
     );
@@ -58,6 +58,7 @@ class Task {
     User? performer,
   }) {
     return Task(
+      pk: this.pk,
       title: title ?? this.title,
       description: description ?? this.description,
       content: content ?? this.content,
@@ -77,6 +78,22 @@ class Task {
         'description': this.description,
         'deadline': this.deadline?.toIso8601String(),
         'board_id': this.boardId,
-        'status': 'TODO',
+        'status': this.status?.toString().split('.').last,
+        'creator_id': this.creator?.id,
+        'performer_id': this.performer?.id,
       };
+
+  bool didChanges(Task comparingTask) {
+    if (this.performer?.id != comparingTask.performer?.id) return true;
+
+    if (this.creator?.id != comparingTask.creator?.id) return true;
+
+    if (this.status != comparingTask.status) return true;
+
+    if (this.deadline != comparingTask.deadline) return true;
+
+    if (this.description != comparingTask.description) return true;
+
+    return false;
+  }
 }

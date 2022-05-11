@@ -62,7 +62,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            _task.title ?? (widget.isEditing ? 'edit'.tr() : 'create'.tr()),
+            widget.isEditing ? _task.title ?? 'edit'.tr() : 'task'.tr(),
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           leading: AppBackButton(),
@@ -70,7 +70,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         body: BlocListener(
           bloc: _bloc,
           listener: (context, state) {
-            print('state is $state');
             isLoading = state is Loading;
 
             if (state is TaskCreated) {
@@ -162,15 +161,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                         FocusScope.of(context).unfocus();
                       }
                       setState(() {});
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
-                        builder: (context) => DatePicker(
-                          onPicked: (date) => _task = _task.copyWith(deadline: date),
-                        ),
-                      );
+                      DatePicker(
+                        onPicked: (date) => _task = _task.copyWith(deadline: date),
+                      ).show(context);
                     },
                   ),
                 ],
@@ -179,18 +172,16 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-          child: AppButton(
-            title: 'create'.tr(),
-            isLoading: isLoading,
-            color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
-            onTap: () {
-              final isValid = _formKey.currentState?.validate() ?? true;
-              if (!isValid || isLoading) return;
-              return _bloc.validateTask(_task);
-            },
-          ),
+        floatingActionButton: AppButton(
+          title: 'create'.tr(),
+          isLoading: isLoading,
+          margin: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+          color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
+          onTap: () {
+            final isValid = _formKey.currentState?.validate() ?? true;
+            if (!isValid || isLoading) return;
+            return _bloc.validateTask(_task);
+          },
         ),
       ),
     );
