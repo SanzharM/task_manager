@@ -30,9 +30,7 @@ class DatePicker extends StatelessWidget {
             ),
             AppButton(
               title: 'done'.tr(),
-              onTap: () {
-                Navigator.of(context).pop();
-              },
+              onTap: () => Navigator.of(context).pop(),
             ),
           ],
         ),

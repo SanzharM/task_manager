@@ -30,6 +30,8 @@ class AppButton extends StatelessWidget {
   final bool needBorder;
   final double? borderWidth;
   final Color? borderColor;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
 
   const AppButton({
     Key? key,
@@ -40,6 +42,8 @@ class AppButton extends StatelessWidget {
     this.needBorder = false,
     this.borderColor,
     this.borderWidth,
+    this.padding,
+    this.margin,
   }) : super(key: key);
 
   @override
@@ -48,7 +52,8 @@ class AppButton extends StatelessWidget {
       key: key,
       width: MediaQuery.of(context).size.width,
       constraints: const BoxConstraints(minHeight: 24.0),
-      padding: EdgeInsets.zero,
+      padding: padding ?? EdgeInsets.zero,
+      margin: margin ?? EdgeInsets.zero,
       decoration: BoxDecoration(
         borderRadius: AppConstraints.borderRadius,
         border: needBorder
