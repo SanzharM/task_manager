@@ -14,30 +14,28 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   verifyCodeCompany(String code) => add(VerifyCompany(code));
 
   LoginBloc() : super(LoginInitial()) {
-    on<GetAuth>(
-      (event, emit) async {
-        if (event.phone == null || event.phone!.length != 11) {
-          emit(ErrorState('invalid_phone_number'.tr()));
-          return emit(EmptyState());
-        }
-        if (event.companyCode == null || event.companyCode!.length != 6) {
-          emit(ErrorState('invalid_code'.tr()));
-          return emit(EmptyState());
-        }
+    on<GetAuth>((event, emit) async {
+      emit(LoginInitial());
+      if (event.phone == null || event.phone!.length != 11) {
+        return emit(ErrorState('invalid_phone_number'.tr()));
+      }
+      if (event.companyCode == null || event.companyCode!.length != 6) {
+        return emit(ErrorState('invalid_code'.tr()));
+      }
 
-        emit(Loading());
-        final response = await ApiClient.getAuth(event.phone!, event.companyCode!);
+      emit(Loading());
+      final response = await ApiClient.getAuth(event.phone!, event.companyCode!);
 
-        if (response.success)
-          emit(PhoneAuthSuccess(event.phone!));
-        else
-          emit(ErrorState(response.error ?? 'login_error'.tr()));
-      },
-    );
+      if (response.success)
+        emit(PhoneAuthSuccess(event.phone!));
+      else
+        emit(ErrorState(response.error ?? 'login_error'.tr()));
+    });
+
     on<VerifySMSCode>((event, emit) async {
+      emit(LoginInitial());
       if ((event.code?.length ?? 0) < 4) {
-        emit(ErrorState('invalid_code'.tr()));
-        return emit(EmptyState());
+        return emit(ErrorState('invalid_code'.tr()));
       }
 
       emit(Loading());
@@ -52,20 +50,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(ErrorState(response.error ?? 'login_error'.tr()));
       }
     });
+
     on<VerifyCompany>((event, emit) async {
-      print('code: ${event.code}');
+      emit(LoginInitial());
       if (event.code.length != 6) {
-        emit(ErrorState('invalid_code'.tr()));
-        return emit(EmptyState());
+        return emit(ErrorState('invalid_code'.tr()));
       }
 
       emit(Loading());
 
-      final verified = await ApiClient.verifyCompanyCode(event.code);
-      if (verified)
-        emit(CodeCompanyVerified(event.code));
+      final response = await ApiClient.verifyCompanyCode(event.code);
+      if (response.success == true)
+        return emit(CodeCompanyVerified(event.code));
       else
-        emit(ErrorState('invalid_company_code'));
+        return emit(ErrorState(response.error ?? 'invalid_company_code'.tr()));
     });
   }
 }

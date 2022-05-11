@@ -9,6 +9,7 @@ import 'package:task_manager/core/application.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'api_response.dart';
 
@@ -41,7 +42,14 @@ class ApiBase {
     Map<String, dynamic>? params,
     Duration? duration,
   }) async {
-    if (!await hasConnection()) return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+    if (!await hasConnection()) {
+      return ApiResponse(
+        body: null,
+        bodyBytes: Uint8List.fromList(jsonEncode({'detail': 'no_internet_connection'.tr()}).codeUnits),
+        isSuccess: false,
+        statusCode: -1,
+      );
+    }
 
     final baseUrl = Application.getBaseUrl();
     final client = http.Client();
@@ -55,9 +63,11 @@ class ApiBase {
           String url = urlWithParams(baseUrl + endpoint.url, urlParams);
           response = await client.get(Uri.parse(url), headers: headers).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
 
         break;
@@ -68,9 +78,11 @@ class ApiBase {
 
           response = await client.post(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
 
         break;
@@ -81,9 +93,11 @@ class ApiBase {
 
           response = await client.put(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
         break;
       case RequestMethod.delete:
@@ -93,9 +107,11 @@ class ApiBase {
 
           response = await client.delete(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
-          return ApiResponse(body: null, bodyBytes: Uint8List(0), isSuccess: false, statusCode: -1);
+          final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
+          return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
         break;
     }
@@ -146,11 +162,12 @@ class ApiBase {
           await http.MultipartFile.fromPath(
             filesKey ?? 'files',
             files[i].path,
-            contentType: MediaType('application', 'x-tar'),
+            contentType: MediaType('audio', 'mp4'),
           ),
         );
       }
     }
+
     final response = await http.Response.fromStream(await request.send());
 
     print('\n-----------------------');

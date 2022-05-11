@@ -20,6 +20,8 @@ dependencies:
   # Local storage
   shared_preferences: ^2.0.7
   flutter_secure_storage: ^5.0.2
+
+  # Auth and permissions
   local_auth: ^1.1.7
   permission_handler: ^8.1.4+2
   
@@ -45,6 +47,7 @@ dependencies:
   package_info_plus: ^1.4.0
   share_extend: ^2.0.0
   shimmer: ^2.0.0
+  another_flushbar: ^1.10.28
 
 
 

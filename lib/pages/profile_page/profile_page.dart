@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/supporting/app_router.dart';
@@ -85,7 +86,9 @@ class ProfilePageState extends State<ProfilePage> {
           print('state is $state');
           isLoading = state is ProfileLoading;
 
-          if (state is ErrorState) {}
+          if (state is ErrorState) {
+            AlertController.showSnackbar(context: context, message: state.error);
+          }
 
           if (state is ProfileLoaded) {
             _user = state.user;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/supporting/app_router.dart';
@@ -50,24 +51,24 @@ class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).hasFocus ? FocusScope.of(context).unfocus() : null,
+      onTap: FocusScope.of(context).hasFocus ? () => FocusScope.of(context).unfocus() : null,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: null,
-        ),
+        appBar: AppBar(automaticallyImplyLeading: false, leading: null),
         body: BlocListener(
           bloc: _bloc,
           listener: (context, state) async {
             isLoading = state is Loading;
+
             if (state is ErrorState) {
-              print('Error state: ${state.error}');
               _shakeKey.currentState?.shake();
+              AlertController.showSnackbar(context: context, message: state.error);
             }
+
             if (state is CodeCompanyVerified) {
               await Application.saveCompanyCode(state.code);
               AppRouter.toLoginPage(context, state.code);
             }
+
             setState(() {});
           },
           child: SingleChildScrollView(
@@ -76,12 +77,12 @@ class _IntroPageState extends State<IntroPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Align(
+                Align(
                   alignment: Alignment.center,
                   child: Text(
-                    'BOTA',
+                    'app_name'.tr(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w700,
                       color: AppColors.lightAction,
@@ -136,7 +137,7 @@ class _IntroPageState extends State<IntroPage> {
                           enablePinAutofill: false,
                           showCursor: false,
                           pinTheme: PinTheme(
-                            activeColor: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.lightBlue,
+                            activeColor: AppColors.lightAction,
                             selectedColor: AppColors.defaultGrey,
                             disabledColor: AppColors.defaultGrey,
                             inactiveColor: AppColors.defaultGrey,

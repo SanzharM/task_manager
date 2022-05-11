@@ -48,20 +48,18 @@ class ApiClient {
     );
 
     if (response.isSuccess)
-      return VoiceAuthenticationResponse(successMessage: 'nice');
+      return VoiceAuthenticationResponse(successMessage: 'Voice authentication proceeded');
     else
-      return VoiceAuthenticationResponse(error: 'Error');
+      return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
   }
 
-  static Future<bool> verifyCompanyCode(String code) async {
+  static Future<BooleanResponse> verifyCompanyCode(String code) async {
     final response = await ApiBase.request(
       endpoint: GetCompanyByCodeEndPoint(),
       urlParams: {'{code}': code},
     );
 
-    print(response.statusCode);
-
-    return response.isSuccess;
+    return BooleanResponse(success: response.isSuccess, error: await compute(parseError, response.bodyBytes));
   }
 
   static Future<BoardsResponse> getBoards() async {

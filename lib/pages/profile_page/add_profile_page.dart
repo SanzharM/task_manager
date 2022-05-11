@@ -80,7 +80,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
             isLoading = state is ProfileLoading;
 
-            if (state is ErrorState) {}
+            if (state is ErrorState) {
+              AlertController.showSnackbar(context: context, message: state.error);
+            }
 
             if (state is ProfileEdited) {
               if (widget.onNext != null) widget.onNext!();

@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
-import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/user.dart';
-import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -110,14 +108,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             }
 
             if (state is ErrorState) {
-              if (Utils.isUnauthorizedStatusCode(state.error)) {
-                AlertController.showSimpleDialog(
-                  context: context,
-                  message: state.error,
-                  barrierDismissible: false,
-                  onPressed: () => Application.clearStorage(context: context),
-                );
-              }
+              AlertController.showSnackbar(context: context, message: state.error);
             }
 
             if (state is BoardsLoaded) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/models/board.dart';
@@ -77,7 +78,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               Navigator.of(context).pop();
             }
 
-            if (state is ErrorState) {}
+            if (state is ErrorState) {
+              AlertController.showSnackbar(context: context, message: state.error);
+            }
 
             setState(() {});
           },

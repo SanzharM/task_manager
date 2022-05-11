@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/utils.dart';
@@ -93,17 +94,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               isLoading = state is Loading;
               if (state is AuthVerifySuccess) _toPinPage();
               if (state is ErrorState) {
-                _scaffoldKey.currentState?.showSnackBar(
-                  SnackBar(
-                    behavior: SnackBarBehavior.fixed,
-                    duration: const Duration(milliseconds: 1400),
-                    content: Container(
-                      color: AppColors.darkGrey,
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(state.error),
-                    ),
-                  ),
-                );
+                AlertController.showSnackbar(context: context, message: state.error);
               }
               if (state is WrongSMS) {
                 _shakeKey.currentState?.shake();

@@ -5,19 +5,17 @@ import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 
 class AppBackButton extends StatelessWidget {
-  final Function? onBack;
-  const AppBackButton({this.onBack});
+  final void Function()? onBack;
+  const AppBackButton({Key? key, this.onBack}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
+      key: key,
       padding: EdgeInsets.zero,
       child: const Icon(CupertinoIcons.back),
       onPressed: () {
-        if (onBack != null) {
-          onBack!();
-          return;
-        }
+        if (onBack != null) return onBack!();
         Navigator.of(context).pop();
       },
     );
@@ -34,6 +32,7 @@ class AppButton extends StatelessWidget {
   final Color? borderColor;
 
   const AppButton({
+    Key? key,
     required this.title,
     required this.onTap,
     this.color,
@@ -41,11 +40,12 @@ class AppButton extends StatelessWidget {
     this.needBorder = false,
     this.borderColor,
     this.borderWidth,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: key,
       width: MediaQuery.of(context).size.width,
       constraints: const BoxConstraints(minHeight: 24.0),
       padding: EdgeInsets.zero,

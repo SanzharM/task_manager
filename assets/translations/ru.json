@@ -91,5 +91,11 @@
   "unable_to_find_board_id": "Ошибка. Не удалось определить кассу",
   "geolocation_denied_warning_message": "Вы ограничили доступ к своей геолокации. Мы не сможем определять ваше местоположение во время сканирования QR-кодов",  
   "choose_performer": "Выберите исполнителя",
-  "no_tasks_in_section": "Section is empty"
+  "no_tasks_in_section": "Нет задач",
+  "authentication": "Аутентификация",
+  "voice_auth": "Аутентификация по голосу",
+  "invalid_company_code": "Некорректный код компании",
+  "no_internet_connection": "Нет подключения к интернету",
+  "timeout_exception": "Превышено время ожидания ответа",
+  "socket_exception": "Ошибка соединения"
 }
