@@ -237,7 +237,7 @@ Future<Map<String, dynamic>?> parseVerifySmsAuth(Uint8List bodyBytes) async {
 Future<List<Board>?> parseBoards(Uint8List bodyBytes) async {
   try {
     final value = convert.json.decode(convert.utf8.decode(bodyBytes));
-    if (value == null || value is! List || value.isEmpty) return null;
+    if (value == null || value is! List) return null;
     return value.map((e) => Board.fromJson(e)).toList();
   } catch (e) {
     return null;

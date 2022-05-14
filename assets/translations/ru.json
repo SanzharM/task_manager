@@ -106,5 +106,11 @@
   "month": "Месяц",
   "week": "Неделя",
   "past_tasks": "Прошедшие",
-  "out_of_deadline": "Без даты окончания"
+  "out_of_deadline": "Без даты окончания",
+  "order_by": "Сортировать по",
+  "order_by_time": "Времени",
+  "order_by_status": "Статусу",
+  "actions": "Действия",
+  "delete_board": "Удалить доску",
+  "board_deleted": "Доска удалена"
 }

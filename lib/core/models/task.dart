@@ -78,7 +78,7 @@ class Task {
         'description': this.description,
         'deadline': this.deadline?.toIso8601String(),
         'board_id': this.boardId,
-        'status': this.status?.toString().split('.').last,
+        'status': (this.status ?? TaskStatus.values.first).toString().split('.').last,
         'creator_id': this.creator?.id,
         'performer_id': this.performer?.id,
       };

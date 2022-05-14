@@ -58,7 +58,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
           leading: AppBackButton(
             onBack: () {
               if (didChanges) {
-                return AlertController.showNativeDialog(
+                AlertController.showNativeDialog(
                   context: context,
                   title: 'do_you_want_to_go_back'.tr(),
                   message: 'you_have_unsaved_changes'.tr(),
@@ -68,6 +68,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   },
                   onNo: () => Navigator.of(context).pop(),
                 );
+                return;
               }
               Navigator.of(context).pop();
             },

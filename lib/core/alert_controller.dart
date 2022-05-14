@@ -7,11 +7,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/widgets/page_routes/transparent_route.dart';
 
 import 'application.dart';
 
 class AlertController {
-  static void showNativeDialog({
+  static Future<void> showNativeDialog({
     required BuildContext context,
     required String title,
     String? message,
@@ -55,7 +56,7 @@ class AlertController {
     );
   }
 
-  static void showSimpleDialog({
+  static Future<void> showSimpleDialog({
     required BuildContext context,
     required String message,
     bool barrierDismissible = true,
@@ -91,7 +92,7 @@ class AlertController {
     );
   }
 
-  static void showSnackbar({required BuildContext context, required String message}) async {
+  static Future<void> showSnackbar({required BuildContext context, required String message}) async {
     if (Utils.isUnauthorizedStatusCode(message)) {
       AlertController.showSimpleDialog(
         context: context,
@@ -118,5 +119,56 @@ class AlertController {
       duration: const Duration(milliseconds: 1600),
       animationDuration: const Duration(milliseconds: 500),
     ).show(context);
+  }
+
+  static Future<void> showResultDialog({
+    required BuildContext context,
+    required String message,
+    bool isSuccess = true,
+    Widget? icon,
+  }) async {
+    Future.delayed(const Duration(milliseconds: 1500), () => Navigator.of(context).pop());
+    Navigator.of(context).push(TransparentRoute(
+      builder: (context) => GestureDetector(
+        onTap: () => Navigator.of(context).pop(),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                borderRadius: AppConstraints.borderRadius,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border.all(width: 0.5, color: Application.isDarkMode(context) ? AppColors.metal : AppColors.defaultGrey),
+              ),
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height * 0.15,
+                maxHeight: MediaQuery.of(context).size.height * 0.87,
+                maxWidth: MediaQuery.of(context).size.width * 0.6,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    child: icon ??
+                        (isSuccess
+                            ? const Icon(CupertinoIcons.check_mark_circled, size: 64, color: AppColors.success)
+                            : const Icon(CupertinoIcons.delete_simple, size: 64, color: AppColors.switchOffLight)),
+                    padding: const EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.only(bottom: 16.0),
+                    decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: AppConstraints.borderRadius),
+                  ),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18.0),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
   }
 }

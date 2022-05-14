@@ -106,5 +106,11 @@
   "month": "Month",
   "week": "Week",
   "past_tasks": "Past tasks",
-  "out_of_deadline": "Out of deadline"
+  "out_of_deadline": "Out of deadline",
+  "order_by": "Order by",
+  "order_by_time": "Time",
+  "order_by_status": "Status",
+  "actions": "Actions",
+  "delete_board": "Delete board",
+  "board_deleted": "Board deleted"
 }

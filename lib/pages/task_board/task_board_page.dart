@@ -16,6 +16,7 @@ import 'package:task_manager/pages/task_board/ui/create_board_page.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_drawer.dart';
 import 'package:task_manager/pages/task_page/create_task_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TaskBoard extends StatefulWidget {
   const TaskBoard({Key? key}) : super(key: key);
@@ -120,7 +121,19 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
             if (state is BoardCreated) {
               _createBoardKey.currentState?.setIsLoading(false);
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Closes CreateBoard Page
+              if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+                Navigator.of(context).pop(); // Closes Scaffold Drawer
+              }
+              _bloc.getBoards();
+            }
+
+            if (state is BoardDeleted) {
+              AlertController.showResultDialog(context: context, message: 'board_deleted'.tr(), isSuccess: false);
+              if (_boards.isEmpty)
+                _currentBoardIndex = null;
+              else
+                _currentBoardIndex = 0;
               _bloc.getBoards();
             }
 
@@ -181,10 +194,10 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Order by', textAlign: TextAlign.start),
+              Text('order_by'.tr(), textAlign: TextAlign.start),
               const EmptyBox(height: 8.0),
               OneLineCell(
-                title: 'Time',
+                title: 'order_by_time'.tr(),
                 icon: _sortOrder == SortOrder.time
                     ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
                     : const Icon(CupertinoIcons.circle),
@@ -196,7 +209,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
               ),
               const EmptyBox(height: 16.0),
               OneLineCell(
-                title: 'Status',
+                title: 'order_by_status'.tr(),
                 icon: _sortOrder == SortOrder.status
                     ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
                     : const Icon(CupertinoIcons.circle),
@@ -207,15 +220,29 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 },
               ),
               const EmptyBox(height: 16.0),
-              Text('Actions', textAlign: TextAlign.start),
+              Text('actions'.tr(), textAlign: TextAlign.start),
               const EmptyBox(height: 8.0),
               OneLineCell(
-                title: 'delete board',
-                onTap: () => _bloc.deleteBoard(_boards[_currentBoardIndex!]),
+                title: 'delete_board'.tr(),
+                icon: const Icon(CupertinoIcons.delete, size: 22, color: AppColors.switchOffLight),
+                iconPadding: 18,
+                onTap: () async {
+                  await AlertController.showNativeDialog(
+                    context: context,
+                    title: 'Are you sure, you want to delete'
+                        ' ${_boards[_currentBoardIndex!].name ?? 'the Board ${_boards[_currentBoardIndex!].pk}'}',
+                    onYes: () {
+                      _bloc.deleteBoard(_boards[_currentBoardIndex!]);
+                      Navigator.of(context).pop();
+                    },
+                    onNo: () => Navigator.of(context).pop(),
+                  );
+                  Navigator.of(context).pop();
+                },
               ),
               const EmptyBox(height: 24.0),
               OneLineCell(
-                title: 'done',
+                title: 'done'.tr(),
                 centerTitle: true,
                 needIcon: false,
                 onTap: () => Navigator.of(context).pop(),

@@ -78,6 +78,21 @@ class TaskCards extends StatelessWidget {
         child: Text('no_tasks_in_section'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
       );
 
+    int emptyCards = 0;
+    tasks.forEach((e) {
+      if (orderByStatus) {
+        if (e.status != columnStatus) {
+          emptyCards += 1;
+        }
+      }
+    });
+    if (emptyCards == tasks.length)
+      return const Center(
+        child: Text(
+          'no tasks',
+          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
+        ),
+      );
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 8.0),
