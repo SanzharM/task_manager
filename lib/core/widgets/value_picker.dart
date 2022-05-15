@@ -11,6 +11,7 @@ class ValuePicker {
   final List<dynamic>? keys;
   final List<String> values;
   final Function(dynamic)? onSelect;
+  final bool needTranslateValue;
 
   ValuePicker({
     required this.context,
@@ -18,6 +19,7 @@ class ValuePicker {
     this.keys,
     required this.values,
     this.onSelect,
+    this.needTranslateValue = false,
   });
 
   void show() => showModalBottomSheet(
@@ -63,7 +65,7 @@ class ValuePicker {
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: OneLineCell(
                             icon: const Icon(CupertinoIcons.forward),
-                            title: values[index],
+                            title: needTranslateValue ? 'status_${values[index]}'.tr() : values[index],
                             onTap: () {
                               if (onSelect != null) onSelect!(keys?[index] ?? values[index]);
                               Navigator.of(context).pop();

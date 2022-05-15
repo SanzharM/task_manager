@@ -34,12 +34,14 @@ class ProfilePageState extends State<ProfilePage> {
   final _scrollController = ScrollController();
 
   User? _user;
+  List<User> _collegues = [];
 
   bool isLoading = false;
+  bool colleguesLoading = false;
 
   void _toEditProfile() => AppRouter.toEditProfile(context: context, user: _user);
   void _toPersonalAccount() => AppRouter.toPersonalAccount(context: context, user: _user!);
-  void _toTeamMembers() => _user == null ? null : AppRouter.toTeamMembers(context: context, user: _user!);
+  void _toTeamMembers() => _user == null ? null : AppRouter.toTeamMembers(context: context, users: _collegues);
   void _toSettings() => AppRouter.toSettings(context: context, changeLanguage: widget.changeLanguage);
   void _toOrganization() =>
       _user?.organization == null ? null : AppRouter.toOrganizationPage(context: context, organization: _user!.organization!);
@@ -52,19 +54,12 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future<void> _onRefresh() async {
     _bloc.getProfile();
+    _bloc.getCollegues();
     await Future.delayed(const Duration(milliseconds: 450));
   }
 
   @override
   void initState() {
-    // _user = User(
-    //   name: 'Sanzhar',
-    //   surname: 'Sanzhar',
-    //   email: 'abc@gmail.com',
-    //   phone: '77015557402',
-    //   position: 'Senior-super-puper-molodec',
-    //   organization: Organization(name: 'Yandex LLC'),
-    // );
     Application.getPhone().then((value) => setState(() => _user = User(phone: value)));
     _bloc.getProfile();
     super.initState();
@@ -85,6 +80,7 @@ class ProfilePageState extends State<ProfilePage> {
         listener: (context, state) {
           print('state is $state');
           isLoading = state is ProfileLoading;
+          colleguesLoading = state is ColleguesLoading;
 
           if (state is ErrorState) {
             AlertController.showSnackbar(context: context, message: state.error);
@@ -92,6 +88,10 @@ class ProfilePageState extends State<ProfilePage> {
 
           if (state is ProfileLoaded) {
             _user = state.user;
+          }
+
+          if (state is ColleguesLoaded) {
+            _collegues = state.collegues;
           }
 
           setState(() {});
@@ -160,23 +160,26 @@ class ProfilePageState extends State<ProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ArrowedCell(
-                            icon: const Icon(CupertinoIcons.person_fill),
+                          OneLineCell.arrowed(
+                            leading: const Icon(CupertinoIcons.person_fill),
                             title: 'edit_profile'.tr(),
                             onTap: _toEditProfile,
                           ),
-                          ArrowedCell(
-                            icon: const Icon(CupertinoIcons.chart_bar_alt_fill),
+                          OneLineCell.arrowed(
+                            leading: const Icon(CupertinoIcons.chart_bar_alt_fill),
                             title: 'personal_account'.tr(),
                             onTap: _toPersonalAccount,
                           ),
-                          ArrowedCell(
-                            icon: const Icon(CupertinoIcons.person_3_fill),
+                          OneLineCell(
+                            fillColor: Colors.transparent,
+                            leading: const Icon(CupertinoIcons.person_3_fill),
                             title: 'your_colleagues'.tr(),
                             onTap: _toTeamMembers,
+                            padding: EdgeInsets.all(8.0),
+                            icon: colleguesLoading ? const CupertinoActivityIndicator() : const Icon(CupertinoIcons.forward),
                           ),
-                          ArrowedCell(
-                            icon: const Icon(CupertinoIcons.calendar),
+                          OneLineCell.arrowed(
+                            leading: const Icon(CupertinoIcons.calendar),
                             title: 'shift_history'.tr(),
                             onTap: () => print('to view schedule history'),
                           ),
@@ -189,18 +192,18 @@ class ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        ArrowedCell(
-                          icon: const Icon(CupertinoIcons.settings_solid),
+                        OneLineCell.arrowed(
+                          leading: const Icon(CupertinoIcons.settings_solid),
                           title: 'settings'.tr(),
                           onTap: _toSettings,
                         ),
-                        ArrowedCell(
-                          icon: const Icon(CupertinoIcons.question_circle_fill),
+                        OneLineCell.arrowed(
+                          leading: const Icon(CupertinoIcons.question_circle_fill),
                           title: 'contact_us'.tr(),
                           onTap: () => print('to contact us'),
                         ),
-                        ArrowedCell(
-                          icon: const Icon(CupertinoIcons.info_circle_fill),
+                        OneLineCell.arrowed(
+                          leading: const Icon(CupertinoIcons.info_circle_fill),
                           title: 'about_us'.tr(),
                           onTap: () => Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => AboutAppPage(),

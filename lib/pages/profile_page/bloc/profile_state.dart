@@ -34,3 +34,13 @@ class ProfileEdited extends ProfileState {
   @override
   List<Object> get props => [user];
 }
+
+class ColleguesLoading extends ProfileState {}
+
+class ColleguesLoaded extends ProfileState {
+  final List<User> collegues;
+  ColleguesLoaded(this.collegues);
+
+  @override
+  List<Object> get props => [collegues];
+}

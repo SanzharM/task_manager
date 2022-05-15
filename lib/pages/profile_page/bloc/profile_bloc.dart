@@ -10,6 +10,7 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   getProfile() => add(GetProfile());
   editProfile(User user) => add(EditProfile(user));
+  getCollegues() => add(GetCollegues());
 
   ProfileBloc() : super(ProfileInitial()) {
     on<GetProfile>((event, emit) async {
@@ -33,6 +34,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       if (response.success == true) {
         return emit(ProfileEdited(event.user));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<GetCollegues>((event, emit) async {
+      emit(ProfileInitial());
+      emit(ColleguesLoading());
+      final response = await ApiClient.getCompanyUsers();
+
+      if (response.users != null) {
+        return emit(ColleguesLoaded(response.users!));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

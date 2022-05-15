@@ -30,6 +30,12 @@ class VoiceAuthenticationRegistrationEndPoint extends ApiEndpoint {
   int statusCode = 200;
 }
 
+class CheckHasRecordedVoiceEndPoint extends ApiEndpoint {
+  String url = '/users/voice/check?phone={phone}';
+  RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
 class GetCompanyByCodeEndPoint extends ApiEndpoint {
   String url = '/company/?company_code={code}';
   RequestMethod method = RequestMethod.get;

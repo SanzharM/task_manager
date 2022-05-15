@@ -112,5 +112,6 @@
   "order_by_status": "Status",
   "actions": "Actions",
   "delete_board": "Delete board",
-  "board_deleted": "Board deleted"
+  "board_deleted": "Board deleted",
+  "company_code_copied": "Company code was copied"
 }

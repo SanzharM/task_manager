@@ -246,6 +246,7 @@ class OneLineCell extends StatelessWidget {
   final Color? fillColor;
   final bool centerTitle;
   final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
 
   const OneLineCell({
     Key? key,
@@ -263,21 +264,38 @@ class OneLineCell extends StatelessWidget {
     this.fillColor,
     this.centerTitle = false,
     this.borderRadius,
+    this.padding,
   }) : super(key: key);
+
+  factory OneLineCell.arrowed({
+    required String title,
+    required void Function() onTap,
+    Widget? leading,
+    bool? centerTitle,
+    bool needBorder = false,
+    EdgeInsets? padding,
+  }) {
+    return OneLineCell(
+      title: title,
+      onTap: onTap,
+      centerTitle: centerTitle ?? false,
+      leading: leading,
+      needBorder: needBorder,
+      fillColor: Colors.transparent,
+      padding: const EdgeInsets.all(8.0),
+      icon: const Icon(CupertinoIcons.forward),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
+      key: key,
       padding: EdgeInsets.zero,
       onPressed: onTap,
       child: Container(
         constraints: constraints,
-        padding: EdgeInsets.only(
-          left: 16.0,
-          top: 16.0,
-          right: iconPadding ?? 16.0,
-          bottom: 16.0,
-        ),
+        padding: padding ?? EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           borderRadius: borderRadius ?? AppConstraints.borderRadius,
           color: fillColor ?? (Application.isDarkMode(context) ? AppColors.grey : AppColors.white),
@@ -311,12 +329,8 @@ class OneLineCell extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: icon ??
-                        const Icon(
-                          Icons.more_horiz,
-                          // color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
-                        ),
+                    padding: EdgeInsets.only(left: 16.0, right: iconPadding ?? 0.0),
+                    child: icon ?? const Icon(Icons.more_horiz),
                   ),
                 ),
               ),

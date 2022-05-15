@@ -37,6 +37,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   List<User> _companyUsers = [];
 
   bool isLoading = false;
+  int? animateTabAfterLoading;
 
   @override
   void initState() {
@@ -101,22 +102,20 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
         child: BlocListener(
           bloc: _bloc,
           listener: (context, state) async {
-            print('state is $state');
-
             isLoading = state is Loading;
 
             if (state is ErrorState && (_createBoardKey.currentState?.isLoading ?? false)) {
-              // await Future.delayed(const Duration(milliseconds: 450));
               _createBoardKey.currentState?.setIsLoading(false);
             }
 
             if (state is ErrorState) {
-              AlertController.showSnackbar(context: context, message: state.error);
+              AlertController.showResultDialog(context: context, message: state.error);
             }
 
             if (state is BoardsLoaded) {
               _boards = state.boards;
               if (_currentBoardIndex == null && _boards.isNotEmpty) _currentBoardIndex = 0;
+              if (animateTabAfterLoading != null) animateTabTo(animateTabAfterLoading!);
             }
 
             if (state is BoardCreated) {
@@ -149,12 +148,18 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
               key: _boardBuilderKey,
               onCreateBoard: _toCreateBoardPage,
               onRefresh: _onRefresh,
+              animateTabAfterLoading: setAnimateTabAfterLoading,
               board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
             ),
           ),
         ),
       ),
     );
+  }
+
+  void setAnimateTabAfterLoading(int? index) {
+    print('\n\nanimating to $index\n\n');
+    setState(() => animateTabAfterLoading = index);
   }
 
   void _onChangeBoard(index) {

@@ -35,6 +35,7 @@ class _TaskPageState extends State<TaskPage> {
       context: context,
       title: 'status'.tr(),
       values: TaskStatus.values.map((e) => e.toString().split('.').last).toList(),
+      needTranslateValue: true,
       onSelect: (value) {
         _task = _task.copyWith(status: Utils.getStatusFromString(value));
         setState(() {});

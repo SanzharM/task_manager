@@ -20,11 +20,13 @@ class TaskBoardBuilder extends StatefulWidget {
     required this.board,
     required this.onCreateBoard,
     required this.onRefresh,
+    required this.animateTabAfterLoading,
   }) : super(key: key);
 
   final Board? board;
   final void Function() onCreateBoard;
   final Future<void> Function() onRefresh;
+  final void Function(int?) animateTabAfterLoading;
 
   @override
   State<TaskBoardBuilder> createState() => TaskBoardBuilderState();
@@ -109,6 +111,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
                     columnStatus: status,
                     timeSort: TimeSort.month,
                     orderByStatus: true,
+                    animateTabAfterLoading: widget.animateTabAfterLoading,
                   ),
               ],
             ),

@@ -53,6 +53,20 @@ class ApiClient {
       return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
   }
 
+  static Future<VoiceAuthenticationResponse> registerVoice(File file) async {
+    final response = await ApiBase.multipartFormdata(
+      endpoint: VoiceAuthenticationRegistrationEndPoint(),
+      urlParams: {'{phone}': (await Application.getPhone() ?? '')},
+      filesKey: 'voice',
+      files: [file],
+    );
+
+    if (response.isSuccess)
+      return VoiceAuthenticationResponse(successMessage: 'Voice successfully recorded and saved');
+    else
+      return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
+  }
+
   static Future<BooleanResponse> verifyCompanyCode(String code) async {
     final response = await ApiBase.request(
       endpoint: GetCompanyByCodeEndPoint(),
@@ -211,6 +225,19 @@ class ApiClient {
       success: response.isSuccess,
       error: await compute(parseError, response.bodyBytes),
     );
+  }
+
+  static Future<BooleanResponse> checkRecordedVoice() async {
+    final response = await ApiBase.request(
+      endpoint: CheckHasRecordedVoiceEndPoint(),
+      urlParams: {'{phone}': await Application.getPhone()},
+    );
+
+    if (response.isSuccess) {
+      return BooleanResponse(success: response.body == 'true');
+    } else {
+      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+    }
   }
 }
 

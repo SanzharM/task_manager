@@ -39,8 +39,8 @@ class AppRouter {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AboutAppPage()));
   }
 
-  static void toTeamMembers({required BuildContext context, required User user}) {
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TeamMembersPage(user: user)));
+  static void toTeamMembers({required BuildContext context, required List<User> users}) {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TeamMembersPage(users: users)));
   }
 
   static void toOrganizationPage({required BuildContext context, required Organization organization}) {

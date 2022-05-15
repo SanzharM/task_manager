@@ -112,5 +112,6 @@
   "order_by_status": "Статусу",
   "actions": "Действия",
   "delete_board": "Удалить доску",
-  "board_deleted": "Доска удалена"
+  "board_deleted": "Доска удалена",
+  "company_code_copied": "Код компании скопирован"
 }

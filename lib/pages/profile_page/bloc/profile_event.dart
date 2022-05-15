@@ -16,3 +16,5 @@ class EditProfile extends ProfileEvent {
   @override
   List<Object> get props => [user];
 }
+
+class GetCollegues extends ProfileEvent {}
