@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:task_manager/core/models/organization.dart';
 import 'package:task_manager/core/utils.dart';
 
@@ -29,6 +32,8 @@ class User {
   });
 
   String get fullName => (this.name ?? '') + (this.surname ?? '');
+
+  bool needToFillProfile() => this.id == null || this.fullName.isEmpty || (this.phone?.isEmpty ?? false);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -86,5 +91,12 @@ class User {
       "updated_at": now.toIso8601String(),
       "created_at": null,
     };
+  }
+
+  Widget tryGetImage() {
+    if (this.imageUrl?.isEmpty ?? true) return const Icon(CupertinoIcons.camera_fill);
+    if (this.imageUrl!.startsWith('http')) return Image.network(this.imageUrl!);
+    if (this.imageUrl!.startsWith('/data')) return Image.file(File(this.imageUrl!));
+    return const Icon(CupertinoIcons.camera_fill);
   }
 }

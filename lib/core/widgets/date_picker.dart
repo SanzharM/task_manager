@@ -5,11 +5,18 @@ import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class DatePicker extends StatelessWidget {
-  const DatePicker({Key? key, required this.onPicked, this.maxDate, this.minDate}) : super(key: key);
+  const DatePicker({
+    Key? key,
+    required this.onPicked,
+    this.maxDate,
+    this.minDate,
+    this.initialDate,
+  }) : super(key: key);
 
   final void Function(DateTime date) onPicked;
   final DateTime? minDate;
   final DateTime? maxDate;
+  final DateTime? initialDate;
 
   Future<void> show(BuildContext context) async => await showModalBottomSheet(
         context: context,
@@ -35,7 +42,7 @@ class DatePicker extends StatelessWidget {
                 maximumDate: maxDate ?? DateTime.now().add(const Duration(days: 365)),
                 minimumDate: minDate ?? DateTime.now(),
                 minimumYear: DateTime.now().year,
-                initialDateTime: DateTime.now(),
+                initialDateTime: initialDate ?? DateTime.now(),
                 mode: CupertinoDatePickerMode.date,
               ),
             ),

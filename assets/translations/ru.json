@@ -99,7 +99,7 @@
   "timeout_exception": "Превышено время ожидания ответа",
   "socket_exception": "Ошибка соединения",
   "invalid_email": "Некорректный электронный адрес",
-  "status_to_do": "К выполнению",
+  "status_todo": "К выполнению",
   "status_in_process": "В процессе",
   "status_done": "Готово",
   "status_undetermined": "Неопределенный",
@@ -113,5 +113,6 @@
   "actions": "Действия",
   "delete_board": "Удалить доску",
   "board_deleted": "Доска удалена",
-  "company_code_copied": "Код компании скопирован"
+  "company_code_copied": "Код компании скопирован",
+  "group_name": "Название группы"
 }

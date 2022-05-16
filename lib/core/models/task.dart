@@ -1,7 +1,7 @@
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 
-enum TaskStatus { to_do, in_process, done, undetermined }
+enum TaskStatus { todo, in_process, done, undetermined }
 
 class Task {
   int? pk;

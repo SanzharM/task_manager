@@ -99,7 +99,7 @@
   "timeout_exception": "Connection timed out",
   "socket_exception": "Connection error",
   "invalid_email": "Invalid email address",
-  "status_to_do": "To Do",
+  "status_todo": "To Do",
   "status_in_process": "In process",
   "status_done": "Done",
   "status_undetermined": "Undetermined",
@@ -113,5 +113,6 @@
   "actions": "Actions",
   "delete_board": "Delete board",
   "board_deleted": "Board deleted",
-  "company_code_copied": "Company code was copied"
+  "company_code_copied": "Company code was copied",
+  "group_name": "Group name"
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
@@ -32,7 +33,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
   bool didChanges = false;
   bool isLoading = false;
 
-  Future<void> _chooseImageFromLibrary() async {}
+  Future<void> _chooseImageFromLibrary() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    print('\n\n\nPATH: ${image.path}');
+    setState(() => _user = _user.copyWith(imageUrl: image.path));
+  }
 
   @override
   void initState() {
@@ -82,7 +90,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             isLoading = state is ProfileLoading;
 
             if (state is ErrorState) {
-              AlertController.showSnackbar(context: context, message: state.error);
+              AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
             }
 
             if (state is ProfileEdited) {
@@ -111,8 +119,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         ),
                         child: ClipOval(
                           child: CupertinoButton(
-                            child: _user.imageUrl != null ? Image.network(_user.imageUrl!) : const Icon(CupertinoIcons.camera_fill),
-                            onPressed: () => _chooseImageFromLibrary(),
+                            child: _user.tryGetImage(),
+                            onPressed: _chooseImageFromLibrary,
                           ),
                         ),
                       ),

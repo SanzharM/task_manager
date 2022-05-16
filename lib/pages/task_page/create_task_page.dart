@@ -163,9 +163,11 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                       setState(() {});
                       DatePicker(
                         onPicked: (date) => _task = _task.copyWith(deadline: date),
+                        initialDate: _task.deadline,
                       ).show(context);
                     },
                   ),
+                  const EmptyBox(height: 60),
                 ],
               ),
             ),

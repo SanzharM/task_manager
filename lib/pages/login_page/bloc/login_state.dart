@@ -30,7 +30,8 @@ class ErrorState extends LoginState {
 
 class AuthVerifySuccess extends LoginState {
   final String token;
-  AuthVerifySuccess(this.token);
+  final bool hasAccount;
+  AuthVerifySuccess({required this.token, this.hasAccount = true});
 
   @override
   List<Object?> get props => [];

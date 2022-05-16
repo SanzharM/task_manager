@@ -52,8 +52,8 @@ class Utils {
 
   static String taskStatusToString(TaskStatus? status) {
     switch (status) {
-      case TaskStatus.to_do:
-        return 'status_to_do'.tr();
+      case TaskStatus.todo:
+        return 'status_todo'.tr();
       case TaskStatus.in_process:
         return 'status_in_process'.tr();
       case TaskStatus.done:
@@ -121,7 +121,9 @@ class Utils {
   static TaskStatus getStatusFromString(String status) {
     switch (status.toLowerCase()) {
       case 'to_do':
-        return TaskStatus.to_do;
+        return TaskStatus.todo;
+      case 'todo':
+        return TaskStatus.todo;
       case 'in_process':
         return TaskStatus.in_process;
       case 'done':

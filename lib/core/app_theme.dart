@@ -25,7 +25,7 @@ class AppTheme {
           bodyColor: AppColors.metal,
           displayColor: AppColors.metal,
         ),
-        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
+        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500)),
         iconTheme: IconThemeData(color: AppColors.snow, size: 24),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.snow,
@@ -71,7 +71,9 @@ class AppTheme {
           bodyColor: AppColors.darkGrey,
           displayColor: AppColors.darkGrey,
         ),
-        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
+        tabBarTheme: TabBarTheme(
+          labelStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500),
+        ),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,

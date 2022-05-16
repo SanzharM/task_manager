@@ -43,7 +43,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       if (response.token != null) {
         await Application.setToken(response.token);
-        emit(AuthVerifySuccess(response.token!));
+        emit(AuthVerifySuccess(token: response.token!, hasAccount: response.hasAccount));
       } else if (response.error == 'wrong_sms') {
         emit(WrongSMS());
       } else {

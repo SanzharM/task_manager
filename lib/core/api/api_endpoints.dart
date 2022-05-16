@@ -36,6 +36,12 @@ class CheckHasRecordedVoiceEndPoint extends ApiEndpoint {
   int statusCode = 200;
 }
 
+class DeleteVoiceEndPoint extends ApiEndpoint {
+  String url = '/users/voice/';
+  RequestMethod method = RequestMethod.delete;
+  int statusCode = 200;
+}
+
 class GetCompanyByCodeEndPoint extends ApiEndpoint {
   String url = '/company/?company_code={code}';
   RequestMethod method = RequestMethod.get;

@@ -34,9 +34,9 @@ class ApiClient {
     if (response.isSuccess) {
       await Application.setPhone(phone);
       final Map<String, dynamic>? json = await compute(parseVerifySmsAuth, response.bodyBytes);
-      return VerifySmsAuthResponse(token: json?['access_token']);
+      return VerifySmsAuthResponse(token: json?['access_token'], hasAccount: json?['is_exist'] ?? true);
     } else
-      return VerifySmsAuthResponse(error: await compute(parseError, response.bodyBytes));
+      return VerifySmsAuthResponse(error: await compute(parseError, response.bodyBytes), hasAccount: false);
   }
 
   static Future<VoiceAuthenticationResponse> authenticateByVoice(File file) async {
@@ -238,6 +238,12 @@ class ApiClient {
     } else {
       return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
     }
+  }
+
+  static Future<BooleanResponse> deleteVoice() async {
+    final response = await ApiBase.request(endpoint: DeleteVoiceEndPoint());
+
+    return BooleanResponse(success: response.isSuccess, error: await compute(parseError, response.bodyBytes));
   }
 }
 

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,7 +77,6 @@ class ProfilePageState extends State<ProfilePage> {
       body: BlocListener(
         bloc: _bloc,
         listener: (context, state) {
-          print('state is $state');
           isLoading = state is ProfileLoading;
           colleguesLoading = state is ColleguesLoading;
 
@@ -88,6 +86,7 @@ class ProfilePageState extends State<ProfilePage> {
 
           if (state is ProfileLoaded) {
             _user = state.user;
+            if (state.user.needToFillProfile()) AppRouter.toEditProfile(context: context, user: state.user);
           }
 
           if (state is ColleguesLoaded) {
@@ -111,17 +110,16 @@ class ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           // Avatar
-                          if (_user?.imageUrl != null)
+                          if (_user != null)
                             ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: _user!.imageUrl!,
-                                fit: BoxFit.cover,
-                                height: 48,
-                                width: 48,
-                                errorWidget: (context, url, error) => Text('error_unable_to_load_photo'.tr()),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight: MediaQuery.of(context).size.width * 0.33,
+                                  maxWidth: MediaQuery.of(context).size.width * 0.33,
+                                ),
+                                child: _user!.tryGetImage(),
                               ),
                             ),
-                          if (_user?.imageUrl == null) const Icon(CupertinoIcons.person, size: 48),
 
                           // Name Surname
                           const EmptyBox(height: 12),

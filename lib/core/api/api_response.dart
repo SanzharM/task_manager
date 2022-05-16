@@ -28,8 +28,9 @@ class PhoneAuthResponse {
 class VerifySmsAuthResponse {
   final String? token;
   final String? error;
+  final bool hasAccount;
 
-  VerifySmsAuthResponse({this.token, this.error});
+  VerifySmsAuthResponse({this.token, this.error, required this.hasAccount});
 }
 
 class VoiceAuthenticationResponse {

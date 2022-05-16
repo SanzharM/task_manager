@@ -124,10 +124,12 @@ class AlertController {
   static Future<void> showResultDialog({
     required BuildContext context,
     required String message,
-    bool isSuccess = true,
+    bool? isSuccess = true,
     Widget? icon,
   }) async {
-    Future.delayed(const Duration(milliseconds: 1500), () => Navigator.of(context).pop());
+    try {
+      Future.delayed(const Duration(milliseconds: 1500), () => Navigator.of(context).pop());
+    } catch (e) {}
     Navigator.of(context).push(TransparentRoute(
       builder: (context) => GestureDetector(
         onTap: () => Navigator.of(context).pop(),
@@ -150,10 +152,15 @@ class AlertController {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    child: icon ??
-                        (isSuccess
+                    child: Builder(
+                      builder: (context) {
+                        if (icon != null) return icon;
+                        if (isSuccess == null) return Icon(CupertinoIcons.exclamationmark_circle, color: AppColors.defaultGrey);
+                        return isSuccess
                             ? const Icon(CupertinoIcons.check_mark_circled, size: 64, color: AppColors.success)
-                            : const Icon(CupertinoIcons.delete_simple, size: 64, color: AppColors.switchOffLight)),
+                            : const Icon(CupertinoIcons.delete_simple, size: 64, color: AppColors.switchOffLight);
+                      },
+                    ),
                     padding: const EdgeInsets.all(16.0),
                     margin: const EdgeInsets.only(bottom: 16.0),
                     decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: AppConstraints.borderRadius),
