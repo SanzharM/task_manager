@@ -57,7 +57,7 @@ class TaskBoardDrawer extends StatelessWidget {
                         ),
                         const EmptyBox(height: 8.0),
                         OneLineCell(
-                          title: boards[i]?.getTitle() ?? 'Board #${i + 1}',
+                          title: 'board'.tr() + ' #${i + 1}',
                           onTap: () => onChangeBoard(i),
                           icon: currentBoard == i
                               ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
@@ -67,7 +67,7 @@ class TaskBoardDrawer extends StatelessWidget {
                     );
                   }
                   return OneLineCell(
-                    title: boards[i]?.getTitle() ?? 'Board #${i + 1}',
+                    title: 'board'.tr() + ' #${i + 1}',
                     onTap: () => onChangeBoard(i),
                     icon: currentBoard == i
                         ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)

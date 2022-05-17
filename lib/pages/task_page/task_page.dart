@@ -85,12 +85,6 @@ class _TaskPageState extends State<TaskPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const EmptyBox(height: 16),
-                  InfoCell.task(
-                    title: 'id: ',
-                    value: _task.pk?.toString(),
-                  ),
-                  const EmptyBox(height: 12),
                   InfoCell.task(
                     title: 'creator'.tr() + ': ',
                     value: _task.creator?.name,
@@ -120,6 +114,7 @@ class _TaskPageState extends State<TaskPage> {
                     onTap: () async {
                       await DatePicker(
                         minDate: _task.createdAt,
+                        initialDate: _task.deadline,
                         onPicked: (date) => setState(() => _task = _task.copyWith(deadline: date)),
                       ).show(context);
                       setState(() {});
@@ -135,6 +130,7 @@ class _TaskPageState extends State<TaskPage> {
                       onChanged: (value) => _task = _task.copyWith(description: value),
                     ),
                   ),
+                  if (_task.didChanges(widget.task)) const EmptyBox(height: 60),
                 ],
               ),
             ),

@@ -20,13 +20,15 @@ class TaskBoardBuilder extends StatefulWidget {
     required this.board,
     required this.onCreateBoard,
     required this.onRefresh,
-    required this.animateTabAfterLoading,
+    required this.onEditTask,
+    this.isLoading = false,
   }) : super(key: key);
 
   final Board? board;
+  final bool isLoading;
   final void Function() onCreateBoard;
   final Future<void> Function() onRefresh;
-  final void Function(int?) animateTabAfterLoading;
+  final void Function(Task editedTask) onEditTask;
 
   @override
   State<TaskBoardBuilder> createState() => TaskBoardBuilderState();
@@ -66,7 +68,11 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
 
   @override
   Widget build(BuildContext context) {
-    if (widget.board == null) {
+    if (widget.board == null && widget.isLoading) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    if (widget.board == null && !widget.isLoading) {
       return RefreshIndicator(
         onRefresh: widget.onRefresh,
         backgroundColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.grey,
@@ -86,8 +92,6 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
       );
     }
 
-    print('\n\nSORT ORDER: $order');
-
     if (order == SortOrder.status) {
       return Column(
         children: [
@@ -95,6 +99,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
             physics: const BouncingScrollPhysics(),
             controller: _boardTabController,
             isScrollable: true,
+            enableFeedback: true,
             indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
             tabs: [
               for (var status in TaskStatus.values) Tab(text: Utils.taskStatusToString(status)),
@@ -111,7 +116,8 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
                     columnStatus: status,
                     timeSort: TimeSort.month,
                     orderByStatus: true,
-                    animateTabAfterLoading: widget.animateTabAfterLoading,
+                    onBack: widget.onRefresh,
+                    onEditTask: widget.onEditTask,
                   ),
               ],
             ),
@@ -126,6 +132,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
           physics: const BouncingScrollPhysics(),
           controller: _boardTabController,
           isScrollable: true,
+          enableFeedback: true,
           indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
           tabs: [
             for (var time in TimeSort.values) Tab(text: Utils.getStringTimeSort(time)),
@@ -142,6 +149,8 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
                   columnStatus: TaskStatus.undetermined,
                   timeSort: time,
                   orderByStatus: false,
+                  onBack: widget.onRefresh,
+                  onEditTask: widget.onEditTask,
                 ),
             ],
           ),

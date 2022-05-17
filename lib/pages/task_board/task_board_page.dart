@@ -6,6 +6,7 @@ import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
@@ -15,6 +16,7 @@ import 'package:task_manager/pages/task_board/bloc/task_board_bloc.dart';
 import 'package:task_manager/pages/task_board/ui/create_board_page.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_drawer.dart';
+import 'package:task_manager/pages/task_page/bloc/task_bloc.dart' as taskBloc;
 import 'package:task_manager/pages/task_page/create_task_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -30,7 +32,8 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   final _boardBuilderKey = GlobalKey<TaskBoardBuilderState>();
   final _createBoardKey = GlobalKey<CreateBoardPageState>();
 
-  final _bloc = TaskBoardBloc();
+  final _boardBloc = TaskBoardBloc();
+  final _taskBloc = taskBloc.TaskBloc();
 
   int? _currentBoardIndex;
   List<Board> _boards = [];
@@ -42,12 +45,12 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _bloc.getBoards();
+    _boardBloc.getBoards();
   }
 
   @override
   void dispose() {
-    _bloc.close();
+    _boardBloc.close();
     super.dispose();
   }
 
@@ -77,7 +80,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                         child: CreateTaskPage(
                       board: _boards[_currentBoardIndex!],
                       task: null,
-                      onBack: () => _bloc.getBoards(), // getBoard(_currentBoardIndex!),
+                      onBack: () => _boardBloc.getBoards(), // getBoard(_currentBoardIndex!),
                       users: _boards[_currentBoardIndex!].users ?? _companyUsers,
                     )),
                   ),
@@ -99,57 +102,81 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
             : null,
       ),
       body: SafeArea(
-        child: BlocListener(
-          bloc: _bloc,
-          listener: (context, state) async {
-            isLoading = state is Loading;
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener(
+              bloc: _boardBloc,
+              listener: (context, state) async {
+                isLoading = state is Loading;
 
-            if (state is ErrorState && (_createBoardKey.currentState?.isLoading ?? false)) {
-              _createBoardKey.currentState?.setIsLoading(false);
-            }
+                if (state is ErrorState && (_createBoardKey.currentState?.isLoading ?? false)) {
+                  _createBoardKey.currentState?.setIsLoading(false);
+                }
 
-            if (state is ErrorState) {
-              AlertController.showResultDialog(context: context, message: state.error);
-            }
+                if (state is ErrorState) {
+                  AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
+                }
 
-            if (state is BoardsLoaded) {
-              _boards = state.boards;
-              if (_currentBoardIndex == null && _boards.isNotEmpty) _currentBoardIndex = 0;
-              if (animateTabAfterLoading != null) animateTabTo(animateTabAfterLoading!);
-            }
+                if (state is BoardsLoaded) {
+                  _boards = state.boards;
+                  if (_currentBoardIndex == null && _boards.isNotEmpty) _currentBoardIndex = 0;
+                  if (animateTabAfterLoading != null) {
+                    Future.delayed(
+                      const Duration(milliseconds: 20),
+                      () => animateTabTo(animateTabAfterLoading!),
+                    );
+                  }
+                }
 
-            if (state is BoardCreated) {
-              _createBoardKey.currentState?.setIsLoading(false);
-              Navigator.of(context).pop(); // Closes CreateBoard Page
-              if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
-                Navigator.of(context).pop(); // Closes Scaffold Drawer
-              }
-              _bloc.getBoards();
-            }
+                if (state is BoardCreated) {
+                  _createBoardKey.currentState?.setIsLoading(false);
+                  Navigator.of(context).pop(); // Closes CreateBoard Page
+                  if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+                    Navigator.of(context).pop(); // Closes Scaffold Drawer
+                  }
+                  _boardBloc.getBoards();
+                }
 
-            if (state is BoardDeleted) {
-              AlertController.showResultDialog(context: context, message: 'board_deleted'.tr(), isSuccess: false);
-              if (_boards.isEmpty)
-                _currentBoardIndex = null;
-              else
-                _currentBoardIndex = 0;
-              _bloc.getBoards();
-            }
+                if (state is BoardDeleted) {
+                  AlertController.showResultDialog(context: context, message: 'board_deleted'.tr(), isSuccess: false);
+                  if (_boards.isEmpty)
+                    _currentBoardIndex = null;
+                  else
+                    _currentBoardIndex = 0;
+                  _boardBloc.getBoards();
+                }
 
-            if (state is CompanyUsersLoaded) {
-              _companyUsers = state.users;
-            }
+                if (state is CompanyUsersLoaded) _companyUsers = state.users;
 
-            setState(() {});
-          },
+                setState(() {});
+              },
+            ),
+            BlocListener(
+              bloc: _taskBloc,
+              listener: (context, state) {
+                if (state is taskBloc.ErrorState)
+                  AlertController.showResultDialog(
+                    context: context,
+                    message: state.error,
+                    isSuccess: false,
+                  );
+
+                if (state is taskBloc.TaskEdited) {
+                  setAnimateTabAfterLoading(state.task.status?.index);
+                  _boardBloc.getBoards();
+                }
+              },
+            ),
+          ],
           child: CustomShimmer(
             enabled: isLoading,
             child: TaskBoardBuilder(
               key: _boardBuilderKey,
+              isLoading: isLoading,
+              board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
               onCreateBoard: _toCreateBoardPage,
               onRefresh: _onRefresh,
-              animateTabAfterLoading: setAnimateTabAfterLoading,
-              board: _currentBoardIndex != null ? _boards[_currentBoardIndex!] : null,
+              onEditTask: _onEditTask,
             ),
           ),
         ),
@@ -162,6 +189,10 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     setState(() => animateTabAfterLoading = index);
   }
 
+  void _onEditTask(Task editedTask) {
+    _taskBloc.editTask(editedTask);
+  }
+
   void _onChangeBoard(index) {
     print('new index: $index');
     setState(() => _currentBoardIndex = index);
@@ -169,8 +200,8 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   }
 
   Future<void> _onRefresh() async {
-    _bloc.getCompanyUsers();
-    _bloc.getBoards();
+    _boardBloc.getCompanyUsers();
+    _boardBloc.getBoards();
     return Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -183,7 +214,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   void _onCreateBoard(String name, String? description) {
     if (name.isEmpty) return;
     _createBoardKey.currentState?.setIsLoading(true);
-    if (!isLoading) return _bloc.createBoard(name, description);
+    if (!isLoading) return _boardBloc.createBoard(name, description);
   }
 
   void _showBoardSettings() async {
@@ -237,7 +268,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                     title: 'Are you sure, you want to delete'
                         ' ${_boards[_currentBoardIndex!].name ?? 'the Board ${_boards[_currentBoardIndex!].pk}'}',
                     onYes: () {
-                      _bloc.deleteBoard(_boards[_currentBoardIndex!]);
+                      _boardBloc.deleteBoard(_boards[_currentBoardIndex!]);
                       Navigator.of(context).pop();
                     },
                     onNo: () => Navigator.of(context).pop(),

@@ -23,7 +23,12 @@ class DatePicker extends StatelessWidget {
         isScrollControlled: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: const RoundedRectangleBorder(borderRadius: AppConstraints.borderRadius),
-        builder: (context) => DatePicker(onPicked: onPicked, minDate: minDate, maxDate: maxDate),
+        builder: (context) => DatePicker(
+          onPicked: onPicked,
+          minDate: minDate,
+          maxDate: maxDate,
+          initialDate: initialDate,
+        ),
       );
 
   @override
