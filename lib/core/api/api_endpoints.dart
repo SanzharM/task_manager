@@ -109,13 +109,13 @@ class GetCompanyUsersEndpoint extends ApiEndpoint {
 }
 
 class GetSessionsEndpoint extends ApiEndpoint {
-  String url = '/sessions';
+  String url = '/sessions/';
   RequestMethod method = RequestMethod.get;
   int statusCode = 200;
 }
 
 class SetSessionEndpoint extends ApiEndpoint {
-  String url = '/sessions';
+  String url = '/sessions/';
   RequestMethod method = RequestMethod.post;
   int statusCode = 200;
 }

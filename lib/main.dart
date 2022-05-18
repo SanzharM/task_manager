@@ -45,7 +45,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppManager(
       child: MaterialApp(
-        title: 'TaskManager',
+        title: 'Bota',
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,

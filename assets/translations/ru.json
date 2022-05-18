@@ -114,5 +114,16 @@
   "delete_board": "Удалить доску",
   "board_deleted": "Доска удалена",
   "company_code_copied": "Код компании скопирован",
-  "group_name": "Название группы"
+  "group_name": "Название группы",
+  "recording_too_short_for_login": "Запись слишком короткая. Говорите в течение не менее 5 секунд",
+  "recording_too_short_for_registration": "Запись слишком короткая для сохранения голоса. Говорите в течение не менее 10 секунд",
+  "wrong_attempts_limited": "Вы достигли 3/3 попыток авторизоваться через голос",
+  "sessions": "Смены",
+  "shift": "Смена",
+  "shifts": "Смены",
+  "session": "Смена",
+  "session_start_time": "Начало смены",
+  "session_end_time": "Конец смены",
+  "active_session": "Активная смена",
+  "end_session": "Закрыть смену"
 }

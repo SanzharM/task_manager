@@ -19,6 +19,7 @@ class Application {
   static const _phoneKey = 'TaskManagerPhoneToken';
   static const _companyCodeKey = 'TaskManagerCompanyCodeToken';
   static const _boardSortOrder = 'TaskManagerBoardSortOrderToken';
+  static const _wrongAttemptsKey = 'TaskManagerWrongVoiceAttempts';
 
   // static String getBaseUrl() => 'http://192.168.1.103:8000';
   static String getBaseUrl() => 'https://app-bota.org';
@@ -126,5 +127,13 @@ class Application {
   static Future<void> clearStorage({BuildContext? context}) async {
     _storage.deleteAll();
     if (context != null) return AppRouter.toIntroPage(context);
+  }
+
+  static Future<void> setWrongVoiceAttempts(int i) async {
+    return _storage.write(key: _wrongAttemptsKey, value: i.toString());
+  }
+
+  static Future<int> getWrongVoiceAttempts() async {
+    return int.tryParse(await _storage.read(key: _wrongAttemptsKey) ?? '') ?? 0;
   }
 }

@@ -11,12 +11,16 @@ class DatePicker extends StatelessWidget {
     this.maxDate,
     this.minDate,
     this.initialDate,
+    this.minYear,
+    this.maxYear,
   }) : super(key: key);
 
   final void Function(DateTime date) onPicked;
   final DateTime? minDate;
   final DateTime? maxDate;
   final DateTime? initialDate;
+  final int? minYear;
+  final int? maxYear;
 
   Future<void> show(BuildContext context) async => await showModalBottomSheet(
         context: context,
@@ -27,6 +31,8 @@ class DatePicker extends StatelessWidget {
           onPicked: onPicked,
           minDate: minDate,
           maxDate: maxDate,
+          minYear: minYear,
+          maxYear: maxYear,
           initialDate: initialDate,
         ),
       );
@@ -43,10 +49,10 @@ class DatePicker extends StatelessWidget {
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
               child: CupertinoDatePicker(
                 onDateTimeChanged: (value) => onPicked(value),
-                maximumYear: DateTime.now().year + 1,
+                minimumYear: minYear ?? DateTime.now().year,
+                maximumYear: maxYear ?? DateTime.now().year + 1,
                 maximumDate: maxDate ?? DateTime.now().add(const Duration(days: 365)),
                 minimumDate: minDate ?? DateTime.now(),
-                minimumYear: DateTime.now().year,
                 initialDateTime: initialDate ?? DateTime.now(),
                 mode: CupertinoDatePickerMode.date,
               ),

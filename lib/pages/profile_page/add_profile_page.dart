@@ -5,8 +5,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
+import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:task_manager/core/widgets/date_picker.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -33,12 +37,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
   bool didChanges = false;
   bool isLoading = false;
 
-  Future<void> _chooseImageFromLibrary() async {
+  Future<void> _chooseImageFromSource(ImageSource source) async {
     final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: source);
     if (image == null) return;
 
-    print('\n\n\nPATH: ${image.path}');
+    didChanges = true;
     setState(() => _user = _user.copyWith(imageUrl: image.path));
   }
 
@@ -57,6 +61,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(DateTime.now().subtract(Duration(days: 365 * 130)));
     return GestureDetector(
       onTap: () => FocusScope.of(context).hasFocus ? FocusScope.of(context).unfocus() : null,
       child: Scaffold(
@@ -85,12 +90,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
         body: BlocListener(
           bloc: _bloc,
           listener: (context, state) {
-            print('state in add profile is $state');
-
             isLoading = state is ProfileLoading;
 
             if (state is ErrorState) {
-              AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
+              AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
             }
 
             if (state is ProfileEdited) {
@@ -119,8 +122,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         ),
                         child: ClipOval(
                           child: CupertinoButton(
-                            child: _user.tryGetImage(),
-                            onPressed: _chooseImageFromLibrary,
+                            child: _user.tryGetImage(canAddImage: true),
+                            onPressed: () {
+                              if (_user.imageUrl?.isEmpty ?? true) {
+                                _chooseImageFromSource(ImageSource.gallery);
+                                return;
+                              }
+                              return _showModal();
+                            },
                           ),
                         ),
                       ),
@@ -148,38 +157,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     ),
                     const EmptyBox(height: 12),
                     AppTextField(
-                      label: 'your_surname'.tr(),
-                      text: _user.surname,
-                      onTap: () => setState(() {}),
-                      maxLines: 2,
-                      needValidator: true,
-                      onChanged: (value) {
-                        _user = _user.copyWith(surname: value);
-                        didChanges = true;
-                        setState(() {});
-                      },
-                    ),
-                    const EmptyBox(height: 12),
-                    AppTextField(
-                      label: 'email'.tr(),
-                      text: _user.email,
-                      keyboardType: TextInputType.emailAddress,
-                      maxLines: 2,
-                      needValidator: true,
-                      onTap: () => setState(() {}),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return 'field_cannot_be_empty'.tr();
-                        if (!value.contains('@')) return 'invalid_email'.tr();
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _user = _user.copyWith(email: value);
-                        didChanges = true;
-                        setState(() {});
-                      },
-                    ),
-                    const EmptyBox(height: 12),
-                    AppTextField(
                       label: 'job_position'.tr(),
                       text: _user.position,
                       onTap: () => setState(() {}),
@@ -189,6 +166,42 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         _user = _user.copyWith(position: value);
                         didChanges = true;
                         setState(() {});
+                      },
+                    ),
+                    const EmptyBox(height: 12),
+                    AppTextField(
+                      label: 'birthday'.tr(),
+                      text: Utils.dateToString(_user.birthday),
+                      readonly: true,
+                      onTap: () => DatePicker(
+                        initialDate: _user.birthday ?? DateTime.now().subtract(Duration(days: 365 * 15)),
+                        minYear: DateTime.now().subtract(Duration(days: 365 * 130)).year,
+                        maxYear: DateTime.now().subtract(Duration(days: 365 * 15)).year,
+                        minDate: DateTime.now().subtract(Duration(days: 365 * 130)),
+                        maxDate: DateTime.now().subtract(Duration(days: 365 * 15)),
+                        onPicked: (date) {
+                          _user = _user.copyWith(birthday: date);
+                          didChanges = true;
+                          setState(() {});
+                        },
+                      ).show(context),
+                      onChanged: (value) {
+                        _user = _user.copyWith(totalMoney: double.tryParse(value));
+                        didChanges = true;
+                        setState(() {});
+                      },
+                    ),
+                    const EmptyBox(height: 12),
+                    AppTextField(
+                      label: 'total_money'.tr(),
+                      text: '${_user.totalMoney}',
+                      keyboardType: TextInputType.number,
+                      onTap: () => setState(() {}),
+                      onChanged: (value) {
+                        if (value.endsWith('.')) value = value.replaceAll('.', '');
+                        final money = double.tryParse(value);
+                        _user = _user.copyWith(totalMoney: money);
+                        didChanges = true;
                       },
                     ),
                     const EmptyBox(height: 16),
@@ -205,6 +218,57 @@ class _AddProfilePageState extends State<AddProfilePage> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showModal() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadiusTLR),
+      isScrollControlled: true,
+      builder: (context) => SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        child: Column(
+          children: [
+            OneLineCell(
+              title: 'choose_image_from_camera'.tr(),
+              icon: const Icon(CupertinoIcons.photo_camera_solid),
+              onTap: () async {
+                await _chooseImageFromSource(ImageSource.camera);
+                Navigator.of(context).pop();
+              },
+            ),
+            const EmptyBox(height: 16.0),
+            OneLineCell(
+              title: 'choose_image_from_library'.tr(),
+              icon: const Icon(CupertinoIcons.photo_fill_on_rectangle_fill),
+              onTap: () async {
+                await _chooseImageFromSource(ImageSource.gallery);
+                Navigator.of(context).pop();
+              },
+            ),
+            const EmptyBox(height: 16.0),
+            OneLineCell(
+              title: 'delete'.tr(),
+              icon: const Icon(CupertinoIcons.delete, size: 22, color: AppColors.switchOffLight),
+              onTap: () {
+                _user.clearImage();
+                didChanges = true;
+                setState(() {});
+              },
+            ),
+            const EmptyBox(height: 24.0),
+            OneLineCell(
+              title: 'done'.tr(),
+              centerTitle: true,
+              onTap: () => Navigator.of(context).pop(),
+              needIcon: false,
+            ),
+          ],
         ),
       ),
     );

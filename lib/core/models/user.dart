@@ -7,8 +7,6 @@ import 'package:task_manager/core/utils.dart';
 class User {
   int? id;
   String? name;
-  String? surname;
-  String? email;
   String? phone;
   dynamic role;
   DateTime? registrationTime;
@@ -16,12 +14,13 @@ class User {
   String? imageUrl;
   String? position;
   Organization? organization;
+  DateTime? birthday;
+  double? totalMoney;
+  double? moneyPerHour;
 
   User({
     this.id,
     this.name,
-    this.surname,
-    this.email,
     this.phone,
     this.role,
     this.registrationTime,
@@ -29,9 +28,12 @@ class User {
     this.imageUrl,
     this.position,
     this.organization,
+    this.birthday,
+    this.moneyPerHour,
+    this.totalMoney,
   });
 
-  String get fullName => (this.name ?? '') + (this.surname ?? '');
+  String get fullName => (this.name ?? '');
 
   bool needToFillProfile() => this.id == null || this.fullName.isEmpty || (this.phone?.isEmpty ?? false);
 
@@ -45,14 +47,17 @@ class User {
       imageUrl: json['image_url'],
       registrationTime: Utils.parseDate('${json['created_at']}'),
       lastVisitTime: Utils.parseDate('${json['updated_at']}'),
+      birthday: Utils.parseDate('${json['birthday']}'),
+      moneyPerHour: double.tryParse('${json['money_in_hour_kzt']}'),
+      totalMoney: double.tryParse('${json['total_money_in_kzt']}'),
     );
   }
+
+  void clearImage() => this.imageUrl = null;
 
   User copyWith({
     int? id,
     String? name,
-    String? surname,
-    String? email,
     String? phone,
     dynamic role,
     DateTime? registrationTime,
@@ -60,12 +65,13 @@ class User {
     String? imageUrl,
     String? position,
     Organization? organization,
+    DateTime? birthday,
+    double? totalMoney,
+    double? moneyPerHour,
   }) {
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
-      surname: surname ?? this.surname,
-      email: email ?? this.email,
       phone: phone ?? this.phone,
       role: role ?? this.role,
       registrationTime: registrationTime ?? this.registrationTime,
@@ -73,6 +79,9 @@ class User {
       imageUrl: imageUrl ?? this.imageUrl,
       position: position ?? this.position,
       organization: organization ?? this.organization,
+      birthday: birthday ?? this.birthday,
+      totalMoney: totalMoney ?? this.totalMoney,
+      moneyPerHour: moneyPerHour ?? this.moneyPerHour,
     );
   }
 
@@ -86,17 +95,36 @@ class User {
       "name": this.name,
       "image_url": this.imageUrl,
       "company_id": this.organization?.id,
-      "total_money_in_kzt": null,
       "last_visit_time": now.toIso8601String(),
       "updated_at": now.toIso8601String(),
-      "created_at": null,
+      "created_at": this.registrationTime?.toIso8601String(),
+      "birthday": this.birthday?.toIso8601String(),
+      "total_money_in_kzt": this.totalMoney,
+      "money_in_hour_kzt": this.moneyPerHour,
     };
   }
 
-  Widget tryGetImage() {
-    if (this.imageUrl?.isEmpty ?? true) return const Icon(CupertinoIcons.camera_fill);
-    if (this.imageUrl!.startsWith('http')) return Image.network(this.imageUrl!);
-    if (this.imageUrl!.startsWith('/data')) return Image.file(File(this.imageUrl!));
-    return const Icon(CupertinoIcons.camera_fill);
+  Widget tryGetImage({bool canAddImage = false}) {
+    final placeholder = canAddImage ? const Icon(CupertinoIcons.camera_fill, size: 32) : const Icon(CupertinoIcons.person_fill, size: 32);
+
+    if (this.imageUrl?.isEmpty ?? true) return placeholder;
+
+    if (this.imageUrl!.startsWith('http')) {
+      return Image.network(
+        this.imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+      );
+    }
+
+    if (this.imageUrl!.startsWith('/data')) {
+      return Image.file(
+        File(this.imageUrl!),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+      );
+    }
+
+    return placeholder;
   }
 }

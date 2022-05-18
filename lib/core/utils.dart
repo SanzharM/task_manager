@@ -154,4 +154,13 @@ class Utils {
         return '';
     }
   }
+
+  static String getNamedDateTime(DateTime? datetime) {
+    if (datetime == null) return '';
+    String time = DateFormat('HH:mm:ss').format(datetime); // .add(DateTime.now().timeZoneOffset)
+    return '${getMonth(datetime.month)}, '
+        '${datetime.day} '
+        '${datetime.year == DateTime.now().year ? '' : datetime.year} '
+        '$time';
+  }
 }

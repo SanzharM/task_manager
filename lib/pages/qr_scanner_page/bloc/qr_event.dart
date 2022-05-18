@@ -13,8 +13,11 @@ class QrGetSession extends QrEvent {
 }
 
 class QrCreateSession extends QrEvent {
+  final LocationData data;
+  QrCreateSession(this.data);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [data];
 }
 
 class QrValidateResult extends QrEvent {

@@ -114,5 +114,16 @@
   "delete_board": "Delete board",
   "board_deleted": "Board deleted",
   "company_code_copied": "Company code was copied",
-  "group_name": "Group name"
+  "group_name": "Group name",
+  "recording_too_short_for_login": "Recording is too short. Speak at least 5 seconds",
+  "recording_too_short_for_registration": "Recording is too short for registration. Speak at least 10 seconds",
+  "wrong_attempts_limited": "You have reached 3/3 attempts to authenticate with voice",
+  "sessions": "Sessions",
+  "shift": "Shift",
+  "shifts": "Shifts",
+  "session": "Session",
+  "session_start_time": "Session start time",
+  "session_end_time": "Session end time",
+  "active_session": "Active session",
+  "end_session": "Close session"
 }

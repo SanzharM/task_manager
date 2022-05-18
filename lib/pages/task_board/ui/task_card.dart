@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:task_manager/core/widgets/date_picker.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/core/widgets/value_picker.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_page/task_page.dart';
@@ -86,23 +90,14 @@ class TaskCard extends StatelessWidget {
                       width: double.maxFinite,
                       child: Icon(CupertinoIcons.chevron_down),
                     ),
-                    onTap: () => ValuePicker(
-                      context: context,
-                      title: 'status'.tr(),
-                      values: TaskStatus.values.map((e) => e.toString().split('.').last).toList(),
-                      needTranslateValue: true,
-                      onSelect: (value) {
-                        final _editedTask = task.copyWith(status: Utils.getStatusFromString(value));
-                        onEditTask(_editedTask);
-                      },
-                    ).show(),
+                    onTap: () => _showActions(context),
                   ),
                 ),
               ],
             ),
             if (difference != null && difference < 7)
               Container(
-                width: double.maxFinite,
+                width: double.maxFinite.abs(),
                 height: 2.0,
                 decoration: BoxDecoration(
                   borderRadius: AppConstraints.borderRadius,
@@ -114,7 +109,7 @@ class TaskCard extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 400),
-                  width: MediaQuery.of(context).size.width * (difference / 7),
+                  width: (MediaQuery.of(context).size.width * (difference / 7)).abs(),
                   height: 2.0,
                   color: AppColors.defaultGrey,
                 ),
@@ -123,6 +118,93 @@ class TaskCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showActions(BuildContext context) async {
+    TaskStatus _status = task.status ?? TaskStatus.undetermined;
+    Task _editedTask = task.copyWith(status: _status);
+    bool didChanges = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      enableDrag: true,
+      shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadiusTLR),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width,
+          maxHeight: MediaQuery.of(context).size.height * 0.87,
+        ),
+        child: StatefulBuilder(
+          builder: (context, childSetState) => GestureDetector(
+            onTap: FocusScope.of(context).hasFocus ? () => FocusScope.of(context).unfocus() : null,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('description'.tr()),
+                  const EmptyBox(height: 8.0),
+                  AppTextField(
+                    text: _editedTask.description,
+                    onTap: () => childSetState(() {}),
+                    onChanged: (value) {
+                      _editedTask = _editedTask.copyWith(description: value);
+                      if (!didChanges) didChanges = true;
+                    },
+                  ),
+                  const EmptyBox(height: 16.0),
+                  Text('status'.tr(), textAlign: TextAlign.start),
+                  const EmptyBox(height: 8.0),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: TaskStatus.values.length,
+                    separatorBuilder: (context, index) => const EmptyBox(height: 12.0),
+                    itemBuilder: (context, index) => OneLineCell(
+                      title: 'status_${TaskStatus.values[index].toString().split('.').last}'.tr(),
+                      onTap: () => childSetState(() {
+                        _status = TaskStatus.values[index];
+                        if (!didChanges) didChanges = true;
+                      }),
+                      icon: index == _status.index
+                          ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                          : const Icon(CupertinoIcons.circle),
+                    ),
+                  ),
+                  const EmptyBox(height: 16.0),
+                  Text('deadline'.tr()),
+                  const EmptyBox(height: 8.0),
+                  OneLineCell(
+                    title: Utils.dateToString(_editedTask.deadline),
+                    icon: const Icon(CupertinoIcons.time),
+                    onTap: () => DatePicker(
+                      initialDate: _editedTask.deadline,
+                      onPicked: (date) => childSetState(() {
+                        _editedTask = _editedTask.copyWith(deadline: date);
+                        if (!didChanges) didChanges = true;
+                      }),
+                    ).show(context),
+                  ),
+                  const EmptyBox(height: 24.0),
+                  OneLineCell(
+                    title: 'done'.tr(),
+                    centerTitle: true,
+                    needIcon: false,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    if (didChanges || _status != task.status) {
+      onEditTask(_editedTask.copyWith(status: _status));
+    }
   }
 }
 

@@ -19,6 +19,12 @@ class ErrorState extends QrState {
   List<Object> get props => [];
 }
 
-class QrSessionsLoaded extends QrState {}
+class QrSessionsLoaded extends QrState {
+  final List<Session> sessions;
+  QrSessionsLoaded(this.sessions);
+
+  @override
+  List<Object> get props => [sessions];
+}
 
 class QrSessionCreated extends QrState {}

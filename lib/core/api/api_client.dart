@@ -2,10 +2,12 @@ import 'dart:convert' as convert;
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:location/location.dart';
 import 'package:task_manager/core/api/api_response.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
 
@@ -40,6 +42,10 @@ class ApiClient {
   }
 
   static Future<VoiceAuthenticationResponse> authenticateByVoice(File file) async {
+    final _wrongAttempts = await Application.getWrongVoiceAttempts();
+    if (_wrongAttempts > 3) {
+      return VoiceAuthenticationResponse(error: 'wrong_attempts_limited');
+    }
     final response = await ApiBase.multipartFormdata(
       endpoint: VoiceAuthenticationLoginEndPoint(),
       urlParams: {'{phone}': (await Application.getPhone() ?? '')},
@@ -47,10 +53,13 @@ class ApiClient {
       files: [file],
     );
 
-    if (response.isSuccess)
+    if (response.isSuccess) {
+      await Application.setWrongVoiceAttempts(0);
       return VoiceAuthenticationResponse(successMessage: 'Voice authentication proceeded');
-    else
+    } else {
+      await Application.setWrongVoiceAttempts(_wrongAttempts + 1);
       return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
+    }
   }
 
   static Future<VoiceAuthenticationResponse> registerVoice(File file) async {
@@ -175,23 +184,26 @@ class ApiClient {
     }
   }
 
-  static Future<dynamic> getSessions() async {
+  static Future<SessionsResponse> getSessions() async {
     final response = await ApiBase.request(endpoint: GetSessionsEndpoint());
 
     if (response.isSuccess) {
-      return null;
+      return SessionsResponse(sessions: await compute(parseSessions, response.bodyBytes));
     } else {
-      return null;
+      return SessionsResponse(error: await compute(parseError, response.bodyBytes));
     }
   }
 
-  static Future<dynamic> setSession() async {
-    final response = await ApiBase.request(endpoint: SetSessionEndpoint());
+  static Future<BooleanResponse> setSession(LocationData data) async {
+    final response = await ApiBase.request(
+      endpoint: SetSessionEndpoint(),
+      params: {'latitude': data.latitude, 'longitude': data.longitude},
+    );
 
     if (response.isSuccess) {
-      return null;
+      return BooleanResponse(success: true);
     } else {
-      return null;
+      return BooleanResponse(error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -311,6 +323,16 @@ Future<List<Task>?> parseTasks(Uint8List bodyBytes) async {
     final json = convert.json.decode(convert.utf8.decode(bodyBytes));
     if (json == null || json is! List) return null;
     return json.map((e) => Task.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Session>?> parseSessions(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null || json is! List) return null;
+    return json.map((e) => Session.fromJson(e)).toList();
   } catch (e) {
     return null;
   }

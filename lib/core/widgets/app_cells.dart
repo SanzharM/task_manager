@@ -340,3 +340,72 @@ class OneLineCell extends StatelessWidget {
     );
   }
 }
+
+class DataInfoCell extends StatelessWidget {
+  const DataInfoCell({
+    Key? key,
+    required this.title,
+    required this.value,
+    this.onPressed,
+    this.leading,
+    this.icon,
+    this.needLeading = false,
+    this.needIcon = false,
+    this.crossAxisAlignment,
+    this.sizeBetween,
+    this.padding,
+    this.margin,
+    this.needBorder = false,
+    this.color,
+    this.borderColor,
+  }) : super(key: key);
+
+  final String title;
+  final String value;
+  final void Function()? onPressed;
+  final Widget? leading;
+  final Widget? icon;
+  final bool needLeading;
+  final bool needIcon;
+  final CrossAxisAlignment? crossAxisAlignment;
+  final double? sizeBetween;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final Color? color;
+  final bool needBorder;
+  final Color? borderColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      child: Container(
+        // height: double.maxFinite,
+        // width: double.maxFinite,
+        // padding: padding,
+        // margin: margin,
+        decoration: BoxDecoration(
+          borderRadius: AppConstraints.borderRadius,
+          border: needBorder ? Border.all(width: 0.5) : null,
+          color: color ?? (Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            EmptyBox(height: sizeBetween ?? 8.0),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+      onPressed: () => onPressed != null ? onPressed!() : null,
+    );
+  }
+}

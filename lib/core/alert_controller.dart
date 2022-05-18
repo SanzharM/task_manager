@@ -127,9 +127,6 @@ class AlertController {
     bool? isSuccess = true,
     Widget? icon,
   }) async {
-    try {
-      Future.delayed(const Duration(milliseconds: 1500), () => Navigator.of(context).pop());
-    } catch (e) {}
     Navigator.of(context).push(TransparentRoute(
       builder: (context) => GestureDetector(
         onTap: () => Navigator.of(context).pop(),
@@ -155,7 +152,7 @@ class AlertController {
                     child: Builder(
                       builder: (context) {
                         if (icon != null) return icon;
-                        if (isSuccess == null) return Icon(CupertinoIcons.exclamationmark_circle, color: AppColors.defaultGrey);
+                        if (isSuccess == null) return const Icon(CupertinoIcons.xmark_circle, size: 64, color: AppColors.switchOffLight);
                         return isSuccess
                             ? const Icon(CupertinoIcons.check_mark_circled, size: 64, color: AppColors.success)
                             : const Icon(CupertinoIcons.delete_simple, size: 64, color: AppColors.switchOffLight);

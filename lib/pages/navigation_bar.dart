@@ -32,12 +32,17 @@ class _NavigationBarState extends State<NavigationBar> {
     await Application.setLocale(locale);
   }
 
+  void _changeTab(int index) {
+    if (index < 0 || index > pages.length) return;
+    setState(() => _currentIndex = index);
+  }
+
   @override
   void initState() {
     pages = [
-      TaskBoard(key: _taskBoardKey),
-      QRScannerPage(key: _qrKey),
-      ProfilePage(key: _profileKey, changeLanguage: _updateLanguage),
+      TaskBoard(key: _taskBoardKey, changeTab: _changeTab),
+      QRScannerPage(key: _qrKey, changeTab: _changeTab),
+      ProfilePage(key: _profileKey, changeLanguage: _updateLanguage, changeTab: _changeTab),
     ];
     _currentIndex = pages.length - 1;
     super.initState();

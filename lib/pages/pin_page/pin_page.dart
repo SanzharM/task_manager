@@ -56,6 +56,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     try {
       bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr());
       if (didAuthenticate) {
+        if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
         _toMainPage();
       }
     } catch (e) {
@@ -85,7 +86,15 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     );
   }
 
-  void _goToVoiceAuth() => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage()));
+  void _goToVoiceAuth() async {
+    if (await Application.getWrongVoiceAttempts() > 3)
+      return AlertController.showResultDialog(
+        context: context,
+        message: 'wrong_attempts_limited'.tr(),
+        isSuccess: null,
+      );
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage()));
+  }
 
   void _setupControllers() {
     _contoller1 = AnimationController(vsync: this, duration: _duration);
@@ -158,36 +167,35 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                         style: const TextStyle(fontSize: 20),
                       ),
                     ),
-                    if (hasFaceId || hasTouchId)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.mic_rounded),
-                            onPressed: _goToVoiceAuth,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: const Icon(CupertinoIcons.mic_fill, size: 32),
+                          onPressed: _goToVoiceAuth,
+                        ),
+                        if (hasFaceId)
+                          CupertinoButton(
+                            onPressed: _tryLoginWithBiometrics,
+                            child: Image.asset(
+                              AppIcons.faceId,
+                              color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                              width: 32,
+                            ),
                           ),
-                          if (hasFaceId)
-                            IconButton(
-                              onPressed: _tryLoginWithBiometrics,
-                              icon: Image.asset(
-                                AppIcons.faceId,
-                                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
-                                width: 48,
-                              ),
+                        if (hasTouchId)
+                          CupertinoButton(
+                            onPressed: _tryLoginWithBiometrics,
+                            child: Image.asset(
+                              AppIcons.touchId,
+                              color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                              width: 32,
                             ),
-                          if (hasTouchId)
-                            IconButton(
-                              onPressed: _tryLoginWithBiometrics,
-                              icon: Image.asset(
-                                AppIcons.touchId,
-                                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
-                                width: 48,
-                              ),
-                            ),
-                        ],
-                      ),
+                          ),
+                      ],
+                    ),
                     const EmptyBox(height: 32),
                     Text(_currentMessage, style: const TextStyle(fontSize: 20)),
                     const EmptyBox(height: 32),
@@ -253,6 +261,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       if (_tempPin == _pin) {
         setState(() => isLoading = true);
         await Application.setPin(_pin);
+        if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
         await Future.delayed(const Duration(milliseconds: 200));
         _toMainPage();
         return;

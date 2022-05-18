@@ -59,7 +59,7 @@ class UserCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${user.name} ${user.surname}',
+                  user.fullName,
                   maxLines: 1,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),

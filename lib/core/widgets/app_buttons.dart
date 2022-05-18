@@ -22,6 +22,24 @@ class AppBackButton extends StatelessWidget {
   }
 }
 
+class AppCloseButton extends StatelessWidget {
+  final void Function()? onBack;
+  const AppCloseButton({Key? key, this.onBack}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      key: key,
+      padding: EdgeInsets.zero,
+      child: const Icon(CupertinoIcons.xmark),
+      onPressed: () {
+        if (onBack != null) return onBack!();
+        Navigator.of(context).pop();
+      },
+    );
+  }
+}
+
 class AppButton extends StatelessWidget {
   final String title;
   final void Function() onTap;

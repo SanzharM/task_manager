@@ -9,6 +9,7 @@ import 'package:task_manager/pages/organization_page/organization_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
+import 'package:task_manager/pages/sessions_page/sessions_page.dart';
 import 'package:task_manager/pages/settings_page/about_app_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
 
@@ -27,8 +28,10 @@ class AppRouter {
     Navigator.of(context).push(CustomPageRoute(child: LoginPage(companyCode: companyCode)));
   }
 
-  static void toEditProfile({required BuildContext context, User? user}) {
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AddProfilePage(user: user, isEditing: true)));
+  static void toEditProfile({required BuildContext context, User? user, void Function()? onNext}) {
+    Navigator.of(context).push(CupertinoPageRoute(
+      builder: (context) => AddProfilePage(user: user, isEditing: true, onNext: () => onNext),
+    ));
   }
 
   static void toSettings({required BuildContext context, required void Function(Locale) changeLanguage}) {
@@ -49,5 +52,9 @@ class AppRouter {
 
   static toPersonalAccount({required BuildContext context, required User user}) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PersonalAccount(user: user)));
+  }
+
+  static toSessionsPage({required BuildContext context}) {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SessionsPage()));
   }
 }

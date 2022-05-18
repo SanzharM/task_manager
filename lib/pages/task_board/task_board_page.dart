@@ -21,7 +21,9 @@ import 'package:task_manager/pages/task_page/create_task_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class TaskBoard extends StatefulWidget {
-  const TaskBoard({Key? key}) : super(key: key);
+  const TaskBoard({Key? key, required this.changeTab}) : super(key: key);
+
+  final void Function(int index) changeTab;
 
   @override
   TaskBoardState createState() => TaskBoardState();
@@ -261,7 +263,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
               OneLineCell(
                 title: 'delete_board'.tr(),
                 icon: const Icon(CupertinoIcons.delete, size: 22, color: AppColors.switchOffLight),
-                iconPadding: 18,
+                iconPadding: 2,
                 onTap: () async {
                   await AlertController.showNativeDialog(
                     context: context,

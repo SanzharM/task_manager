@@ -63,9 +63,11 @@ class ApiBase {
           String url = urlWithParams(baseUrl + endpoint.url, urlParams);
           response = await client.get(Uri.parse(url), headers: headers).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
@@ -75,12 +77,13 @@ class ApiBase {
         String url = urlWithParams(baseUrl + endpoint.url, urlParams);
         try {
           final body = jsonEncode(params);
-
           response = await client.post(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
@@ -93,9 +96,11 @@ class ApiBase {
 
           response = await client.put(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }
@@ -107,9 +112,11 @@ class ApiBase {
 
           response = await client.delete(Uri.parse(url), headers: headers, body: body).timeout(duration ?? const Duration(seconds: 30));
         } on TimeoutException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'timeout_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         } on SocketException catch (_) {
+          print('$_');
           final bodyBytes = Uint8List.fromList(jsonEncode({'detail': 'socket_exception'.tr()}).codeUnits);
           return ApiResponse(body: null, bodyBytes: bodyBytes, isSuccess: false, statusCode: -1);
         }

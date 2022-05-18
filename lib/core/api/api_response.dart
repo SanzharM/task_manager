@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
 
@@ -80,4 +81,11 @@ class TasksResponse {
   final String? error;
 
   TasksResponse({this.tasks, this.error});
+}
+
+class SessionsResponse {
+  final List<Session>? sessions;
+  final String? error;
+
+  SessionsResponse({this.sessions, this.error});
 }
