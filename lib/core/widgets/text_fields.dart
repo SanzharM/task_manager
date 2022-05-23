@@ -24,6 +24,7 @@ class AppTextField extends StatefulWidget {
   final int maxLength;
   final int maxLines;
   final bool needValidator;
+  final Color? borderColor;
 
   final Function(String value)? onChanged;
   final Function onTap;
@@ -52,6 +53,7 @@ class AppTextField extends StatefulWidget {
     this.onSubmit,
     this.validator,
     this.needValidator = false,
+    this.borderColor,
   });
 
   @override
@@ -130,11 +132,12 @@ class _AppTextFieldState extends State<AppTextField> {
       height: widget.maxLines == 1 ? 54 : null,
       padding: widget.needValidator ? const EdgeInsets.only(top: 8.0, bottom: 8.0) : EdgeInsets.zero,
       decoration: BoxDecoration(
+        borderRadius: AppConstraints.borderRadius,
         border: Border.all(
-          color: Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3),
+          color: widget.borderColor ??
+              (Application.isDarkMode(context) ? AppColors.snow.withOpacity(0.3) : AppColors.darkGrey.withOpacity(0.3)),
           width: 0.5,
         ),
-        borderRadius: AppConstraints.borderRadius,
       ),
       child: TextFormField(
         focusNode: focus,

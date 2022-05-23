@@ -65,7 +65,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
             widget.isEditing ? _task.title ?? 'edit'.tr() : 'task'.tr(),
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
-          leading: AppBackButton(),
+          leading: AppCloseButton(),
         ),
         body: BlocListener(
           bloc: _bloc,
@@ -141,6 +141,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                     text: _task.performer?.name ?? _task.performer?.phone ?? _task.performer?.toString(),
                     readonly: true,
                     needValidator: true,
+                    borderColor: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                    onChanged: (value) => null,
                     onTap: () {
                       setState(() {});
                       ValuePicker(
@@ -155,7 +157,6 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                         },
                       ).show();
                     },
-                    onChanged: (value) => null,
                   ),
                   const EmptyBox(height: 12.0),
                   AppTextField(
@@ -163,6 +164,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                     text: Utils.toDateString(_task.deadline, includeMonthTitles: true),
                     readonly: true,
                     needValidator: true,
+                    borderColor: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
                     onTap: () {
                       if (FocusScope.of(context).hasFocus) {
                         FocusScope.of(context).unfocus();

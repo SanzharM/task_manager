@@ -205,7 +205,7 @@ class Utils {
     final bool isDark = Application.isDarkMode(context);
     switch (status) {
       case TaskStatus.todo:
-        return isDark ? AppColors.darkAction.withOpacity(0.5) : AppColors.lightAction.withOpacity(0.5);
+        return isDark ? AppColors.darkAction.withOpacity(0.35) : AppColors.lightAction.withOpacity(0.5);
       case TaskStatus.in_process:
         return isDark ? AppColors.lightAction.withOpacity(0.7) : AppColors.lightAction;
       case TaskStatus.done:

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
@@ -186,7 +187,7 @@ class _TaskPageState extends State<TaskPage> {
         floatingActionButton: _task.didChanges(widget.task)
             ? AppButton(
                 title: 'edit'.tr(),
-                color: AppColors.lightAction,
+                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
                 margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 isLoading: isLoading,
                 onTap: () {
