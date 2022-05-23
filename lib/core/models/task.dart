@@ -84,6 +84,8 @@ class Task {
       };
 
   bool didChanges(Task comparingTask) {
+    if (this.title != comparingTask.title) return true;
+
     if (this.performer?.id != comparingTask.performer?.id) return true;
 
     if (this.creator?.id != comparingTask.creator?.id) return true;

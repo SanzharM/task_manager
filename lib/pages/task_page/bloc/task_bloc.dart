@@ -14,6 +14,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   createTask(Task task) => add(CreateTask(task));
 
   editTask(Task task) => add(EditTask(task));
+  deleteTask(Task task) => add(DeleteTask(task));
+
+  getUsers() => add(GetUsers());
 
   TaskBloc() : super(TaskInitial()) {
     on<GetTask>((event, emit) async {
@@ -83,6 +86,32 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       if (response.success == true) {
         return emit(TaskEdited(event.task));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<DeleteTask>((event, emit) async {
+      emit(TaskInitial());
+      emit(Loading());
+
+      final response = await ApiClient.deleteTask(event.task);
+
+      if (response.success == true) {
+        return emit(TaskDeleted(event.task));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<GetUsers>((event, emit) async {
+      emit(TaskInitial());
+      emit(Loading());
+
+      final response = await ApiClient.getCompanyUsers();
+
+      if (response.users != null) {
+        return emit(UsersLoaded(response.users!));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

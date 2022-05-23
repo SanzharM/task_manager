@@ -8,8 +8,6 @@ import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/date_picker.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/core/widgets/text_fields.dart';
-import 'package:task_manager/core/widgets/value_picker.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 import 'package:task_manager/pages/task_page/task_page.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -20,11 +18,13 @@ class TaskCard extends StatelessWidget {
     required this.task,
     required this.onBack,
     required this.onEditTask,
+    required this.deleteTask,
   }) : super(key: key);
 
   final Task task;
   final void Function() onBack;
   final void Function(Task) onEditTask;
+  final void Function(Task) deleteTask;
 
   static Widget getCardContainer(BuildContext context, {double opacity = 0.5}) {
     return Container(
@@ -46,15 +46,12 @@ class TaskCard extends StatelessWidget {
       pressedOpacity: 0.75,
       onPressed: () => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => TaskPage(task, onBack: onBack))),
       child: Container(
-        constraints: const BoxConstraints(minHeight: 60, minWidth: 90),
-        height: MediaQuery.of(context).size.height * 0.15,
-        width: MediaQuery.of(context).size.width - 16.0,
         margin: const EdgeInsets.all(8.0),
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           borderRadius: AppConstraints.borderRadius,
           border: Border.all(color: Application.isDarkMode(context) ? AppColors.defaultGrey.withOpacity(0.5) : AppColors.grey),
-          color: Application.isDarkMode(context) ? AppColors.grey : AppColors.lightAction,
+          color: Utils.getColorFromStatus(task.status, context),
         ),
         child: Stack(
           alignment: Alignment.bottomLeft,
@@ -65,37 +62,55 @@ class TaskCard extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          task.title ?? 'task'.tr(),
-                          maxLines: task.description != null && task.description!.isNotEmpty ? 1 : null,
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
+                      Text(
+                        task.title ?? 'task'.tr(),
+                        maxLines: 5,
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      if (task.description != null && task.description!.isNotEmpty) Expanded(child: Text(task.description!)),
+                      const EmptyBox(height: 8.0),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(CupertinoIcons.person_fill),
+                          const EmptyBox(width: 8.0),
+                          Flexible(
+                            child: Text(
+                              task.performer?.name ?? task.performer?.phone ?? 'No performer',
+                              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const EmptyBox(height: 8.0),
+                      Row(
+                        children: [
+                          const Icon(CupertinoIcons.time_solid),
+                          const EmptyBox(width: 8.0),
+                          Text(Utils.toDateString(task.deadline), style: const TextStyle(fontWeight: FontWeight.w500)),
+                        ],
+                      ),
                       const EmptyBox(height: 8.0),
                     ],
                   ),
                 ),
-                Flexible(
+                Expanded(
                   flex: 1,
                   child: GestureDetector(
+                    onTap: () => _showActions(context),
                     child: Container(
                       color: AppColors.white.withOpacity(0.01),
-                      height: double.maxFinite,
-                      width: double.maxFinite,
                       child: Icon(CupertinoIcons.chevron_down),
                     ),
-                    onTap: () => _showActions(context),
                   ),
                 ),
               ],
             ),
-            if (difference != null && difference < 7)
+            if (difference != null && difference < 7 && task.status != TaskStatus.done)
               Container(
                 width: double.maxFinite.abs(),
                 height: 2.0,
@@ -104,12 +119,12 @@ class TaskCard extends StatelessWidget {
                   color: AppColors.error,
                 ),
               ),
-            if (difference != null && difference < 7)
+            if (difference != null && difference < 7 && task.status != TaskStatus.done)
               Align(
                 alignment: Alignment.bottomRight,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 400),
-                  width: (MediaQuery.of(context).size.width * (difference / 7)).abs(),
+                  width: (MediaQuery.of(context).size.width * ((difference.isNegative ? 0 : difference) / 7)).abs(),
                   height: 2.0,
                   color: AppColors.defaultGrey,
                 ),
@@ -145,17 +160,6 @@ class TaskCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('description'.tr()),
-                  const EmptyBox(height: 8.0),
-                  AppTextField(
-                    text: _editedTask.description,
-                    onTap: () => childSetState(() {}),
-                    onChanged: (value) {
-                      _editedTask = _editedTask.copyWith(description: value);
-                      if (!didChanges) didChanges = true;
-                    },
-                  ),
-                  const EmptyBox(height: 16.0),
                   Text('status'.tr(), textAlign: TextAlign.start),
                   const EmptyBox(height: 8.0),
                   ListView.separated(
@@ -181,12 +185,25 @@ class TaskCard extends StatelessWidget {
                     title: Utils.dateToString(_editedTask.deadline),
                     icon: const Icon(CupertinoIcons.time),
                     onTap: () => DatePicker(
+                      minDate: _editedTask.createdAt?.subtract(Duration(days: 365)),
                       initialDate: _editedTask.deadline,
                       onPicked: (date) => childSetState(() {
-                        _editedTask = _editedTask.copyWith(deadline: date);
+                        _editedTask = _editedTask.copyWith(deadline: Utils.parseOnlyDate(date));
                         if (!didChanges) didChanges = true;
                       }),
                     ).show(context),
+                  ),
+                  const EmptyBox(height: 16.0),
+                  Text('delete'.tr()),
+                  const EmptyBox(height: 8.0),
+                  OneLineCell(
+                    title: 'delete'.tr(),
+                    centerTitle: false,
+                    icon: const Icon(CupertinoIcons.delete, color: AppColors.lightRed),
+                    onTap: () {
+                      deleteTask(task);
+                      Navigator.of(context).pop();
+                    },
                   ),
                   const EmptyBox(height: 24.0),
                   OneLineCell(
@@ -217,6 +234,7 @@ class TaskCards extends StatelessWidget {
     this.orderByStatus = true,
     required this.onEditTask,
     required this.onBack,
+    required this.deleteTask,
   }) : super(key: key);
 
   final List<Task> tasks;
@@ -225,6 +243,7 @@ class TaskCards extends StatelessWidget {
   final bool orderByStatus;
   final void Function() onBack;
   final void Function(Task) onEditTask;
+  final void Function(Task) deleteTask;
 
   @override
   Widget build(BuildContext context) {
@@ -240,6 +259,8 @@ class TaskCards extends StatelessWidget {
     tasks.forEach((e) {
       if (orderByStatus) {
         if (e.status != columnStatus) emptyCards += 1;
+      } else {
+        if (!Utils.isBelongingToTimeSort(timeSort: timeSort, deadline: e.deadline)) emptyCards += 1;
       }
     });
     if (emptyCards == tasks.length)
@@ -261,16 +282,23 @@ class TaskCards extends StatelessWidget {
             task: tasks[index],
             onBack: onBack,
             onEditTask: onEditTask,
+            deleteTask: deleteTask,
           );
         }
         // if (tasks[index].deadline == null) {
         //   return const EmptyBox();
         // }
-        return TaskCard(
-          task: tasks[index],
-          onBack: onBack,
-          onEditTask: onEditTask,
-        );
+
+        if (Utils.isBelongingToTimeSort(timeSort: timeSort, deadline: tasks[index].deadline)) {
+          return TaskCard(
+            task: tasks[index],
+            onBack: onBack,
+            onEditTask: onEditTask,
+            deleteTask: deleteTask,
+          );
+        } else {
+          return const EmptyBox();
+        }
       },
     );
   }

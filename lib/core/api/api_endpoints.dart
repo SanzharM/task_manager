@@ -91,7 +91,7 @@ class CreateTaskEndpoint extends ApiEndpoint {
 }
 
 class DeleteTaskEndpoint extends ApiEndpoint {
-  String url = '/tasks/';
+  String url = '/tasks/{task_id}';
   RequestMethod method = RequestMethod.delete;
   int statusCode = 200;
 }

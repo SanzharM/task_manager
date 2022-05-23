@@ -55,3 +55,19 @@ class BoardUsersLoaded extends TaskState {
   @override
   List<Object> get props => [users];
 }
+
+class TaskDeleted extends TaskState {
+  final Task task;
+  TaskDeleted(this.task);
+
+  @override
+  List<Object> get props => [task];
+}
+
+class UsersLoaded extends TaskState {
+  final List<User> users;
+  UsersLoaded(this.users);
+
+  @override
+  List<Object> get props => [users];
+}

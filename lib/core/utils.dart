@@ -1,4 +1,7 @@
+import 'package:flutter/widgets.dart';
 import 'package:task_manager/core/api/api_endpoints.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -162,5 +165,55 @@ class Utils {
         '${datetime.day} '
         '${datetime.year == DateTime.now().year ? '' : datetime.year} '
         '$time';
+  }
+
+  static DateTime parseOnlyDate(DateTime date) {
+    try {
+      return DateFormat('yyyy-MM-dd').parse(date.toString());
+    } catch (e) {
+      print('Utils parseOnlyDate error: $e');
+      return date;
+    }
+  }
+
+  static const day = Duration(days: 1);
+  static const week = Duration(days: 7);
+  static const month = Duration(days: 30);
+  static const year = Duration(days: 365);
+
+  static bool isBelongingToTimeSort({required TimeSort timeSort, DateTime? deadline}) {
+    final DateTime today = DateTime.now();
+    switch (timeSort) {
+      case TimeSort.week:
+        if (deadline != null && today.isAfter(deadline)) {
+          return false; // if deadline was overdue
+        }
+        return deadline?.isBefore(today.add(week)) ?? false;
+      case TimeSort.month:
+        if (deadline != null && today.isAfter(deadline)) {
+          return false; // if deadline was overdue
+        }
+        return (deadline?.isAfter(today.add(week)) ?? false) && (deadline?.isBefore(today.add(month)) ?? false);
+      case TimeSort.past_tasks:
+        return deadline?.isBefore(today) ?? false;
+      case TimeSort.out_of_deadline:
+        return deadline == null || deadline.isAfter(today.add(month));
+    }
+  }
+
+  static Color getColorFromStatus(TaskStatus? status, BuildContext context) {
+    final bool isDark = Application.isDarkMode(context);
+    switch (status) {
+      case TaskStatus.todo:
+        return isDark ? AppColors.darkAction.withOpacity(0.5) : AppColors.lightAction.withOpacity(0.5);
+      case TaskStatus.in_process:
+        return isDark ? AppColors.lightAction.withOpacity(0.7) : AppColors.lightAction;
+      case TaskStatus.done:
+        return isDark ? AppColors.success.withOpacity(0.5) : AppColors.success;
+      case TaskStatus.undetermined:
+        return isDark ? AppColors.grey : AppColors.defaultGrey;
+      default:
+        return isDark ? AppColors.grey : AppColors.defaultGrey;
+    }
   }
 }

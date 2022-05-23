@@ -43,7 +43,7 @@ class InfoCell extends StatelessWidget {
       value: value,
       crossAxisAlignment: CrossAxisAlignment.start,
       padding: EdgeInsets.zero,
-      onTap: onTap ?? () {},
+      onTap: onTap,
     );
   }
 
@@ -53,6 +53,7 @@ class InfoCell extends StatelessWidget {
     final _valueStyle = TextStyle(fontSize: valueSize, fontWeight: valueWeight);
     return CupertinoButton(
       onPressed: onTap,
+      disabledColor: AppColors.black,
       child: Container(
         padding: padding,
         width: MediaQuery.of(context).size.width,

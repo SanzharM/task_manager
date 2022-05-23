@@ -21,6 +21,7 @@ class TaskBoardBuilder extends StatefulWidget {
     required this.onCreateBoard,
     required this.onRefresh,
     required this.onEditTask,
+    required this.deleteTask,
     this.isLoading = false,
   }) : super(key: key);
 
@@ -29,6 +30,7 @@ class TaskBoardBuilder extends StatefulWidget {
   final void Function() onCreateBoard;
   final Future<void> Function() onRefresh;
   final void Function(Task editedTask) onEditTask;
+  final void Function(Task task) deleteTask;
 
   @override
   State<TaskBoardBuilder> createState() => TaskBoardBuilderState();
@@ -118,6 +120,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
                     orderByStatus: true,
                     onBack: widget.onRefresh,
                     onEditTask: widget.onEditTask,
+                    deleteTask: widget.deleteTask,
                   ),
               ],
             ),
@@ -151,6 +154,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
                   orderByStatus: false,
                   onBack: widget.onRefresh,
                   onEditTask: widget.onEditTask,
+                  deleteTask: widget.deleteTask,
                 ),
             ],
           ),

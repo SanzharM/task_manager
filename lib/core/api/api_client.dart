@@ -257,6 +257,18 @@ class ApiClient {
 
     return BooleanResponse(success: response.isSuccess, error: await compute(parseError, response.bodyBytes));
   }
+
+  static Future<BooleanResponse> deleteTask(Task task) async {
+    final response = await ApiBase.request(
+      endpoint: DeleteTaskEndpoint(),
+      urlParams: {'{task_id}': '${task.pk ?? ''}'},
+    );
+
+    return BooleanResponse(
+      success: response.isSuccess,
+      error: response.isSuccess ? null : await compute(parseError, response.bodyBytes),
+    );
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {

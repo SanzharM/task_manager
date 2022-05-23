@@ -109,6 +109,13 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   ),
                   const EmptyBox(height: 12.0),
                   AppTextField(
+                    label: 'status'.tr(),
+                    text: Utils.taskStatusToString(_task.status),
+                    readonly: true,
+                    onTap: _changeStatus,
+                  ),
+                  const EmptyBox(height: 12.0),
+                  AppTextField(
                     label: 'created_by'.tr(),
                     text: _task.creator?.name ?? _task.creator?.phone ?? _task.creator?.toString(),
                     readonly: true,
@@ -186,5 +193,18 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         ),
       ),
     );
+  }
+
+  void _changeStatus() async {
+    ValuePicker(
+      context: context,
+      title: 'status'.tr(),
+      values: TaskStatus.values.map((e) => e.toString().split('.').last).toList(),
+      needTranslateValue: true,
+      onSelect: (value) {
+        _task = _task.copyWith(status: Utils.getStatusFromString(value));
+        setState(() {});
+      },
+    ).show();
   }
 }

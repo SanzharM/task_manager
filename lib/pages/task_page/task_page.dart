@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/task.dart';
+import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
@@ -15,9 +17,10 @@ import 'package:task_manager/core/widgets/value_picker.dart';
 import 'package:task_manager/pages/task_page/bloc/task_bloc.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage(this.task, {Key? key, this.onBack}) : super(key: key);
+  const TaskPage(this.task, {Key? key, this.users, this.onBack}) : super(key: key);
 
   final Task task;
+  final List<User>? users;
   final void Function()? onBack;
 
   @override
@@ -27,6 +30,8 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   final _bloc = TaskBloc();
   late Task _task;
+
+  List<User> _users = [];
 
   bool isLoading = false;
 
@@ -47,6 +52,10 @@ class _TaskPageState extends State<TaskPage> {
   void initState() {
     super.initState();
     _task = widget.task;
+    if (widget.users == null)
+      _bloc.getUsers();
+    else
+      _users = widget.users!;
   }
 
   @override
@@ -61,6 +70,24 @@ class _TaskPageState extends State<TaskPage> {
           title: Text(_task.title ?? 'task'.tr()),
           centerTitle: true,
           leading: AppBackButton(),
+          actions: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: const Icon(CupertinoIcons.delete),
+              onPressed: () {
+                if (isLoading) return;
+                AlertController.showNativeDialog(
+                  context: context,
+                  title: 'delete'.tr() + ' ?',
+                  onYes: () {
+                    _bloc.deleteTask(_task);
+                    Navigator.of(context).pop();
+                  },
+                  onNo: () => Navigator.of(context).pop(),
+                );
+              },
+            ),
+          ],
         ),
         body: BlocListener(
           bloc: _bloc,
@@ -71,9 +98,18 @@ class _TaskPageState extends State<TaskPage> {
               AlertController.showSnackbar(context: context, message: state.error);
             }
 
+            if (state is TaskDeleted) {
+              if (widget.onBack != null) widget.onBack!();
+              Navigator.of(context).pop();
+            }
+
             if (state is TaskEdited) {
               if (widget.onBack != null) widget.onBack!();
               Navigator.of(context).pop();
+            }
+
+            if (state is UsersLoaded) {
+              _users = state.users;
             }
 
             setState(() {});
@@ -85,14 +121,34 @@ class _TaskPageState extends State<TaskPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  AppTextField(
+                    label: 'title'.tr(),
+                    text: _task.title,
+                    maxLines: 1,
+                    needValidator: true,
+                    onTap: () => setState(() {}),
+                    onChanged: (value) => _task = _task.copyWith(title: value),
+                  ),
+                  const EmptyBox(height: 12),
+                  CupertinoScrollbar(
+                    child: AppTextField(
+                      label: 'description'.tr(),
+                      text: _task.description,
+                      maxLines: 3,
+                      onTap: () => setState(() {}),
+                      onChanged: (value) => _task = _task.copyWith(description: value),
+                    ),
+                  ),
+                  const EmptyBox(height: 12),
                   InfoCell.task(
                     title: 'creator'.tr() + ': ',
-                    value: _task.creator?.name,
+                    value: _task.creator?.name ?? _task.creator?.phone,
                   ),
                   const EmptyBox(height: 12),
                   InfoCell.task(
                     title: 'performer'.tr() + ': ',
-                    value: _task.performer?.name,
+                    value: _task.performer?.name ?? _task.performer?.phone,
+                    onTap: _choosePerformer,
                   ),
                   const EmptyBox(height: 12),
                   InfoCell(
@@ -120,16 +176,6 @@ class _TaskPageState extends State<TaskPage> {
                       setState(() {});
                     },
                   ),
-                  const EmptyBox(height: 12),
-                  CupertinoScrollbar(
-                    child: AppTextField(
-                      label: 'description'.tr(),
-                      text: _task.description,
-                      maxLines: 3,
-                      onTap: () => setState(() {}),
-                      onChanged: (value) => _task = _task.copyWith(description: value),
-                    ),
-                  ),
                   if (_task.didChanges(widget.task)) const EmptyBox(height: 60),
                 ],
               ),
@@ -150,5 +196,53 @@ class _TaskPageState extends State<TaskPage> {
             : null,
       ),
     );
+  }
+
+  void _choosePerformer() async {
+    if (_users.isEmpty) return;
+    User? _selectedUser = _task.performer;
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: AppConstraints.borderRadius),
+      builder: (context) => StatefulBuilder(
+        builder: (context, childSetState) => SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('choose_performer'.tr()),
+              const EmptyBox(height: 12.0),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: _users.length,
+                separatorBuilder: (context, index) => const EmptyBox(height: 12.0),
+                itemBuilder: (context, index) => OneLineCell(
+                  title: _users[index].name ?? _users[index].phone ?? 'User #${_users[index].id}',
+                  onTap: () => childSetState(() => _selectedUser = _users[index]),
+                  needIcon: true,
+                  icon: _selectedUser != null && _users.indexOf(_selectedUser!) == index
+                      ? const Icon(CupertinoIcons.check_mark_circled_solid, color: AppColors.success)
+                      : const Icon(CupertinoIcons.circle),
+                ),
+              ),
+              const EmptyBox(height: 16.0),
+              OneLineCell(
+                title: 'done'.tr(),
+                onTap: () => Navigator.of(context).pop(),
+                needIcon: false,
+                centerTitle: true,
+              ),
+              const EmptyBox(),
+            ],
+          ),
+        ),
+      ),
+    );
+    _task = _task.copyWith(performer: _selectedUser);
+    setState(() {});
   }
 }

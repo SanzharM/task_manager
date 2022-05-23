@@ -167,6 +167,13 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                   setAnimateTabAfterLoading(state.task.status?.index);
                   _boardBloc.getBoards();
                 }
+
+                if (state is taskBloc.TaskDeleted) {
+                  setAnimateTabAfterLoading(state.task.status?.index);
+                  _boardBloc.getBoards();
+                }
+
+                setState(() {});
               },
             ),
           ],
@@ -179,6 +186,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
               onCreateBoard: _toCreateBoardPage,
               onRefresh: _onRefresh,
               onEditTask: _onEditTask,
+              deleteTask: _deleteTask,
             ),
           ),
         ),
@@ -191,9 +199,9 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     setState(() => animateTabAfterLoading = index);
   }
 
-  void _onEditTask(Task editedTask) {
-    _taskBloc.editTask(editedTask);
-  }
+  void _onEditTask(Task editedTask) => _taskBloc.editTask(editedTask);
+
+  void _deleteTask(Task task) => _taskBloc.deleteTask(task);
 
   void _onChangeBoard(index) {
     print('new index: $index');
@@ -202,7 +210,6 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   }
 
   Future<void> _onRefresh() async {
-    _boardBloc.getCompanyUsers();
     _boardBloc.getBoards();
     return Future.delayed(const Duration(milliseconds: 500));
   }

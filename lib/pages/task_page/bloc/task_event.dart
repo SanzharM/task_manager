@@ -44,9 +44,16 @@ class ValidateTask extends TaskEvent {
   ValidateTask(this.task);
 }
 
+class DeleteTask extends TaskEvent {
+  final Task task;
+  DeleteTask(this.task);
+}
+
 class GetBoardUsers extends TaskEvent {
   final int boardId;
   GetBoardUsers(this.boardId);
   @override
   List<Object> get props => [boardId];
 }
+
+class GetUsers extends TaskEvent {}
