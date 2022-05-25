@@ -135,5 +135,9 @@
   "confirm_logout": "Are you sure you want to exit ?",
   "today": "Today",
   "deadline_is_out": "Deadline is out",
-  "days_left": "Days left: {days}"
+  "days_left": "Days left: {days}",
+  "comments": "Comments",
+  "comment": "Comment",
+  "add_comment": "Add a comment",
+  "delete_comment": "Delete comment"
 }

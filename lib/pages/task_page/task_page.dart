@@ -10,12 +10,17 @@ import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
+import 'package:task_manager/core/widgets/comment_card.dart';
+import 'package:task_manager/core/widgets/custom_stepper.dart' as stepper;
 import 'package:task_manager/core/widgets/date_picker.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
+import 'package:task_manager/core/widgets/user_card.dart';
 import 'package:task_manager/core/widgets/value_picker.dart';
 import 'package:task_manager/pages/task_page/bloc/task_bloc.dart';
+import 'package:task_manager/pages/task_page/comments_page.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage(this.task, {Key? key, this.users, this.onBack}) : super(key: key);
@@ -28,13 +33,17 @@ class TaskPage extends StatefulWidget {
   _TaskPageState createState() => _TaskPageState();
 }
 
-class _TaskPageState extends State<TaskPage> {
+class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
   final _bloc = TaskBloc();
   late Task _task;
 
   List<User> _users = [];
 
   bool isLoading = false;
+  bool isTextExpanded = false;
+  bool isCommentsLoading = false;
+
+  String _newComment = '';
 
   void _changeStatus() async {
     ValuePicker(
@@ -57,6 +66,7 @@ class _TaskPageState extends State<TaskPage> {
       _bloc.getUsers();
     else
       _users = widget.users!;
+    if (_task.pk != null) _bloc.getComments(_task.pk!);
   }
 
   @override
@@ -93,9 +103,12 @@ class _TaskPageState extends State<TaskPage> {
         body: BlocListener(
           bloc: _bloc,
           listener: (context, state) {
+            print('state is $state');
             isLoading = state is Loading;
+            if (state is CommentsLoading) isCommentsLoading = true;
 
             if (state is ErrorState) {
+              isCommentsLoading = false;
               AlertController.showSnackbar(context: context, message: state.error);
             }
 
@@ -124,57 +137,97 @@ class _TaskPageState extends State<TaskPage> {
                 children: [
                   AppTextField(
                     label: 'title'.tr(),
-                    text: _task.title,
+                    text: _task.description,
+                    keyboardType: TextInputType.text,
                     maxLines: 1,
-                    needValidator: true,
+                    readonly: true,
                     onTap: () => setState(() {}),
-                    onChanged: (value) => _task = _task.copyWith(title: value),
+                    onChanged: (value) => setState(() => _task = _task.copyWith(title: value)),
                   ),
-                  const EmptyBox(height: 12),
-                  CupertinoScrollbar(
-                    child: AppTextField(
-                      label: 'description'.tr(),
-                      text: _task.description,
-                      maxLines: 3,
-                      onTap: () => setState(() {}),
-                      onChanged: (value) => _task = _task.copyWith(description: value),
+                  const EmptyBox(height: 12.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: AppColors.grey.withOpacity(0.33)),
+                      borderRadius: AppConstraints.borderRadius,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: AppConstraints.borderRadius,
+                      child: ExpansionTile(
+                        title: Text('description'.tr()),
+                        textColor: Theme.of(context).primaryColor,
+                        iconColor: Theme.of(context).primaryColor,
+                        childrenPadding: const EdgeInsets.symmetric(vertical: 12.0),
+                        children: [
+                          Text(
+                            _task.description ?? '',
+                            style: const TextStyle(fontSize: 16.0),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const EmptyBox(height: 12),
-                  InfoCell.task(
-                    title: 'creator'.tr() + ': ',
-                    value: _task.creator?.name ?? _task.creator?.phone,
+                  stepper.CustomStepper(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controlsBuilder: (context, {onStepCancel, onStepContinue}) => const EmptyBox(),
+                    steps: [
+                      stepper.Step(
+                        state: stepper.StepState.complete,
+                        isActive: true,
+                        content: const EmptyBox(),
+                        title: CupertinoButton(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: UserRow(user: _task.creator, size: 48.0, namePlaceholder: 'No creator'),
+                          onPressed: null,
+                        ),
+                        subtitle: CupertinoButton(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                          child: Text('created_date'.tr() + ': ' + Utils.toDateString(_task.createdAt)),
+                          onPressed: null,
+                        ),
+                      ),
+                      stepper.Step(
+                        state: _task.status == TaskStatus.done ? stepper.StepState.complete : stepper.StepState.editing,
+                        isActive: _task.status == TaskStatus.done,
+                        content: const EmptyBox(),
+                        title: CupertinoButton(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          onPressed: _choosePerformer,
+                          child: UserRow(user: _task.performer, size: 48.0, namePlaceholder: 'No performer'),
+                        ),
+                        subtitle: CupertinoButton(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                          child: Text('deadline'.tr() + ': ' + Utils.toDateString(_task.deadline)),
+                          onPressed: () async {
+                            await DatePicker(
+                              minDate: Utils.getOnlyDate(_task.createdAt),
+                              initialDate: _task.deadline,
+                              onPicked: (date) => setState(() => _task = _task.copyWith(deadline: date)),
+                            ).show(context);
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const EmptyBox(height: 12),
-                  InfoCell.task(
-                    title: 'performer'.tr() + ': ',
-                    value: _task.performer?.name ?? _task.performer?.phone,
-                    onTap: _choosePerformer,
-                  ),
-                  const EmptyBox(height: 12),
-                  InfoCell(
-                    title: 'status'.tr() + ': ',
-                    value: Utils.taskStatusToString(_task.status),
+                  OneLineCell(
+                    title: 'status'.tr() + ': ' + Utils.taskStatusToString(_task.status),
+                    leading: const Icon(CupertinoIcons.square_list_fill),
                     onTap: _changeStatus,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    padding: EdgeInsets.zero,
                   ),
                   const EmptyBox(height: 12),
-                  InfoCell.task(
-                    title: 'created_date'.tr() + ': ',
-                    value: Utils.dateToString(_task.createdAt),
-                  ),
-                  const EmptyBox(height: 12),
-                  InfoCell.task(
-                    title: 'deadline'.tr() + ': ',
-                    value: deadline,
-                    onTap: () async {
-                      await DatePicker(
-                        minDate: _task.createdAt,
-                        initialDate: _task.deadline,
-                        onPicked: (date) => setState(() => _task = _task.copyWith(deadline: date)),
-                      ).show(context);
-                      setState(() {});
+                  OneLineCell(
+                    title: 'comments'.tr(),
+                    leading: const Icon(Icons.comment),
+                    icon: const Icon(CupertinoIcons.forward),
+                    onTap: () {
+                      if (_task.pk == null) return;
+                      Navigator.of(context).push(CustomPageRoute(
+                        direction: AxisDirection.up,
+                        child: CommentsPage(taskId: _task.pk!),
+                      ));
+                      return;
                     },
                   ),
                   if (_task.didChanges(widget.task)) const EmptyBox(height: 60),
@@ -187,7 +240,7 @@ class _TaskPageState extends State<TaskPage> {
         floatingActionButton: _task.didChanges(widget.task)
             ? AppButton(
                 title: 'edit'.tr(),
-                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
                 margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 isLoading: isLoading,
                 onTap: () {

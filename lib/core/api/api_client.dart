@@ -294,16 +294,16 @@ class ApiClient {
     }
   }
 
-  static Future<CommentResponse> createComment(String text, int taskId) async {
+  static Future<CommentsResponse> createComment(String text, int taskId) async {
     final response = await ApiBase.request(
       endpoint: CreateCommentEndpoint(),
       params: {'task_id': taskId, 'content': text},
     );
 
     if (response.isSuccess) {
-      return CommentResponse(comment: Comment.fromJson(convert.json.decode(convert.utf8.decode(response.bodyBytes))));
+      return CommentsResponse(comments: await compute(parseComments, response.bodyBytes));
     } else {
-      return CommentResponse(error: await compute(parseError, response.bodyBytes));
+      return CommentsResponse(error: await compute(parseError, response.bodyBytes));
     }
   }
 }

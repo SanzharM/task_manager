@@ -140,8 +140,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       final response = await ApiClient.createComment(event.text, event.taskId);
 
-      if (response.comment != null) {
-        return emit(CommentCreated(response.comment!));
+      if (response.comments != null) {
+        return emit(CommentCreated(response.comments!));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

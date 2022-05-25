@@ -17,7 +17,7 @@ class Comment {
       task: json['task'] == null ? null : Task.fromJson(json['task']),
       user: json['user'] == null ? null : User.fromJson(json['user']),
       content: json['content'],
-      createdAt: Utils.parseDate('${json['date']}'),
+      createdAt: Utils.parseDate('${json['created_at']}'),
     );
   }
 
