@@ -293,6 +293,19 @@ class ApiClient {
       return CommentsResponse(error: await compute(parseError, response.bodyBytes));
     }
   }
+
+  static Future<CommentResponse> createComment(String text, int taskId) async {
+    final response = await ApiBase.request(
+      endpoint: CreateCommentEndpoint(),
+      params: {'task_id': taskId, 'content': text},
+    );
+
+    if (response.isSuccess) {
+      return CommentResponse(comment: Comment.fromJson(convert.json.decode(convert.utf8.decode(response.bodyBytes))));
+    } else {
+      return CommentResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {

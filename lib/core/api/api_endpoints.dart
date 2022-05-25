@@ -143,3 +143,9 @@ class GetCommentsEndpoint extends ApiEndpoint {
   RequestMethod method = RequestMethod.get;
   int statusCode = 200;
 }
+
+class CreateCommentEndpoint extends ApiEndpoint {
+  String url = '/tasks/comment';
+  RequestMethod method = RequestMethod.post;
+  int statusCode = 200;
+}

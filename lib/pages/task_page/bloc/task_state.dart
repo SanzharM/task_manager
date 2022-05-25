@@ -81,3 +81,11 @@ class CommentsLoaded extends TaskState {
   @override
   List<Object> get props => [comments];
 }
+
+class CommentCreated extends TaskState {
+  final Comment comment;
+  CommentCreated(this.comment);
+
+  @override
+  List<Object> get props => [comment];
+}

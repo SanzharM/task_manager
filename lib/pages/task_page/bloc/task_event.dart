@@ -66,3 +66,12 @@ class GetComments extends TaskEvent {
   @override
   List<Object> get props => [taskId];
 }
+
+class CreateComment extends TaskEvent {
+  final String text;
+  final int taskId;
+  CreateComment(this.text, this.taskId);
+
+  @override
+  List<Object> get props => [text, taskId];
+}

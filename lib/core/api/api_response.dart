@@ -104,3 +104,10 @@ class CommentsResponse {
 
   CommentsResponse({this.comments, this.error});
 }
+
+class CommentResponse {
+  final Comment? comment;
+  final String? error;
+
+  CommentResponse({this.comment, this.error});
+}

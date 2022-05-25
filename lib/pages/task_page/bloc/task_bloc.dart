@@ -18,7 +18,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   deleteTask(Task task) => add(DeleteTask(task));
 
   getUsers() => add(GetUsers());
+
   void getComments(int taskId) => add(GetComments(taskId));
+  void createComment(String text, int taskId) => add(CreateComment(text, taskId));
 
   TaskBloc() : super(TaskInitial()) {
     on<GetTask>((event, emit) async {
@@ -127,6 +129,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       if (response.comments != null) {
         return emit(CommentsLoaded(response.comments!));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<CreateComment>((event, emit) async {
+      emit(TaskInitial());
+      emit(CommentsLoading());
+
+      final response = await ApiClient.createComment(event.text, event.taskId);
+
+      if (response.comment != null) {
+        return emit(CommentCreated(response.comment!));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }
