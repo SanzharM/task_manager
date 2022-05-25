@@ -7,6 +7,7 @@ import 'package:task_manager/core/api/api_response.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/error_types.dart';
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
@@ -269,6 +270,29 @@ class ApiClient {
       error: response.isSuccess ? null : await compute(parseError, response.bodyBytes),
     );
   }
+
+  static Future<VoiceAuthTextsResponse> getTextsForVoiceAuth() async {
+    final response = await ApiBase.request(endpoint: GetTextsEndpoint());
+
+    if (response.isSuccess) {
+      return VoiceAuthTextsResponse(text: await compute(parseTexts, response.bodyBytes));
+    } else {
+      return VoiceAuthTextsResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
+
+  static Future<CommentsResponse> getComments(int taskId) async {
+    final response = await ApiBase.request(
+      endpoint: GetCommentsEndpoint(),
+      urlParams: {'{task_id}': '$taskId'},
+    );
+
+    if (response.isSuccess) {
+      return CommentsResponse(comments: await compute(parseComments, response.bodyBytes));
+    } else {
+      return CommentsResponse(error: await compute(parseError, response.bodyBytes));
+    }
+  }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {
@@ -345,6 +369,26 @@ Future<List<Session>?> parseSessions(Uint8List bodyBytes) async {
     final json = convert.json.decode(convert.utf8.decode(bodyBytes));
     if (json == null || json is! List) return null;
     return json.map((e) => Session.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<String?> parseTexts(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null || json is! String) return null;
+    return json;
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Comment>?> parseComments(Uint8List bodyBytes) async {
+  try {
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (json == null || json is! List) return null;
+    return json.map((e) => Comment.fromJson(e)).toList();
   } catch (e) {
     return null;
   }

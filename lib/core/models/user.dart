@@ -104,8 +104,10 @@ class User {
     };
   }
 
-  Widget tryGetImage({bool canAddImage = false}) {
-    final placeholder = canAddImage ? const Icon(CupertinoIcons.camera_fill, size: 32) : const Icon(CupertinoIcons.person_fill, size: 32);
+  Widget tryGetImage({bool canAddImage = false, double? placeholderSize}) {
+    final placeholder = canAddImage
+        ? Icon(CupertinoIcons.camera_fill, size: placeholderSize ?? 32)
+        : Icon(CupertinoIcons.person_fill, size: placeholderSize ?? 32);
 
     if (this.imageUrl?.isEmpty ?? true) return placeholder;
 

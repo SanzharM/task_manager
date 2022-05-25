@@ -21,6 +21,11 @@ class Application {
   static const _boardSortOrder = 'TaskManagerBoardSortOrderToken';
   static const _wrongAttemptsKey = 'TaskManagerWrongVoiceAttempts';
 
+  // Settings preferences
+  static const _biometricsKey = 'TaskManagerBiometricsKey';
+  static const _voiceAuthKey = 'TaskManagerVoiceAuthKey';
+  static const _pinCodeKey = 'TaskManagerPinCodeKey';
+
   // static String getBaseUrl() => 'http://192.168.1.103:8000';
   static String getBaseUrl() => 'https://app-bota.org';
 
@@ -135,5 +140,44 @@ class Application {
 
   static Future<int> getWrongVoiceAttempts() async {
     return int.tryParse(await _storage.read(key: _wrongAttemptsKey) ?? '') ?? 0;
+  }
+
+  // Biometrics
+  static Future<void> setUseBiometrics(bool? value) async {
+    if (value == null) {
+      return _storage.delete(key: _biometricsKey);
+    } else {
+      return await _storage.write(key: _biometricsKey, value: '$value');
+    }
+  }
+
+  static Future<bool> useBiometrics() async {
+    return await _storage.read(key: _biometricsKey) == 'true';
+  }
+
+  // Voice Auth
+  static Future<void> setUseVoiceAuth(bool? value) async {
+    if (value == null) {
+      return await _storage.delete(key: _voiceAuthKey);
+    } else {
+      return await _storage.write(key: _voiceAuthKey, value: '$value');
+    }
+  }
+
+  static Future<bool> useVoiceAuth() async {
+    return await _storage.read(key: _voiceAuthKey) == 'true';
+  }
+
+  // Pin Code
+  static Future<void> setUsePinCode(bool? value) async {
+    if (value == null) {
+      return await _storage.delete(key: _pinCodeKey);
+    } else {
+      return await _storage.write(key: _pinCodeKey, value: '$value');
+    }
+  }
+
+  static Future<bool> usePinCode() async {
+    return await _storage.read(key: _pinCodeKey) == 'true';
   }
 }

@@ -125,5 +125,15 @@
   "session_start_time": "Session start time",
   "session_end_time": "Session end time",
   "active_session": "Active session",
-  "end_session": "Close session"
+  "end_session": "Close session",
+  "use_biometrics_for_login": "Use biometrics for login ?",
+  "voice_authentication": "Voice authentication",
+  "pin_code": "Pin code",
+  "biometrics": "Biometrics",
+  "security": "Security",
+  "other_settings": "Other settings",
+  "confirm_logout": "Are you sure you want to exit ?",
+  "today": "Today",
+  "deadline_is_out": "Deadline is out",
+  "days_left": "Days left: {days}"
 }

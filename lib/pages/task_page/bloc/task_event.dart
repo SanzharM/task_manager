@@ -52,8 +52,17 @@ class DeleteTask extends TaskEvent {
 class GetBoardUsers extends TaskEvent {
   final int boardId;
   GetBoardUsers(this.boardId);
+
   @override
   List<Object> get props => [boardId];
 }
 
 class GetUsers extends TaskEvent {}
+
+class GetComments extends TaskEvent {
+  final int taskId;
+  GetComments(this.taskId);
+
+  @override
+  List<Object> get props => [taskId];
+}

@@ -1,3 +1,4 @@
+import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 
@@ -15,6 +16,7 @@ class Task {
   int? boardId;
   User? creator;
   User? performer;
+  List<Comment>? comments;
 
   Task({
     this.pk,
@@ -28,6 +30,7 @@ class Task {
     this.boardId,
     this.creator,
     this.performer,
+    this.comments,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -42,6 +45,7 @@ class Task {
       creator: json['creator'] == null ? null : User.fromJson(json['creator']),
       createdAt: Utils.parseDate('${json['created_at'] ?? ''}'),
       lastUpdatedAt: Utils.parseDate('${json['updated_at']}'),
+      comments: json['comments'] == null ? null : (json['comments'] as List).map((e) => Comment.fromJson(e)).toList(),
     );
   }
 
@@ -56,6 +60,7 @@ class Task {
     int? boardId,
     User? creator,
     User? performer,
+    List<Comment>? comments,
   }) {
     return Task(
       pk: this.pk,
@@ -69,6 +74,7 @@ class Task {
       boardId: boardId ?? this.boardId,
       creator: creator ?? this.creator,
       performer: performer ?? this.performer,
+      comments: comments ?? this.comments,
     );
   }
 

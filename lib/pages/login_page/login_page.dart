@@ -8,7 +8,6 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
-import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -17,7 +16,6 @@ import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/pages/pin_page/pin_page.dart';
-import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   final String? companyCode;

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:task_manager/core/models/board.dart';
+import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
@@ -88,4 +89,18 @@ class SessionsResponse {
   final String? error;
 
   SessionsResponse({this.sessions, this.error});
+}
+
+class VoiceAuthTextsResponse {
+  final String? text;
+  final String? error;
+
+  VoiceAuthTextsResponse({this.text, this.error});
+}
+
+class CommentsResponse {
+  final List<Comment>? comments;
+  final String? error;
+
+  CommentsResponse({this.comments, this.error});
 }

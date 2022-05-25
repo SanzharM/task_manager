@@ -71,3 +71,13 @@ class UsersLoaded extends TaskState {
   @override
   List<Object> get props => [users];
 }
+
+class CommentsLoading extends TaskState {}
+
+class CommentsLoaded extends TaskState {
+  final List<Comment> comments;
+  CommentsLoaded(this.comments);
+
+  @override
+  List<Object> get props => [comments];
+}

@@ -193,6 +193,7 @@ class CountryCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
+      padding: EdgeInsets.zero,
       onPressed: onTap,
       child: Container(
         decoration: BoxDecoration(

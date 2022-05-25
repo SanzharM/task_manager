@@ -113,3 +113,31 @@ class UserCard extends StatelessWidget {
     );
   }
 }
+
+class UserRow extends StatelessWidget {
+  const UserRow({Key? key, required this.user, this.size, this.namePlaceholder}) : super(key: key);
+
+  final User? user;
+  final double? size;
+  final String? namePlaceholder;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          child: user?.tryGetImage() ?? const Icon(CupertinoIcons.person_badge_minus_fill),
+          height: size ?? 24.0,
+          width: size ?? 24.0,
+        ),
+        const EmptyBox(width: 8.0),
+        Flexible(
+          child: Text(
+            user?.name ?? namePlaceholder ?? 'No user',
+            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    );
+  }
+}

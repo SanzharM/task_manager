@@ -7,6 +7,7 @@ import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/login_page/intro_page.dart';
+import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 import 'core/app_theme.dart';
 import 'pages/pin_page/pin_page.dart';
@@ -15,7 +16,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   StatefulWidget homeScreen = IntroPage();
-  if (await Application.isAuthorized()) homeScreen = PinPage(shouldSetupPin: false);
+  if (await Application.isAuthorized()) {
+    final bool voice = await Application.useVoiceAuth();
+    final bool pin = await Application.usePinCode();
+    if (!pin && voice) {
+      homeScreen = VoiceAuthenticationPage(canEscape: false);
+    } else if (await Application.getPin() != null || !pin) {
+      homeScreen = PinPage(shouldSetupPin: false);
+    }
+  }
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

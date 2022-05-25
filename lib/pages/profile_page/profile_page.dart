@@ -117,16 +117,15 @@ class ProfilePageState extends State<ProfilePage> {
                         child: Column(
                           children: [
                             // Avatar
-                            if (_user != null)
-                              ClipOval(
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                    maxHeight: MediaQuery.of(context).size.width * 0.25,
-                                    maxWidth: MediaQuery.of(context).size.width * 0.25,
-                                  ),
-                                  child: _user!.tryGetImage(),
+                            ClipOval(
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxHeight: MediaQuery.of(context).size.width * 0.25,
+                                  maxWidth: MediaQuery.of(context).size.width * 0.25,
                                 ),
+                                child: _user!.tryGetImage(),
                               ),
+                            ),
 
                             // Name Surname
                             const EmptyBox(height: 12),

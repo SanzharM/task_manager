@@ -125,5 +125,15 @@
   "session_start_time": "Начало смены",
   "session_end_time": "Конец смены",
   "active_session": "Активная смена",
-  "end_session": "Закрыть смену"
+  "end_session": "Закрыть смену",
+  "use_biometrics_for_login": "Использовать биометрическую аутентификацию ?",
+  "voice_authentication": "Голосовая аутентификация",
+  "pin_code": "Пин-код",
+  "biometrics": "Биометрика",
+  "security": "Безопасность",
+  "other_settings": "Другое",
+  "confirm_logout": "Вы уверены, что хотите выйти ?",
+  "today": "Сегодня",
+  "deadline_is_out": "Крайний срок истек",
+  "days_left": "Дней осталось: {days}"
 }

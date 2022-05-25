@@ -6,6 +6,7 @@ class AppTheme {
   get darkTheme => ThemeData(
         scaffoldBackgroundColor: AppColors.darkGrey,
         bottomAppBarColor: AppColors.darkGrey,
+        splashFactory: NoSplash.splashFactory,
         appBarTheme: const AppBarTheme(
           brightness: Brightness.dark,
           color: AppColors.darkGrey,
@@ -44,6 +45,7 @@ class AppTheme {
         canvasColor: AppColors.grey,
         accentColor: AppColors.darkGrey,
         accentIconTheme: IconThemeData(color: Colors.white),
+        dividerColor: Colors.transparent,
       );
 
   get lightTheme => ThemeData(
@@ -51,6 +53,7 @@ class AppTheme {
         // snackBarTheme: SnackBarThemeData(),
         bottomAppBarColor: AppColors.snow,
         backgroundColor: AppColors.snow,
+        splashFactory: NoSplash.splashFactory,
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           brightness: Brightness.light,
@@ -93,6 +96,7 @@ class AppTheme {
         canvasColor: AppColors.grey,
         accentColor: AppColors.snow,
         accentIconTheme: IconThemeData(color: AppColors.darkGrey),
+        dividerColor: Colors.transparent,
       );
 }
 

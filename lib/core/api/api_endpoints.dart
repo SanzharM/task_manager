@@ -31,7 +31,7 @@ class VoiceAuthenticationRegistrationEndPoint extends ApiEndpoint {
 }
 
 class CheckHasRecordedVoiceEndPoint extends ApiEndpoint {
-  String url = '/users/voice/check?phone={phone}';
+  String url = '/users/voice/check/{phone}';
   RequestMethod method = RequestMethod.get;
   int statusCode = 200;
 }
@@ -129,5 +129,17 @@ class GetProfileEndpoint extends ApiEndpoint {
 class EditProfileEndpoint extends ApiEndpoint {
   String url = '/users/';
   RequestMethod method = RequestMethod.put;
+  int statusCode = 200;
+}
+
+class GetTextsEndpoint extends ApiEndpoint {
+  String url = '/users/voice';
+  RequestMethod method = RequestMethod.get;
+  int statusCode = 200;
+}
+
+class GetCommentsEndpoint extends ApiEndpoint {
+  String url = '/tasks/comment/{task_id}';
+  RequestMethod method = RequestMethod.get;
   int statusCode = 200;
 }

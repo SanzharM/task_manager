@@ -209,11 +209,34 @@ class Utils {
       case TaskStatus.in_process:
         return isDark ? AppColors.lightAction.withOpacity(0.7) : AppColors.lightAction;
       case TaskStatus.done:
-        return isDark ? AppColors.success.withOpacity(0.5) : AppColors.success;
+        return isDark ? AppColors.success.withOpacity(0.5) : AppColors.success.withOpacity(0.33);
       case TaskStatus.undetermined:
         return isDark ? AppColors.grey : AppColors.defaultGrey;
       default:
         return isDark ? AppColors.grey : AppColors.defaultGrey;
     }
+  }
+
+  static DateTime? getOnlyDate(DateTime? date) {
+    if (date == null) return null;
+    try {
+      return DateFormat('yyyy-MM-dd').parse(date.toString());
+    } catch (e) {}
+    return null;
+  }
+
+  static String getDeadlineDaysLeft(DateTime? deadline) {
+    if (deadline == null) return '';
+    try {
+      final difference = deadline.difference(DateTime.now()).inDays;
+      if (difference > 0) {
+        return 'days_left'.tr(namedArgs: {'days': '$difference'});
+      } else if (difference == 0) {
+        return 'today'.tr();
+      } else {
+        return 'deadline_is_out'.tr();
+      }
+    } catch (e) {}
+    return '';
   }
 }

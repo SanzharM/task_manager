@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:task_manager/core/api/api_client.dart';
+import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/core/models/user.dart';
@@ -17,6 +18,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   deleteTask(Task task) => add(DeleteTask(task));
 
   getUsers() => add(GetUsers());
+  void getComments(int taskId) => add(GetComments(taskId));
 
   TaskBloc() : super(TaskInitial()) {
     on<GetTask>((event, emit) async {
@@ -112,6 +114,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
       if (response.users != null) {
         return emit(UsersLoaded(response.users!));
+      } else {
+        return emit(ErrorState(response.error ?? 'error'.tr()));
+      }
+    });
+
+    on<GetComments>((event, emit) async {
+      emit(TaskInitial());
+      emit(CommentsLoading());
+
+      final response = await ApiClient.getComments(event.taskId);
+
+      if (response.comments != null) {
+        return emit(CommentsLoaded(response.comments!));
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }

@@ -31,10 +31,13 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   bool hasTouchId = false;
   bool hasFaceId = false;
+  bool hasVoice = false;
 
   String _currentMessage = 'setup_pin_code'.tr();
 
   bool isLoading = false;
+
+  int _incorrectAttempts = 0;
 
   static const _duration = const Duration(milliseconds: 50);
   late AnimationController _contoller1;
@@ -52,7 +55,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   void _toMainPage() => AppRouter.toMainPage(context);
 
-  void _tryLoginWithBiometrics() async {
+  Future<void> _tryLoginWithBiometrics() async {
     try {
       bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr());
       if (didAuthenticate) {
@@ -67,9 +70,11 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
   void _checkBiometrics() async {
     if (await _localAuth.isDeviceSupported()) {
       final _biometrics = await _localAuth.getAvailableBiometrics();
-      if (_biometrics.contains(BiometricType.fingerprint)) hasTouchId = true;
-      if (_biometrics.contains(BiometricType.face)) hasFaceId = true;
-      if (_biometrics.contains(BiometricType.iris)) hasFaceId = true;
+      final bool biometrics = await Application.useBiometrics();
+      if (biometrics && _biometrics.contains(BiometricType.fingerprint)) hasTouchId = true;
+      if (biometrics && _biometrics.contains(BiometricType.face)) hasFaceId = true;
+      if (biometrics && _biometrics.contains(BiometricType.iris)) hasFaceId = true;
+      if (await Application.useVoiceAuth()) hasVoice = true;
       setState(() {});
     }
   }
@@ -93,7 +98,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
         message: 'wrong_attempts_limited'.tr(),
         isSuccess: null,
       );
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage()));
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage(mode: AuthMode.login, canEscape: true)));
   }
 
   void _setupControllers() {
@@ -159,44 +164,47 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'use_biometrics'.tr(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          child: const Icon(CupertinoIcons.mic_fill, size: 32),
-                          onPressed: _goToVoiceAuth,
+                    if (!widget.shouldSetupPin && (hasVoice || hasFaceId || hasTouchId)) ...[
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'use_biometrics'.tr(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 20),
                         ),
-                        if (hasFaceId)
-                          CupertinoButton(
-                            onPressed: _tryLoginWithBiometrics,
-                            child: Image.asset(
-                              AppIcons.faceId,
-                              color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
-                              width: 32,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (hasVoice)
+                            CupertinoButton(
+                              padding: EdgeInsets.zero,
+                              child: const Icon(CupertinoIcons.mic_fill, size: 32),
+                              onPressed: _goToVoiceAuth,
                             ),
-                          ),
-                        if (hasTouchId)
-                          CupertinoButton(
-                            onPressed: _tryLoginWithBiometrics,
-                            child: Image.asset(
-                              AppIcons.touchId,
-                              color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
-                              width: 32,
+                          if (hasFaceId)
+                            CupertinoButton(
+                              onPressed: _tryLoginWithBiometrics,
+                              child: Image.asset(
+                                AppIcons.faceId,
+                                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                                width: 32,
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                    const EmptyBox(height: 32),
+                          if (hasTouchId)
+                            CupertinoButton(
+                              onPressed: _tryLoginWithBiometrics,
+                              child: Image.asset(
+                                AppIcons.touchId,
+                                color: Application.isDarkMode(context) ? AppColors.lightAction : AppColors.darkAction,
+                                width: 32,
+                              ),
+                            ),
+                        ],
+                      ),
+                      const EmptyBox(height: 32),
+                    ],
                     Text(_currentMessage, style: const TextStyle(fontSize: 20)),
                     const EmptyBox(height: 32),
                     ShakeWidget(
@@ -250,24 +258,61 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     }
     _tryAnimatePinDots();
 
-    if (_tempPin.length == 4 && _pin.isEmpty) {
+    // Setting pin code
+    if (widget.shouldSetupPin && _tempPin.length == 4 && _pin.isEmpty) {
       _pin = _tempPin;
       _tempPin = '';
       _currentMessage = 'repeat_pin_code'.tr();
       setState(() {});
       return;
     }
+
+    // Login pin code
+    if (!widget.shouldSetupPin && _tempPin.length == 4 && _tempPin == await Application.getPin()) {
+      setState(() => isLoading = true);
+      _toMainPage();
+    }
+
+    // Repeating pin code
     if (_tempPin.length == 4 && _pin.length == 4) {
       if (_tempPin == _pin) {
         setState(() => isLoading = true);
         await Application.setPin(_pin);
         if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
         await Future.delayed(const Duration(milliseconds: 200));
+        if (widget.shouldSetupPin)
+          return await AlertController.showNativeDialog(
+            context: context,
+            title: 'use_biometrics_for_login'.tr(),
+            onYes: () async {
+              await Application.setUseBiometrics(false);
+              Navigator.of(context).pop();
+              await _tryLoginWithBiometrics();
+            },
+            onNo: () async {
+              await Application.setUseBiometrics(false);
+              Navigator.of(context).pop();
+              _toMainPage();
+            },
+          );
         _toMainPage();
-        return;
       }
       _tempPin = '';
-      _currentMessage = 'incorrect_repeated_pin_code'.tr();
+      if (widget.shouldSetupPin) {
+        _incorrectAttempts += 1;
+        if (_incorrectAttempts > 3) {
+          _pin = '';
+          _tempPin = '';
+          _currentMessage = 'enter_pin_code'.tr();
+        } else
+          _currentMessage = 'incorrect_repeated_pin_code'.tr();
+      } else {
+        _incorrectAttempts += 1;
+        if (_incorrectAttempts > 3) {
+          return await Application.clearStorage(context: context);
+        }
+        _currentMessage = 'incorrect_pin_code'.tr();
+      }
       _vibrate();
       setState(() {});
     }

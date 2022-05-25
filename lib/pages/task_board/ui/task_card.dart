@@ -76,11 +76,18 @@ class TaskCard extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(CupertinoIcons.person_fill),
+                          ClipOval(
+                            child: SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: task.performer?.tryGetImage(placeholderSize: 24) ?? const Icon(CupertinoIcons.person_fill, size: 24),
+                            ),
+                          ),
                           const EmptyBox(width: 8.0),
                           Flexible(
                             child: Text(
                               task.performer?.name ?? task.performer?.phone ?? 'No performer',
+                              maxLines: 2,
                               style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
                             ),
                           ),
@@ -91,7 +98,13 @@ class TaskCard extends StatelessWidget {
                         children: [
                           const Icon(CupertinoIcons.time_solid),
                           const EmptyBox(width: 8.0),
-                          Text(Utils.toDateString(task.deadline), style: const TextStyle(fontWeight: FontWeight.w500)),
+                          Flexible(
+                            child: Text(
+                              Utils.toDateString(task.deadline) + '\n' + Utils.getDeadlineDaysLeft(task.deadline),
+                              maxLines: 3,
+                              style: const TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                          ),
                         ],
                       ),
                       const EmptyBox(height: 8.0),
@@ -104,7 +117,7 @@ class TaskCard extends StatelessWidget {
                     onTap: () => _showActions(context),
                     child: Container(
                       color: AppColors.white.withOpacity(0.01),
-                      child: Icon(CupertinoIcons.chevron_down),
+                      child: const Icon(CupertinoIcons.chevron_down),
                     ),
                   ),
                 ),
