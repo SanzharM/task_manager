@@ -48,9 +48,7 @@ class UserCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipOval(
-            child: user.imageUrl != null
-                ? Image.network(user.imageUrl!, height: 48, width: 48)
-                : const Icon(CupertinoIcons.person_fill, size: 48),
+            child: user.tryGetImage(placeholderSize: 48.0),
           ),
           const EmptyBox(width: 8),
           Expanded(

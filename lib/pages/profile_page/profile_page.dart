@@ -123,7 +123,7 @@ class ProfilePageState extends State<ProfilePage> {
                                   maxHeight: MediaQuery.of(context).size.width * 0.25,
                                   maxWidth: MediaQuery.of(context).size.width * 0.25,
                                 ),
-                                child: _user!.tryGetImage(),
+                                child: _user?.tryGetImage() ?? const Icon(CupertinoIcons.person_fill),
                               ),
                             ),
 

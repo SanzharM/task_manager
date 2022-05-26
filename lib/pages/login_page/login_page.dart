@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               isLoading = state is Loading;
               if (state is AuthVerifySuccess) _toPinPage();
               if (state is ErrorState) {
-                AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
+                AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
               }
               if (state is WrongSMS) {
                 _shakeKey.currentState?.shake();
@@ -174,7 +174,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               showCursor: false,
                               pinTheme: PinTheme(
                                 activeColor: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
-                                selectedColor: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
+                                selectedColor: Application.isDarkMode(context)
+                                    ? AppColors.darkAction.withOpacity(0.2)
+                                    : AppColors.lightAction.withOpacity(0.2),
                                 disabledColor: AppColors.defaultGrey,
                                 inactiveColor: AppColors.defaultGrey,
                                 fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 16.0),

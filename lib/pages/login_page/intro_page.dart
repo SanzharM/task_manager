@@ -138,7 +138,7 @@ class _IntroPageState extends State<IntroPage> {
                           showCursor: false,
                           pinTheme: PinTheme(
                             activeColor: AppColors.lightAction,
-                            selectedColor: AppColors.defaultGrey,
+                            selectedColor: AppColors.lightAction.withOpacity(0.2),
                             disabledColor: AppColors.defaultGrey,
                             inactiveColor: AppColors.defaultGrey,
                           ),
