@@ -115,7 +115,7 @@ class Utils {
   static DateTime? parseDate(String? date, {String dateFormat = 'yyyy-MM-ddTHH:mm:ss'}) {
     if (date == null || date.isEmpty) return null;
     try {
-      return DateFormat(dateFormat).parse(date);
+      return DateFormat(dateFormat).parse(date)..add(DateTime.now().timeZoneOffset);
     } catch (e) {
       return null;
     }

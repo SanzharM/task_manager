@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BottomInput extends StatefulWidget {
   final String text;
@@ -76,7 +77,6 @@ class BottomInputState extends State<BottomInput> with TickerProviderStateMixin 
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      // padding: EdgeInsets.only(top: 8.0, bottom: FocusScope.of(context).hasFocus ? 8.0 : 10.0),
       decoration: BoxDecoration(color: widget.backgroundColor),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,7 +98,8 @@ class BottomInputState extends State<BottomInput> with TickerProviderStateMixin 
               scrollPhysics: const BouncingScrollPhysics(),
               scrollPadding: const EdgeInsets.symmetric(vertical: 4.0),
               style: const TextStyle(fontSize: 15, decoration: TextDecoration.none),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                hintText: 'add_comment'.tr(),
                 fillColor: Colors.white,
                 filled: true,
                 isDense: true,
