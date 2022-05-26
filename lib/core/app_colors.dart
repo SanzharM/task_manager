@@ -21,7 +21,7 @@ class AppColors {
   static const lightRed = Color(0xffED4C67);
 
   static const lightAction = Color(0xff97C8FF);
-  static const darkAction = Color(0xff1350B7);
+  static const darkAction = Color(0xFF2573FA);
 
   static const switchOnDark = Color(0xff8cb2e9);
   static const switchOnLight = Color(0xffa4ccff);

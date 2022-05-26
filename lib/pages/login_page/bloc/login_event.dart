@@ -10,7 +10,8 @@ abstract class LoginEvent extends Equatable {
 
 class GetAuth extends LoginEvent {
   final String? phone;
-  GetAuth({this.phone});
+  final String? companyCode;
+  GetAuth({required this.phone, required this.companyCode});
 
   @override
   List<Object?> get props => [];
@@ -19,7 +20,16 @@ class GetAuth extends LoginEvent {
 class VerifySMSCode extends LoginEvent {
   final String phone;
   final String? code;
-  VerifySMSCode({required this.phone, required this.code});
+  final String companyCode;
+  VerifySMSCode({required this.phone, required this.code, required this.companyCode});
+
+  @override
+  List<Object?> get props => [];
+}
+
+class VerifyCompany extends LoginEvent {
+  final String code;
+  VerifyCompany(this.code);
 
   @override
   List<Object?> get props => [];

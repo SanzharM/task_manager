@@ -6,7 +6,8 @@ class AppTheme {
   get darkTheme => ThemeData(
         scaffoldBackgroundColor: AppColors.darkGrey,
         bottomAppBarColor: AppColors.darkGrey,
-        appBarTheme: AppBarTheme(
+        splashFactory: NoSplash.splashFactory,
+        appBarTheme: const AppBarTheme(
           brightness: Brightness.dark,
           color: AppColors.darkGrey,
           elevation: 0,
@@ -16,20 +17,22 @@ class AppTheme {
         fontFamily: 'Montserrat',
         accentColorBrightness: Brightness.dark,
         primaryColorBrightness: Brightness.dark,
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.grey),
           labelStyle: TextStyle(color: AppColors.metal),
+          errorStyle: TextStyle(color: AppColors.darkRed),
         ),
         textTheme: TextTheme().apply(
           bodyColor: AppColors.metal,
           displayColor: AppColors.metal,
         ),
+        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500)),
         iconTheme: IconThemeData(color: AppColors.snow, size: 24),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.snow,
           scaffoldBackgroundColor: AppColors.darkGrey,
           brightness: Brightness.dark,
-          textTheme: CupertinoTextThemeData(
+          textTheme: const CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
             textStyle: const TextStyle(
               fontFamily: 'Montserrat',
@@ -42,6 +45,7 @@ class AppTheme {
         canvasColor: AppColors.grey,
         accentColor: AppColors.darkGrey,
         accentIconTheme: IconThemeData(color: Colors.white),
+        dividerColor: Colors.transparent,
       );
 
   get lightTheme => ThemeData(
@@ -49,33 +53,37 @@ class AppTheme {
         // snackBarTheme: SnackBarThemeData(),
         bottomAppBarColor: AppColors.snow,
         backgroundColor: AppColors.snow,
-        appBarTheme: AppBarTheme(
+        splashFactory: NoSplash.splashFactory,
+        appBarTheme: const AppBarTheme(
           centerTitle: true,
           brightness: Brightness.light,
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
-          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
         ),
         accentColorBrightness: Brightness.light,
         primaryColorBrightness: Brightness.light,
         fontFamily: 'Montserrat',
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.darkGrey),
           labelStyle: TextStyle(color: AppColors.darkGrey),
+          errorStyle: TextStyle(color: AppColors.lightRed),
         ),
-        textTheme: TextTheme().apply(
+        textTheme: const TextTheme().apply(
           bodyColor: AppColors.darkGrey,
           displayColor: AppColors.darkGrey,
         ),
-        tabBarTheme: TabBarTheme(labelStyle: const TextStyle(fontFamily: 'Montserrat')),
+        tabBarTheme: TabBarTheme(
+          labelStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w500),
+        ),
         cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
           primaryColor: AppColors.darkGrey,
           scaffoldBackgroundColor: AppColors.snow,
           brightness: Brightness.light,
-          textTheme: CupertinoTextThemeData(
+          textTheme: const CupertinoTextThemeData(
             primaryColor: AppColors.darkGrey,
-            textStyle: const TextStyle(
+            textStyle: TextStyle(
               fontFamily: 'Montserrat',
               color: AppColors.darkGrey,
               fontSize: 16,
@@ -88,6 +96,7 @@ class AppTheme {
         canvasColor: AppColors.grey,
         accentColor: AppColors.snow,
         accentIconTheme: IconThemeData(color: AppColors.darkGrey),
+        dividerColor: Colors.transparent,
       );
 }
 

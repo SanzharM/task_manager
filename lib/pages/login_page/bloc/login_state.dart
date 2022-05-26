@@ -30,7 +30,8 @@ class ErrorState extends LoginState {
 
 class AuthVerifySuccess extends LoginState {
   final String token;
-  AuthVerifySuccess(this.token);
+  final bool hasAccount;
+  AuthVerifySuccess({required this.token, this.hasAccount = true});
 
   @override
   List<Object?> get props => [];
@@ -40,6 +41,18 @@ class PhoneAuthSuccess extends LoginState {
   final String phone;
   PhoneAuthSuccess(this.phone);
 
+  @override
+  List<Object?> get props => [];
+}
+
+class CodeCompanyVerified extends LoginState {
+  final String code;
+  CodeCompanyVerified(this.code);
+  @override
+  List<Object?> get props => [];
+}
+
+class WrongSMS extends LoginState {
   @override
   List<Object?> get props => [];
 }

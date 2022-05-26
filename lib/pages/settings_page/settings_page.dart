@@ -44,45 +44,81 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           physics: const BouncingScrollPhysics(),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SwitchCell(
-                  title: 'notifications'.tr(),
-                  value: _notifications,
-                  onChanged: onNotification,
+              Text('security'.tr()),
+              const EmptyBox(height: 8.0),
+              FutureBuilder<bool>(
+                future: Application.useBiometrics(),
+                builder: (context, snapshot) => SwitchCell(
+                  title: 'Touch ID / Face ID',
+                  value: snapshot.data ?? false,
+                  onChanged: (value) async {
+                    await Application.setUseBiometrics(value);
+                    setState(() {});
+                  },
                 ),
               ),
-              const EmptyBox(height: 12),
-              Column(
+              const EmptyBox(height: 8.0),
+              FutureBuilder<bool>(
+                future: Application.useVoiceAuth(),
+                builder: (context, snapshot) => SwitchCell(
+                  title: 'voice_authentication'.tr(),
+                  value: snapshot.data ?? false,
+                  onChanged: (value) async {
+                    await Application.setUseVoiceAuth(value);
+                    setState(() {});
+                  },
+                ),
+              ),
+              const EmptyBox(height: 8.0),
+              FutureBuilder<bool>(
+                future: Application.usePinCode(),
+                builder: (context, snapshot) => SwitchCell(
+                  title: 'pin_code'.tr(),
+                  value: snapshot.data ?? false,
+                  onChanged: (value) async {
+                    await Application.setUsePinCode(value);
+                    setState(() {});
+                  },
+                ),
+              ),
+              const EmptyBox(height: 20.0),
+              Text('theme_mode'.tr()),
+              const EmptyBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('theme_mode'.tr()),
-                  const EmptyBox(height: 4),
-                  Container(
-                    height: 72,
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    constraints: BoxConstraints(maxHeight: 72),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ChangeModeButton(
-                          icon: CupertinoIcons.sun_max_fill,
-                          mode: ThemeMode.light,
-                          onTap: () => setState(() {}),
-                        ),
-                        ChangeModeButton(
-                          icon: Icons.nightlight_round_outlined,
-                          mode: ThemeMode.dark,
-                          onTap: () => setState(() {}),
-                        ),
-                      ],
+                  Expanded(
+                    child: ChangeModeButton(
+                      icon: CupertinoIcons.sun_max_fill,
+                      mode: ThemeMode.light,
+                      onTap: () => setState(() {}),
+                    ),
+                  ),
+                  Expanded(
+                    child: ChangeModeButton(
+                      icon: Icons.nightlight_round_outlined,
+                      mode: ThemeMode.dark,
+                      onTap: () => setState(() {}),
                     ),
                   ),
                 ],
               ),
+              const EmptyBox(height: 20.0),
+              Text('other_settings'.tr()),
+              const EmptyBox(height: 8.0),
+              SwitchCell(
+                title: 'notifications'.tr(),
+                value: _notifications,
+                onChanged: onNotification,
+              ),
+              const EmptyBox(height: 20.0),
+              Text('language'.tr()),
+              const EmptyBox(height: 8.0),
               for (int i = 0; i < context.supportedLocales.length; i++)
                 CountryCell(
                   isSelected: context.locale == context.supportedLocales[i],
@@ -122,8 +158,8 @@ class ChangeModeButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(4.0),
         width: MediaQuery.of(context).size.width / 3,
-        decoration:
-            BoxDecoration(borderRadius: BorderRadius.circular(25.0), color: Application.isDarkMode(context) ? AppColors.snow : AppColors.darkGrey),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25.0), color: Application.isDarkMode(context) ? AppColors.snow : AppColors.darkGrey),
         child: Icon(
           icon,
           size: 32,

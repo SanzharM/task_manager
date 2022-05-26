@@ -64,7 +64,7 @@ class _PersonalAccountState extends State<PersonalAccount> {
       Bar(Utils.getMonth(DateTime.now().month - 2), 100),
       Bar(Utils.getMonth(DateTime.now().month - 1), 97),
       Bar(Utils.getMonth(DateTime.now().month), 85),
-      Bar(Utils.getMonth(DateTime.now().month + 1), 100),
+      Bar(Utils.getMonth(DateTime.now().add(Duration(days: 30)).month), 100),
     ];
 
     return [

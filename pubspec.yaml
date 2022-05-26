@@ -1,5 +1,5 @@
 name: task_manager
-description: A new Flutter project.
+description: Secure mobile application for company employees.
 
 version: 1.0.0
 
@@ -10,23 +10,49 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Basics
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   http: ^0.13.3
   connectivity: ^3.0.6
   provider: ^6.0.1
+
+  # Local storage
   shared_preferences: ^2.0.7
+  flutter_secure_storage: ^5.0.2
+
+  # Auth and permissions
   local_auth: ^1.1.7
-  qr_code_scanner: ^0.6.1
   permission_handler: ^8.1.4+2
+  
+  # Voice Auth dependencies
+  flutter_sound: ^9.1.9
+  path_provider: any
+  audio_session: ^0.1.6+1
+  avatar_glow: ^2.0.2
+
+  # Location
+  location: ^4.3.0
+  geocoding: ^2.0.4
+  
   url_launcher: ^6.0.10
+  easy_localization: ^3.0.0
+  
+  qr_code_scanner: ^0.6.1
   cached_network_image: ^3.2.0
   charts_flutter: ^0.11.0
   cupertino_icons: ^1.0.2
   mask_text_input_formatter: ^2.0.0
   pin_code_fields: ^7.3.0
-  easy_localization: ^3.0.0
+  package_info_plus: ^1.4.0
+  share_extend: ^2.0.0
+  shimmer: ^2.0.0
+  another_flushbar: ^1.10.28
+  image_picker: ^0.8.4+1
 
+
+
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

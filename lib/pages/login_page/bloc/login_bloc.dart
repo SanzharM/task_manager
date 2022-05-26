@@ -9,40 +9,61 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  getAuth(String phone) => add(GetAuth());
-  verifySMS(String phone, String? code) => add(VerifySMSCode(phone: phone, code: code));
+  getAuth(String phone, String companyCode) => add(GetAuth(phone: phone, companyCode: companyCode));
+  verifySMS(String phone, String? code, String companyCode) => add(VerifySMSCode(phone: phone, code: code, companyCode: companyCode));
+  verifyCodeCompany(String code) => add(VerifyCompany(code));
 
   LoginBloc() : super(LoginInitial()) {
-    on<GetAuth>(
-      (event, emit) async {
-        if (event.phone == null || event.phone == null || event.phone!.length != 11) {
-          emit(ErrorState('invalid_phone_number'.tr()));
-          return emit(EmptyState());
-        }
-
-        emit(Loading());
-        final response = await ApiClient.getAuth(event.phone!);
-
-        if (response.success)
-          emit(PhoneAuthSuccess(event.phone!));
-        else
-          emit(ErrorState(response.error ?? 'login_error'.tr()));
-      },
-    );
-    on<VerifySMSCode>((event, emit) async {
-      if ((event.code?.length ?? 0) < 4) {
-        emit(ErrorState('invalid_code'.tr()));
-        return emit(EmptyState());
+    on<GetAuth>((event, emit) async {
+      emit(LoginInitial());
+      if (event.phone == null || event.phone!.length != 11) {
+        return emit(ErrorState('invalid_phone_number'.tr()));
+      }
+      if (event.companyCode == null || event.companyCode!.length != 6) {
+        return emit(ErrorState('invalid_code'.tr()));
       }
 
       emit(Loading());
-      final response = await ApiClient.verifySmsCode(event.phone, event.code!);
+      final response = await ApiClient.getAuth(event.phone!, event.companyCode!);
+
+      if (response.success)
+        emit(PhoneAuthSuccess(event.phone!));
+      else
+        emit(ErrorState(response.error ?? 'login_error'.tr()));
+    });
+
+    on<VerifySMSCode>((event, emit) async {
+      emit(LoginInitial());
+      if ((event.code?.length ?? 0) < 4) {
+        return emit(ErrorState('invalid_code'.tr()));
+      }
+
+      emit(Loading());
+      final response = await ApiClient.verifySmsCode(event.phone, event.code!, event.companyCode);
 
       if (response.token != null) {
         await Application.setToken(response.token);
-        emit(AuthVerifySuccess(response.token!));
-      } else
+        emit(AuthVerifySuccess(token: response.token!, hasAccount: response.hasAccount));
+      } else if (response.error == 'wrong_sms') {
+        emit(WrongSMS());
+      } else {
         emit(ErrorState(response.error ?? 'login_error'.tr()));
+      }
+    });
+
+    on<VerifyCompany>((event, emit) async {
+      emit(LoginInitial());
+      if (event.code.length != 6) {
+        return emit(ErrorState('invalid_code'.tr()));
+      }
+
+      emit(Loading());
+
+      final response = await ApiClient.verifyCompanyCode(event.code);
+      if (response.success == true)
+        return emit(CodeCompanyVerified(event.code));
+      else
+        return emit(ErrorState(response.error ?? 'invalid_company_code'.tr()));
     });
   }
 }
