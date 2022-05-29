@@ -80,15 +80,15 @@ class _NavigationBarState extends State<NavigationBar> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.table_badge_more),
-            activeIcon: Icon(CupertinoIcons.table_badge_more_fill),
+            activeIcon: Icon(CupertinoIcons.table_badge_more_fill, color: AppColors.lightAction),
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.qrcode_viewfinder),
-            activeIcon: Icon(CupertinoIcons.qrcode_viewfinder),
+            activeIcon: Icon(CupertinoIcons.qrcode_viewfinder, color: AppColors.lightAction),
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.person),
-            activeIcon: Icon(CupertinoIcons.person_fill),
+            activeIcon: Icon(CupertinoIcons.person_fill, color: AppColors.lightAction),
           ),
         ],
       ),

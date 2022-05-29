@@ -139,5 +139,11 @@
   "comments": "Comments",
   "comment": "Comment",
   "add_comment": "Add a comment",
-  "delete_comment": "Delete comment"
+  "delete_comment": "Delete comment",
+  "share": "Share",
+  "save_to_gallery": "Save to Images",
+  "allow_photos_permissions": "Allow access to Photos",
+  "cannot_save_qr": "Unable to save QR-code",
+  "cannot_share_qr": "Unable to share QR-code",
+  "qr_saved": "QR-code was saved"
 }

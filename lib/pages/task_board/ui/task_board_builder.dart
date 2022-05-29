@@ -12,7 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 enum SortOrder { time, status }
 
-enum TimeSort { week, month, past_tasks, out_of_deadline }
+enum TimeSort { past_tasks, week, month, out_of_deadline }
 
 class TaskBoardBuilder extends StatefulWidget {
   const TaskBoardBuilder({

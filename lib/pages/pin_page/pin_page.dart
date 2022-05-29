@@ -270,7 +270,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     // Login pin code
     if (!widget.shouldSetupPin && _tempPin.length == 4 && _tempPin == await Application.getPin()) {
       setState(() => isLoading = true);
-      _toMainPage();
+      return _toMainPage();
     }
 
     // Repeating pin code

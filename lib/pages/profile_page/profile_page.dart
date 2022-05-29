@@ -187,6 +187,11 @@ class ProfilePageState extends State<ProfilePage> {
                               title: 'shift_history'.tr(),
                               onTap: () => AppRouter.toSessionsPage(context: context),
                             ),
+                            OneLineCell.arrowed(
+                              leading: const Icon(CupertinoIcons.qrcode),
+                              title: 'generate_qr_code'.tr(),
+                              onTap: () => AppRouter.toGenerateQrPage(context: context),
+                            ),
                           ],
                         ),
                       ),
