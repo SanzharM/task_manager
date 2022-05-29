@@ -139,5 +139,11 @@
   "comments": "Комментарии",
   "comment": "Комментарий",
   "add_comment": "Добавить комментарий",
-  "delete_comment": "Удалить комментарий"
+  "delete_comment": "Удалить комментарий",
+  "share": "Поделиться",
+  "save_to_gallery": "Сохранить",
+  "allow_photos_permissions": "Предоставьте доступ к галерее",
+  "cannot_save_qr": "Не удалось сохранить QR кодом",
+  "cannot_share_qr": "Не удалось поделиться QR кодом",
+  "qr_saved": "QR код сохранен"
 }

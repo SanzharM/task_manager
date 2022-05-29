@@ -7,6 +7,7 @@ import 'package:task_manager/pages/login_page/login_page.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
 import 'package:task_manager/pages/organization_page/organization_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
+import 'package:task_manager/pages/profile_page/generate_qr_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/sessions_page/sessions_page.dart';
@@ -56,5 +57,9 @@ class AppRouter {
 
   static toSessionsPage({required BuildContext context}) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SessionsPage()));
+  }
+
+  static toGenerateQrPage({required BuildContext context}) {
+    Navigator.of(context).push(CustomPageRoute(child: GenerateQrPage()));
   }
 }

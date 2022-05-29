@@ -48,6 +48,10 @@ class QRScannerPageState extends State<QRScannerPage> {
   }
 
   void _requestPermissions() async {
+    final cameraPermissions = await permission.Permission.camera.request();
+    if (cameraPermissions == permission.PermissionStatus.granted || cameraPermissions == permission.PermissionStatus.limited) return;
+    setState(() {});
+
     final status = await _location.requestPermission();
     if (status == PermissionStatus.granted || status == PermissionStatus.grantedLimited) return;
 
