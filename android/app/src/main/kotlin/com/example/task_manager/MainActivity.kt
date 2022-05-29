@@ -1,4 +1,4 @@
-package com.example.task_manager
+package com.bota_task_manager.apk
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
