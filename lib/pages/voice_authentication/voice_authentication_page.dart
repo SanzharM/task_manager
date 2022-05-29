@@ -404,9 +404,6 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
                 ),
               ),
             ),
-            // const EmptyBox(height: 32.0),
-            //   ],
-            // ),
             if (isLoading)
               AnimatedOpacity(
                 opacity: isLoading ? 1.0 : 0.0,

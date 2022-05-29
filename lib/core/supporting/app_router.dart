@@ -13,6 +13,7 @@ import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/sessions_page/sessions_page.dart';
 import 'package:task_manager/pages/settings_page/about_app_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
+import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class AppRouter {
   static void toMainPage(BuildContext context) {
@@ -61,5 +62,9 @@ class AppRouter {
 
   static toGenerateQrPage({required BuildContext context}) {
     Navigator.of(context).push(CustomPageRoute(child: GenerateQrPage()));
+  }
+
+  static toVoiceAuth(BuildContext context) {
+    Navigator.of(context).push(CustomPageRoute(child: VoiceAuthenticationPage()));
   }
 }
