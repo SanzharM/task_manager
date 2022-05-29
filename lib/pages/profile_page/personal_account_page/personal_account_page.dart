@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/models/user.dart';
-import 'package:task_manager/core/utils.dart';
+// import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -42,11 +42,11 @@ class _PersonalAccountState extends State<PersonalAccount> {
             Container(
               height: MediaQuery.of(context).size.height * 0.25,
               width: double.infinity,
-              child: charts.BarChart(
-                _createData(),
-                animationDuration: const Duration(milliseconds: 400),
-                animate: true,
-              ),
+              // child: charts.BarChart(
+              //   // _createData(),
+              //   animationDuration: const Duration(milliseconds: 400),
+              //   animate: true,
+              // ),
             ),
             InfoCell(
               title: 'current_shift'.tr(),
@@ -59,24 +59,24 @@ class _PersonalAccountState extends State<PersonalAccount> {
     );
   }
 
-  static List<charts.Series<Bar, String>> _createData() {
-    final data = [
-      Bar(Utils.getMonth(DateTime.now().month - 2), 100),
-      Bar(Utils.getMonth(DateTime.now().month - 1), 97),
-      Bar(Utils.getMonth(DateTime.now().month), 85),
-      Bar(Utils.getMonth(DateTime.now().add(Duration(days: 30)).month), 100),
-    ];
+  // static List<charts.Series<Bar, String>> _createData() {
+  //   final data = [
+  //     Bar(Utils.getMonth(DateTime.now().month - 2), 100),
+  //     Bar(Utils.getMonth(DateTime.now().month - 1), 97),
+  //     Bar(Utils.getMonth(DateTime.now().month), 85),
+  //     Bar(Utils.getMonth(DateTime.now().add(Duration(days: 30)).month), 100),
+  //   ];
 
-    return [
-      charts.Series<Bar, String>(
-        id: 'Attendence',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (Bar bars, _) => bars.label,
-        measureFn: (Bar bars, _) => bars.value,
-        data: data,
-      )
-    ];
-  }
+  //   return [
+  //     charts.Series<Bar, String>(
+  //       id: 'Attendence',
+  //       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+  //       domainFn: (Bar bars, _) => bars.label,
+  //       measureFn: (Bar bars, _) => bars.value,
+  //       data: data,
+  //     )
+  //   ];
+  // }
 }
 
 class Bar {

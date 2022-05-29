@@ -123,7 +123,7 @@ class _IntroPageState extends State<IntroPage> {
                           appContext: context,
                           length: 6,
                           controller: _companyCodeController,
-                          onChanged: (value) => _companyCodeController.text = value,
+                          onChanged: (value) {},
                           onTap: () => setState(() {}),
                           textCapitalization: TextCapitalization.characters,
                           autoDismissKeyboard: true,

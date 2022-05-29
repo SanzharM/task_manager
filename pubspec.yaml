@@ -41,7 +41,7 @@ dependencies:
   qr_code_scanner: ^0.6.1
   qr_flutter: ^4.0.0
   cached_network_image: ^3.2.0
-  charts_flutter: ^0.11.0
+  # charts_flutter: ^0.11.0
   cupertino_icons: ^1.0.2
   mask_text_input_formatter: ^2.0.0
   pin_code_fields: ^7.3.0

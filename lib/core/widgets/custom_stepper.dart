@@ -427,7 +427,10 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
 
   Widget _buildVerticalControls() {
     if (widget.controlsBuilder != null)
-      return widget.controlsBuilder!(context, onStepContinue: widget.onStepContinue, onStepCancel: widget.onStepCancel);
+      return widget.controlsBuilder!(
+        context,
+        ControlsDetails(currentStep: 0, stepIndex: 0, onStepContinue: widget.onStepContinue, onStepCancel: widget.onStepCancel),
+      );
 
     final Color cancelColor;
     switch (Theme.of(context).brightness) {
@@ -695,7 +698,6 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
               AnimatedSize(
                 curve: Curves.fastOutSlowIn,
                 duration: kThemeAnimationDuration,
-                vsync: this,
                 child: widget.steps[widget.currentStep].content,
               ),
               _buildVerticalControls(),

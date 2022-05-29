@@ -10,7 +10,6 @@ import 'package:task_manager/core/models/user.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
-import 'package:task_manager/core/widgets/comment_card.dart';
 import 'package:task_manager/core/widgets/custom_stepper.dart' as stepper;
 import 'package:task_manager/core/widgets/date_picker.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -42,8 +41,6 @@ class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
   bool isLoading = false;
   bool isTextExpanded = false;
   bool isCommentsLoading = false;
-
-  String _newComment = '';
 
   void _changeStatus() async {
     ValuePicker(
@@ -169,7 +166,7 @@ class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
                   const EmptyBox(height: 12),
                   stepper.CustomStepper(
                     physics: const NeverScrollableScrollPhysics(),
-                    controlsBuilder: (context, {onStepCancel, onStepContinue}) => const EmptyBox(),
+                    controlsBuilder: (context, details) => const EmptyBox(),
                     steps: [
                       stepper.Step(
                         state: stepper.StepState.complete,

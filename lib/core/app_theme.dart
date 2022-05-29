@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:task_manager/core/app_colors.dart';
 
 class AppTheme {
@@ -8,15 +9,13 @@ class AppTheme {
         bottomAppBarColor: AppColors.darkGrey,
         splashFactory: NoSplash.splashFactory,
         appBarTheme: const AppBarTheme(
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           color: AppColors.darkGrey,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.white),
           titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
         fontFamily: 'Montserrat',
-        accentColorBrightness: Brightness.dark,
-        primaryColorBrightness: Brightness.dark,
         inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.grey),
           labelStyle: TextStyle(color: AppColors.metal),
@@ -43,8 +42,6 @@ class AppTheme {
         primaryColor: AppColors.darkGrey,
         brightness: Brightness.dark,
         canvasColor: AppColors.grey,
-        accentColor: AppColors.darkGrey,
-        accentIconTheme: IconThemeData(color: Colors.white),
         dividerColor: Colors.transparent,
       );
 
@@ -56,14 +53,12 @@ class AppTheme {
         splashFactory: NoSplash.splashFactory,
         appBarTheme: const AppBarTheme(
           centerTitle: true,
-          brightness: Brightness.light,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
           titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
         ),
-        accentColorBrightness: Brightness.light,
-        primaryColorBrightness: Brightness.light,
         fontFamily: 'Montserrat',
         inputDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: AppColors.darkGrey),
@@ -94,8 +89,6 @@ class AppTheme {
         primaryColor: AppColors.darkGrey,
         brightness: Brightness.light,
         canvasColor: AppColors.grey,
-        accentColor: AppColors.snow,
-        accentIconTheme: IconThemeData(color: AppColors.darkGrey),
         dividerColor: Colors.transparent,
       );
 }

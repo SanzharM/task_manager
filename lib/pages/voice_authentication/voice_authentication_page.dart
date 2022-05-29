@@ -394,7 +394,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
                   child: AvatarGlow(
                     endRadius: (Theme.of(context).iconTheme.size ?? 32.0) + 32.0,
                     animate: _mRecorder!.isRecording,
-                    glowColor: Theme.of(context).buttonColor,
+                    glowColor: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
                     repeatPauseDuration: Duration.zero,
                     duration: const Duration(milliseconds: 1400),
                     child: _mRecorder!.isRecording
