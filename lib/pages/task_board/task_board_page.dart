@@ -36,6 +36,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   final _createBoardKey = GlobalKey<CreateBoardPageState>();
 
   final _boardBloc = TaskBoardBloc();
+
   final _taskBloc = taskBloc.TaskBloc();
 
   int? _currentBoardIndex;
@@ -222,10 +223,10 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
         child: CreateBoardPage(onCreate: _onCreateBoard, key: _createBoardKey),
       ));
 
-  void _onCreateBoard(String name, String? description) {
+  void _onCreateBoard(String name, String? description, List<User> users) {
     if (name.isEmpty) return;
     _createBoardKey.currentState?.setIsLoading(true);
-    if (!isLoading) return _boardBloc.createBoard(name, description);
+    if (!isLoading) return _boardBloc.createBoard(name, description, users);
   }
 
   void _showBoardSettings() async {
