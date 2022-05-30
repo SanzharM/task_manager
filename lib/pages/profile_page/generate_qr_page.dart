@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
@@ -92,6 +93,7 @@ class _GenerateQrPageState extends State<GenerateQrPage> {
                     child: QrImage(
                       data: Application.getBaseUrl() + '/session/?company_code=' + (companyCode ?? ''),
                       size: MediaQuery.of(context).size.width * 0.66,
+                      foregroundColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
                     ),
                   ),
                 ),

@@ -170,7 +170,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
             message: 'recording_too_short_for_login'.tr(),
             isSuccess: null,
           );
-        } else if (!_hasVoiceRegistered && isRecordingShort(10)) {
+        } else if (!_hasVoiceRegistered && isRecordingShort(15)) {
           return AlertController.showResultDialog(
             context: context,
             message: 'recording_too_short_for_registration'.tr(),

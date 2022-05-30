@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -11,11 +9,14 @@ import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/pages/pin_page/pin_page.dart';
+import 'package:task_manager/pages/voice_authentication/bloc/voice_authentication_bloc.dart' as voice;
+import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class LoginPage extends StatefulWidget {
   final String? companyCode;
@@ -26,6 +27,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+  final _voiceBloc = voice.VoiceAuthenticationBloc();
   final _bloc = LoginBloc();
   final _shakeKey = GlobalKey<ShakeWidgetState>();
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
@@ -41,6 +43,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String _phone = '';
   String _code = '';
   bool isLoading = false;
+  bool isVoiceLoading = false;
 
   void _toPinPage() async {
     await Application.setPin(null);
@@ -51,7 +54,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   void _tryGetAuth() {
     if (FocusScope.of(context).hasFocus) FocusScope.of(context).unfocus();
-    if (_phone.isNotEmpty) _bloc.add(GetAuth(phone: _phone, companyCode: widget.companyCode));
+    if (_phone.isNotEmpty && !isLoading) _voiceBloc.hasRecordedVoice(phone: _phone);
   }
 
   @override
@@ -88,24 +91,48 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           ),
           resizeToAvoidBottomInset: false,
-          body: BlocListener<LoginBloc, LoginState>(
-            bloc: _bloc,
-            listener: (context, state) {
-              isLoading = state is Loading;
-              if (state is AuthVerifySuccess) _toPinPage();
-              if (state is ErrorState) {
-                AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
-              }
-              if (state is WrongSMS) {
-                _shakeKey.currentState?.shake();
-              }
-              if (state is PhoneAuthSuccess) {
-                _phone = state.phone;
-                _animationControllerPhone.reverse();
-                _animationControllerSms.forward();
-              }
-              setState(() {});
-            },
+          body: MultiBlocListener(
+            listeners: [
+              BlocListener<LoginBloc, LoginState>(
+                bloc: _bloc,
+                listener: (context, state) {
+                  isLoading = state is Loading;
+                  if (state is AuthVerifySuccess) _toPinPage();
+                  if (state is ErrorState) {
+                    AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
+                  }
+                  if (state is WrongSMS) {
+                    _shakeKey.currentState?.shake();
+                  }
+                  if (state is PhoneAuthSuccess) {
+                    _phone = state.phone;
+                    _animationControllerPhone.reverse();
+                    _animationControllerSms.forward();
+                  }
+                  setState(() {});
+                },
+              ),
+              BlocListener(
+                bloc: _voiceBloc,
+                listener: (context, state) async {
+                  isVoiceLoading = state is voice.Loading;
+                  if (state is voice.ErrorState) {
+                    AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
+                  }
+                  if (state is voice.RecordedVoiceChecked) {
+                    if (state.hasVoice) {
+                      await Application.setPhone(_phone);
+                      Navigator.of(context).pushReplacement(CustomPageRoute(child: VoiceAuthenticationPage()));
+                      return;
+                    }
+                    if (_phone.isNotEmpty && (widget.companyCode?.isNotEmpty ?? false)) {
+                      _bloc.getAuth(_phone, widget.companyCode!);
+                    }
+                  }
+                  setState(() {});
+                },
+              ),
+            ],
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               physics: const BouncingScrollPhysics(),
@@ -140,9 +167,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       width: MediaQuery.of(context).size.width,
                       child: AppButton(
                         color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
-                        title: 'sign_in/sign_up'.tr(),
+                        title: 'next'.tr(),
                         onTap: _tryGetAuth,
-                        isLoading: isLoading,
+                        isLoading: isLoading || isVoiceLoading,
                       ),
                     ),
                   ),

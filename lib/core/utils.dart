@@ -98,14 +98,19 @@ class Utils {
   static bool isUnauthorizedStatusCode(String error) {
     switch (error.toLowerCase()) {
       case ErrorType.tokenExpired:
+        Application.clearStorage();
         return true;
       case 'not authenticated':
+        Application.clearStorage();
         return true;
       case 'not authorized':
+        Application.clearStorage();
         return true;
       case 'unauthorized':
+        Application.clearStorage();
         return true;
       case '401':
+        Application.clearStorage();
         return true;
       default:
         return false;

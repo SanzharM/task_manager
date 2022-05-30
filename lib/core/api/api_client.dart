@@ -11,6 +11,7 @@ import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'api_endpoints.dart';
 import 'api_base.dart';
@@ -36,7 +37,7 @@ class ApiClient {
 
     if (response.isSuccess) {
       await Application.setPhone(phone);
-      final Map<String, dynamic>? json = await compute(parseVerifySmsAuth, response.bodyBytes);
+      final Map<String, dynamic>? json = await compute(parseJson, response.bodyBytes);
       return VerifySmsAuthResponse(token: json?['access_token'], hasAccount: json?['is_exist'] ?? true);
     } else
       return VerifySmsAuthResponse(error: await compute(parseError, response.bodyBytes), hasAccount: false);
@@ -56,6 +57,8 @@ class ApiClient {
 
     if (response.isSuccess) {
       await Application.setWrongVoiceAttempts(0);
+      final Map<String, dynamic>? json = await compute(parseJson, response.bodyBytes);
+      if (json?['access_token'] != null) await Application.setToken(json!['access_token']);
       return VoiceAuthenticationResponse(successMessage: 'Voice authentication proceeded');
     } else {
       await Application.setWrongVoiceAttempts(_wrongAttempts + 1);
@@ -240,10 +243,13 @@ class ApiClient {
     );
   }
 
-  static Future<BooleanResponse> checkRecordedVoice() async {
+  static Future<BooleanResponse> checkRecordedVoice(String? phone) async {
+    final _phone = phone ?? await Application.getPhone();
+    if (_phone?.isEmpty ?? true) return BooleanResponse(success: false, error: 'error_no_phone'.tr());
+
     final response = await ApiBase.request(
       endpoint: CheckHasRecordedVoiceEndPoint(),
-      urlParams: {'{phone}': await Application.getPhone()},
+      urlParams: {'{phone}': _phone},
     );
 
     if (response.isSuccess) {
@@ -320,7 +326,7 @@ Future<String> parseError(Uint8List bodyBytes) async {
   }
 }
 
-Future<Map<String, dynamic>?> parseVerifySmsAuth(Uint8List bodyBytes) async {
+Future<Map<String, dynamic>?> parseJson(Uint8List bodyBytes) async {
   try {
     return convert.json.decode(convert.utf8.decode(bodyBytes));
   } catch (e) {

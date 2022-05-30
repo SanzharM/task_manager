@@ -13,7 +13,7 @@ class AppTheme {
           color: AppColors.darkGrey,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.white),
-          titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+          titleTextStyle: TextStyle(fontFamily: 'Montserrat', fontSize: 20, color: AppColors.metal),
         ),
         fontFamily: 'Montserrat',
         inputDecorationTheme: const InputDecorationTheme(
@@ -57,7 +57,7 @@ class AppTheme {
           color: AppColors.snow,
           elevation: 0,
           iconTheme: IconThemeData(color: AppColors.darkGrey),
-          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w100),
+          titleTextStyle: TextStyle(fontFamily: 'Montserrat', fontSize: 20, color: AppColors.darkGrey),
         ),
         fontFamily: 'Montserrat',
         inputDecorationTheme: const InputDecorationTheme(

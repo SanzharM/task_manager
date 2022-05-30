@@ -8,6 +8,7 @@ import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -116,7 +117,8 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 }
 
                 if (state is ErrorState) {
-                  AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
+                  if (Utils.isUnauthorizedStatusCode(state.error)) return Application.logout(context);
+                  AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
                 }
 
                 if (state is BoardsLoaded) {

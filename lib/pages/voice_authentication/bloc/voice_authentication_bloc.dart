@@ -11,7 +11,7 @@ part 'voice_authentication_state.dart';
 class VoiceAuthenticationBloc extends Bloc<VoiceauthenticationEvent, VoiceAuthenticationState> {
   authByVoice(File file) => add(AuthenticateByVoice(file));
   registerVoice(File file) => add(RegisterVoice(file));
-  hasRecordedVoice() => add(CheckRecordedVoice());
+  hasRecordedVoice({String? phone}) => add(CheckRecordedVoice(phone));
   deleteVoice() => add(DeleteVoice());
   getTexts() => add(GetTexts());
 
@@ -42,7 +42,7 @@ class VoiceAuthenticationBloc extends Bloc<VoiceauthenticationEvent, VoiceAuthen
     on<CheckRecordedVoice>((event, emit) async {
       emit(VoiceAuthenticationInitial());
       emit(Loading());
-      final response = await ApiClient.checkRecordedVoice();
+      final response = await ApiClient.checkRecordedVoice(event.phone);
 
       if (response.success == true) {
         return emit(RecordedVoiceChecked(true));

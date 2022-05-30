@@ -57,11 +57,22 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   Future<void> _tryLoginWithBiometrics() async {
     try {
-      bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr());
+      bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr(), biometricOnly: true);
+      print(didAuthenticate);
       if (didAuthenticate) {
         if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
         _toMainPage();
       }
+    } on PlatformException catch (_) {
+      String text;
+      switch (_.code) {
+        case 'LockedOut':
+          text = 'too_many_attemps_try_again_later'.tr();
+          break;
+        default:
+          text = 'wrong_attempts_limited_local_auth'.tr();
+      }
+      return AlertController.showResultDialog(context: context, message: text, isSuccess: null);
     } catch (e) {
       print('Unable to local auth. Error: $e');
     }
@@ -278,16 +289,16 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       if (_tempPin == _pin) {
         setState(() => isLoading = true);
         await Application.setPin(_pin);
-        if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
+        Application.setWrongVoiceAttempts(0);
         await Future.delayed(const Duration(milliseconds: 200));
         if (widget.shouldSetupPin)
           return await AlertController.showNativeDialog(
             context: context,
             title: 'use_biometrics_for_login'.tr(),
             onYes: () async {
-              await Application.setUseBiometrics(false);
+              await Application.setUseBiometrics(true);
               Navigator.of(context).pop();
-              await _tryLoginWithBiometrics();
+              _toMainPage();
             },
             onNo: () async {
               await Application.setUseBiometrics(false);

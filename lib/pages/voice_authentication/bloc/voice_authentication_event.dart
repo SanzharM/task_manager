@@ -16,6 +16,9 @@ class AuthenticateByVoice extends VoiceauthenticationEvent {
 }
 
 class CheckRecordedVoice extends VoiceauthenticationEvent {
+  final String? phone;
+  CheckRecordedVoice(this.phone);
+
   @override
   List<Object> get props => [];
 }
