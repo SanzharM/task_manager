@@ -152,5 +152,9 @@
   "total_money_per_hour": "Salary per hour (KZT)",
   "wrong_attempts_limited_local_auth": "Maximum attempts of biometrics authentication was reached",
   "too_many_attemps_try_again_later": "Too many wrong attempts. Try again later",
-  "token_expired": "Token was expired. Please, relogin."
+  "token_expired": "Token was expired. Please, relogin.",
+  "renew_voice": "Обновить запись голоса",
+  "register_voice": "Добавить запись голоса",
+  "unable_to_deleted_voice": "Не удалось удалить запись голоса",
+  "voice_deleted": "Запиь голоса удалена"
 }

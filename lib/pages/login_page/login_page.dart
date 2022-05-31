@@ -4,19 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/api/api_client.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
 import 'package:task_manager/core/widgets/shake_widget.dart';
 import 'package:task_manager/core/widgets/text_fields.dart';
+import 'package:task_manager/pages/authorization/authorization_controller.dart';
 import 'package:task_manager/pages/login_page/bloc/login_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/pages/pin_page/pin_page.dart';
 import 'package:task_manager/pages/voice_authentication/bloc/voice_authentication_bloc.dart' as voice;
-import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class LoginPage extends StatefulWidget {
   final String? companyCode;
@@ -87,7 +87,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             leading: IconButton(
               padding: EdgeInsets.zero,
               icon: const Icon(CupertinoIcons.xmark),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () async {
+                await Application.clearStorage();
+                Navigator.of(context).pop();
+              },
             ),
           ),
           resizeToAvoidBottomInset: false,
@@ -122,7 +125,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   if (state is voice.RecordedVoiceChecked) {
                     if (state.hasVoice) {
                       await Application.setPhone(_phone);
-                      Navigator.of(context).pushReplacement(CustomPageRoute(child: VoiceAuthenticationPage()));
+                      await _toAuthController();
                       return;
                     }
                     if (_phone.isNotEmpty && (widget.companyCode?.isNotEmpty ?? false)) {
@@ -234,5 +237,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future<void> _toAuthController() async {
+    await Application.setUseVoiceAuth(true);
+    await Application.setUsePinCode(true);
+
+    final bool shouldSetupPin = await Application.getPin() == null;
+    final bool hasVoice = (await ApiClient.checkRecordedVoice(_phone)).success == true;
+
+    await Navigator.of(context).pushReplacement(CupertinoPageRoute(
+      builder: (context) => AuthController(
+        authOrder: const [AuthType.voice, AuthType.pin],
+        shouldSetupPin: shouldSetupPin,
+        shouldSetupVoice: !hasVoice,
+      ),
+    ));
   }
 }

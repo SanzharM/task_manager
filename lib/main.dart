@@ -1,29 +1,35 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:task_manager/core/api/api_client.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/pages/authorization/authorization_controller.dart';
 import 'package:task_manager/pages/login_page/intro_page.dart';
-import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 import 'core/app_theme.dart';
-import 'pages/pin_page/pin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   StatefulWidget homeScreen = IntroPage();
   if (await Application.isAuthorized()) {
-    final bool voice = await Application.useVoiceAuth();
-    final bool pin = await Application.usePinCode();
-    if (!pin && voice) {
-      homeScreen = VoiceAuthenticationPage(canEscape: false);
-    } else if (await Application.getPin() != null || !pin) {
-      homeScreen = PinPage(shouldSetupPin: false);
+    final bool hasVoice = (await ApiClient.checkRecordedVoice(null)).success == true;
+    final List<AuthType> order = [];
+    if (await Application.usePinCode()) {
+      order.add(AuthType.pin);
     }
+    if (await Application.useVoiceAuth() && hasVoice) {
+      order.add(AuthType.voice);
+    }
+    print('\n\nAuth order: $order\n\n');
+    if (order.isNotEmpty)
+      homeScreen = AuthController(
+        authOrder: order,
+        shouldSetupPin: await Application.getPin() == null,
+      );
   }
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));

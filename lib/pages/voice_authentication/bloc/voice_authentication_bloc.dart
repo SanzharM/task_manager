@@ -29,7 +29,7 @@ class VoiceAuthenticationBloc extends Bloc<VoiceauthenticationEvent, VoiceAuthen
 
     on<RegisterVoice>((event, emit) async {
       emit(VoiceAuthenticationInitial());
-      emit(Loading());
+      emit(AuthenticationProcessing());
       final response = await ApiClient.registerVoice(event.file);
 
       if (response.successMessage != null) {

@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/api/api_client.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
+import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key, required this.changeLanguage}) : super(key: key);
@@ -17,9 +21,11 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _notifications = false;
+  bool? hasVoice;
 
   void _getSettings() async {
     _notifications = await Application.getNotifications();
+    hasVoice = (await ApiClient.checkRecordedVoice(null)).success == true;
     setState(() {});
   }
 
@@ -62,29 +68,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
               ),
-              const EmptyBox(height: 8.0),
-              FutureBuilder<bool>(
-                future: Application.useVoiceAuth(),
-                builder: (context, snapshot) => SwitchCell(
-                  title: 'voice_authentication'.tr(),
-                  value: snapshot.data ?? false,
-                  onChanged: (value) async {
-                    await Application.setUseVoiceAuth(value);
-                    setState(() {});
-                  },
-                ),
-              ),
-              const EmptyBox(height: 8.0),
-              FutureBuilder<bool>(
-                future: Application.usePinCode(),
-                builder: (context, snapshot) => SwitchCell(
-                  title: 'pin_code'.tr(),
-                  value: snapshot.data ?? false,
-                  onChanged: (value) async {
-                    await Application.setUsePinCode(value);
-                    setState(() {});
-                  },
-                ),
+              const EmptyBox(height: 12.0),
+              OneLineCell(
+                title: 'voice_authentication'.tr(),
+                onTap: _voiceAuthOptions,
+                icon: hasVoice == null ? const CupertinoActivityIndicator() : const Icon(CupertinoIcons.mic_fill),
               ),
               const EmptyBox(height: 20.0),
               Text('theme_mode'.tr()),
@@ -127,6 +115,76 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _voiceAuthOptions() async {
+    if (hasVoice == null) return;
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      isScrollControlled: true,
+      builder: (context) => SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text('voice_authentication'.tr(), style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+            const EmptyBox(height: 12.0),
+            OneLineCell(
+              title: hasVoice! ? 'renew_voice' : 'register_voice'.tr(),
+              icon: const Icon(CupertinoIcons.mic_fill),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  CustomPageRoute(
+                    child: VoiceAuthenticationPage(
+                      mode: AuthMode.register,
+                      onNext: () {
+                        setState(() {});
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+            const EmptyBox(height: 12.0),
+            if (hasVoice!)
+              OneLineCell(
+                title: 'delete'.tr(),
+                icon: const Icon(CupertinoIcons.delete, color: AppColors.lightRed),
+                onTap: () async {
+                  final isDeleted = await ApiClient.deleteVoice();
+                  Navigator.of(context).pop();
+                  if (isDeleted.success == true) {
+                    AlertController.showResultDialog(
+                      context: context,
+                      message: 'voice_deleted'.tr(),
+                      isSuccess: false,
+                    );
+                  } else {
+                    AlertController.showResultDialog(
+                      context: context,
+                      message: 'unable_to_deleted_voice'.tr(),
+                      isSuccess: null,
+                    );
+                  }
+                },
+              ),
+            const EmptyBox(height: 24.0),
+            OneLineCell(
+              title: 'done'.tr(),
+              centerTitle: true,
+              needIcon: false,
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            const EmptyBox(height: 16.0),
+          ],
         ),
       ),
     );

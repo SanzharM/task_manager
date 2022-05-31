@@ -15,8 +15,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
 class PinPage extends StatefulWidget {
+  const PinPage({
+    Key? key,
+    this.shouldSetupPin = false,
+    this.needAppBar = true,
+    this.onBack,
+    this.onNext,
+  }) : super(key: key);
+
   final bool shouldSetupPin;
-  const PinPage({Key? key, this.shouldSetupPin = false}) : super(key: key);
+  final bool needAppBar;
+  final void Function()? onBack;
+  final void Function()? onNext;
 
   @override
   _PinPageState createState() => _PinPageState();
@@ -31,7 +41,6 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   bool hasTouchId = false;
   bool hasFaceId = false;
-  bool hasVoice = false;
 
   String _currentMessage = 'setup_pin_code'.tr();
 
@@ -58,9 +67,11 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
   Future<void> _tryLoginWithBiometrics() async {
     try {
       bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr(), biometricOnly: true);
-      print(didAuthenticate);
       if (didAuthenticate) {
         if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
+        if (widget.onNext != null) {
+          return widget.onNext!();
+        }
         _toMainPage();
       }
     } on PlatformException catch (_) {
@@ -85,12 +96,11 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       if (biometrics && _biometrics.contains(BiometricType.fingerprint)) hasTouchId = true;
       if (biometrics && _biometrics.contains(BiometricType.face)) hasFaceId = true;
       if (biometrics && _biometrics.contains(BiometricType.iris)) hasFaceId = true;
-      if (await Application.useVoiceAuth()) hasVoice = true;
       setState(() {});
     }
   }
 
-  void _onBack() {
+  void _askLogout() {
     AlertController.showNativeDialog(
       context: context,
       title: 'logout'.tr(),
@@ -100,16 +110,6 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       },
       onNo: () => Navigator.of(context).pop(),
     );
-  }
-
-  void _goToVoiceAuth() async {
-    if (await Application.getWrongVoiceAttempts() > 3)
-      return AlertController.showResultDialog(
-        context: context,
-        message: 'wrong_attempts_limited'.tr(),
-        isSuccess: null,
-      );
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => VoiceAuthenticationPage(mode: AuthMode.login, canEscape: true)));
   }
 
   void _setupControllers() {
@@ -158,7 +158,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: AppBackButton(onBack: _onBack)),
+      appBar: widget.needAppBar ? AppBar(leading: AppBackButton(onBack: widget.onBack ?? _askLogout)) : null,
       body: Stack(
         children: [
           Container(
@@ -175,7 +175,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (!widget.shouldSetupPin && (hasVoice || hasFaceId || hasTouchId)) ...[
+                    if (!widget.shouldSetupPin && (hasFaceId || hasTouchId)) ...[
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
@@ -188,12 +188,6 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if (hasVoice)
-                            CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              child: const Icon(CupertinoIcons.mic_fill, size: 32),
-                              onPressed: _goToVoiceAuth,
-                            ),
                           if (hasFaceId)
                             CupertinoButton(
                               onPressed: _tryLoginWithBiometrics,
@@ -281,6 +275,10 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
     // Login pin code
     if (!widget.shouldSetupPin && _tempPin.length == 4 && _tempPin == await Application.getPin()) {
       setState(() => isLoading = true);
+      await Application.setUsePinCode(true);
+      if (widget.onNext != null) {
+        return widget.onNext!();
+      }
       return _toMainPage();
     }
 
@@ -291,21 +289,28 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
         await Application.setPin(_pin);
         Application.setWrongVoiceAttempts(0);
         await Future.delayed(const Duration(milliseconds: 200));
-        if (widget.shouldSetupPin)
-          return await AlertController.showNativeDialog(
+        if (widget.shouldSetupPin) {
+          await Application.setUsePinCode(true);
+          await AlertController.showNativeDialog(
             context: context,
             title: 'use_biometrics_for_login'.tr(),
             onYes: () async {
               await Application.setUseBiometrics(true);
               Navigator.of(context).pop();
-              _toMainPage();
             },
             onNo: () async {
               await Application.setUseBiometrics(false);
               Navigator.of(context).pop();
-              _toMainPage();
             },
           );
+          if (widget.onNext != null) {
+            return widget.onNext!();
+          }
+          await Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) => VoiceAuthenticationPage(mode: AuthMode.register, canEscape: false),
+          ));
+          return;
+        }
         _toMainPage();
       }
       _tempPin = '';
@@ -326,6 +331,10 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
       }
       _vibrate();
       setState(() {});
+    }
+
+    if (await Application.getPin() == null && !widget.shouldSetupPin) {
+      return Application.logout(context);
     }
   }
 

@@ -13,11 +13,11 @@ import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform
 import 'package:task_manager/core/alert_controller.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/supporting/app_router.dart';
 import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/pages/login_page/intro_page.dart';
 import 'package:task_manager/pages/voice_authentication/bloc/voice_authentication_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -28,10 +28,18 @@ const theSource = AudioSource.microphone;
 enum AuthMode { register, login }
 
 class VoiceAuthenticationPage extends StatefulWidget {
-  const VoiceAuthenticationPage({Key? key, this.mode = AuthMode.login, this.canEscape = true}) : super(key: key);
+  const VoiceAuthenticationPage({
+    Key? key,
+    this.mode = AuthMode.login,
+    this.canEscape = true,
+    this.needAppBar = true,
+    this.onNext,
+  }) : super(key: key);
 
   final AuthMode mode;
   final bool canEscape;
+  final bool needAppBar;
+  final void Function()? onNext;
 
   @override
   State<VoiceAuthenticationPage> createState() => _VoiceAuthenticationPageState();
@@ -55,6 +63,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
   bool isLoading = false;
 
   bool _hasVoiceRegistered = false;
+  late AuthMode _mode;
 
   String text =
       'I can’t say enough about these headphones. They’re excellent for the gym! They don’t fall off and aren’t uncomfortable after a while. The sound is amazing and the controls are easy to use without needing your phone picked up.';
@@ -84,8 +93,8 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
 
   @override
   void initState() {
-    _bloc.hasRecordedVoice();
     _bloc.getTexts();
+    _mode = widget.mode;
 
     _mPlayer!.openPlayer().then((value) {
       setState(() => _mPlayerIsInited = true);
@@ -164,23 +173,28 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
   void stopRecorder() async {
     await _mRecorder!.stopRecorder().then((url) async {
       if (url != null && url.isNotEmpty) {
-        if (_hasVoiceRegistered && isRecordingShort(5)) {
-          return AlertController.showResultDialog(
-            context: context,
-            message: 'recording_too_short_for_login'.tr(),
-            isSuccess: null,
-          );
-        } else if (!_hasVoiceRegistered && isRecordingShort(15)) {
-          return AlertController.showResultDialog(
-            context: context,
-            message: 'recording_too_short_for_registration'.tr(),
-            isSuccess: null,
-          );
+        switch (_mode) {
+          case AuthMode.login:
+            if (isRecordingShort(5)) {
+              return AlertController.showResultDialog(
+                context: context,
+                message: 'recording_too_short_for_login'.tr(),
+                isSuccess: null,
+              );
+            }
+            _bloc.authByVoice(File(url));
+            return;
+          case AuthMode.register:
+            if (isRecordingShort(15)) {
+              return AlertController.showResultDialog(
+                context: context,
+                message: 'recording_too_short_for_registration'.tr(),
+                isSuccess: null,
+              );
+            }
+            _bloc.registerVoice(File(url));
+            return;
         }
-        if (_hasVoiceRegistered)
-          _bloc.authByVoice(File(url));
-        else
-          _bloc.registerVoice(File(url));
       }
       setState(() => _mplaybackReady = true);
     });
@@ -228,38 +242,26 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
 
   @override
   Widget build(BuildContext context) {
+    final fullWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        leading: AppBackButton(
-          onBack: () async {
-            if (widget.mode == AuthMode.login && !widget.canEscape) {
-              return await AlertController.showNativeDialog(
-                context: context,
-                title: 'confirm_logout'.tr(),
-                onNo: () => Navigator.of(context).pop(),
-                onYes: () async {
-                  await Application.clearStorage();
-                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => IntroPage()));
+      appBar: !widget.needAppBar
+          ? null
+          : AppBar(
+              leading: AppBackButton(
+                onBack: () async {
+                  if (widget.mode == AuthMode.login && !widget.canEscape) {
+                    return await AlertController.showNativeDialog(
+                      context: context,
+                      title: 'confirm_logout'.tr(),
+                      onNo: () => Navigator.of(context).pop(),
+                      onYes: () => Application.logout(context),
+                    );
+                  }
+                  Navigator.of(context).pop();
+                  return;
                 },
-              );
-            }
-            Navigator.of(context).pop();
-            return;
-          },
-        ),
-        actions: [
-          if (!isLoading && !(_mRecorder?.isRecording ?? false) && widget.mode == AuthMode.register)
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: const Icon(Icons.delete_rounded),
-              onPressed: () {
-                if (isLoading || (_mRecorder?.isRecording ?? false) || widget.mode == AuthMode.login) return;
-                _bloc.deleteVoice();
-                return;
-              },
+              ),
             ),
-        ],
-      ),
       body: BlocListener(
         bloc: _bloc,
         listener: (context, state) async {
@@ -268,7 +270,7 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
           if (state is ErrorState) {
             if (state.error == 'wrong_attempts_limited') {
               setState(() {});
-              Navigator.of(context).pop();
+              Application.logout(context);
               return AlertController.showResultDialog(
                 context: context,
                 message: 'wrong_attempts_limited'.tr(),
@@ -280,17 +282,24 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
 
           if (state is VoiceAuthenticationSucceeded) {
             await AlertController.showResultDialog(context: context, message: state.message);
+            if (widget.onNext != null) return widget.onNext!();
+            if (await Application.getPin() == null) await AppRouter.toPinPage(context, shouldSetupPin: true);
             AppRouter.toMainPage(context);
           }
 
           if (state is VoiceAuthenticationRegistered) {
             _hasVoiceRegistered = true;
+            _mode = AuthMode.login;
             AlertController.showResultDialog(context: context, message: state.message);
             _bloc.getTexts();
           }
 
           if (state is RecordedVoiceChecked) {
             _hasVoiceRegistered = state.hasVoice;
+            if (_hasVoiceRegistered)
+              _mode = AuthMode.login;
+            else
+              _mode = AuthMode.register;
           }
 
           if (state is VoiceDeleted) {
@@ -306,45 +315,43 @@ class _VoiceAuthenticationPageState extends State<VoiceAuthenticationPage> with 
         },
         child: Stack(
           children: [
-            // Align(
-            //   alignment: Alignment.centerRight,
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(16.0),
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.end,
-            //       children: [
-            //         Text('Recording controller', style: const TextStyle(fontSize: 18.0)),
-            //         const EmptyBox(height: 12.0),
-            //         CupertinoButton(
-            //           padding: EdgeInsets.zero,
-            //           child: _mPlayer!.isPlaying
-            //               ? const Icon(CupertinoIcons.pause_circle, size: 32.0)
-            //               : const Icon(CupertinoIcons.play_circle, size: 32.0),
-            //           onPressed: getPlaybackFn(),
-            //         ),
-            //         Text(_mPlayer!.isPlaying ? 'Playback in progress' : 'Player is stopped'),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Speak at least ${_mode == AuthMode.login ? '5' : '15'} seconds.',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ),
+            ),
             if (_mRecorder!.isRecording)
               AnimatedOpacity(
                 opacity: _mRecorder!.isRecording ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 150),
                 child: Align(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+                          alignment: Alignment.centerLeft,
+                          height: 2.0,
+                          width: _mode == AuthMode.login ? (_timerSeconds * (fullWidth * 0.2)) : (_timerSeconds * (fullWidth * 0.1)),
+                          decoration: BoxDecoration(borderRadius: AppConstraints.borderRadius, color: AppColors.success),
+                        ),
+                      ),
                       Expanded(
                         child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
                           padding: const EdgeInsets.fromLTRB(16.0, 56.0, 48.0, 16.0),
                           child: Text(
-                            text + text,
-                            style: TextStyle(fontSize: 18.0),
+                            'Support text:\n' + text,
+                            style: const TextStyle(fontSize: 18.0),
                           ),
                         ),
                       ),
-                      const EmptyBox(height: 136.0),
+                      const EmptyBox(height: 148.0),
                     ],
                   ),
                 ),
