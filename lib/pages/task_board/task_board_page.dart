@@ -41,7 +41,6 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
 
   int? _currentBoardIndex;
   List<Board> _boards = [];
-  List<User> _companyUsers = [];
 
   bool isLoading = false;
   int? animateTabAfterLoading;
@@ -79,15 +78,17 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 CupertinoButton(
                   padding: EdgeInsets.zero,
                   child: const Icon(CupertinoIcons.add_circled_solid),
-                  onPressed: () => Navigator.of(context).push(
-                    CustomPageRoute(
-                        child: CreateTaskPage(
-                      board: _boards[_currentBoardIndex!],
-                      task: null,
-                      onBack: () => _boardBloc.getBoards(), // getBoard(_currentBoardIndex!),
-                      users: _boards[_currentBoardIndex!].users ?? _companyUsers,
-                    )),
-                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CustomPageRoute(
+                          child: CreateTaskPage(
+                        board: _boards[_currentBoardIndex!],
+                        task: null,
+                        onBack: () => _boardBloc.getBoards(),
+                        users: _boards[_currentBoardIndex!].users ?? const [],
+                      )),
+                    );
+                  },
                 ),
                 const EmptyBox(width: 16.0),
                 CupertinoButton(
@@ -150,8 +151,6 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                     _currentBoardIndex = 0;
                   _boardBloc.getBoards();
                 }
-
-                if (state is CompanyUsersLoaded) _companyUsers = state.users;
 
                 setState(() {});
               },

@@ -12,7 +12,6 @@ import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
 import 'package:task_manager/pages/profile_page/bloc/profile_bloc.dart';
-import 'package:task_manager/pages/settings_page/about_app_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -39,7 +38,7 @@ class ProfilePageState extends State<ProfilePage> {
   bool isLoading = false;
   bool colleguesLoading = false;
 
-  void _toEditProfile() => AppRouter.toEditProfile(context: context, user: _user);
+  void _toEditProfile() => AppRouter.toEditProfile(context: context, user: _user, onNext: () => _bloc.getProfile());
   void _toPersonalAccount() => AppRouter.toPersonalAccount(context: context, user: _user!);
   void _toTeamMembers() => _user == null ? null : AppRouter.toTeamMembers(context: context, users: _collegues);
   void _toSettings() => AppRouter.toSettings(context: context, changeLanguage: widget.changeLanguage);
@@ -62,6 +61,7 @@ class ProfilePageState extends State<ProfilePage> {
   void initState() {
     Application.getPhone().then((value) => setState(() => _user = User(phone: value)));
     _bloc.getProfile();
+    _bloc.getCollegues();
     super.initState();
   }
 
@@ -207,14 +207,12 @@ class ProfilePageState extends State<ProfilePage> {
                           OneLineCell.arrowed(
                             leading: const Icon(CupertinoIcons.question_circle_fill),
                             title: 'contact_us'.tr(),
-                            onTap: () => print('to contact us'),
+                            onTap: () => AppRouter.toContactUs(context),
                           ),
                           OneLineCell.arrowed(
                             leading: const Icon(CupertinoIcons.info_circle_fill),
                             title: 'about_us'.tr(),
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => AboutAppPage(),
-                            )),
+                            onTap: () => AppRouter.toAboutApp(context),
                           ),
                         ],
                       ),

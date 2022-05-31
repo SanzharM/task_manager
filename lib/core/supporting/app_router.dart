@@ -13,6 +13,7 @@ import 'package:task_manager/pages/profile_page/personal_account_page/personal_a
 import 'package:task_manager/pages/profile_page/team_members_page.dart';
 import 'package:task_manager/pages/sessions_page/sessions_page.dart';
 import 'package:task_manager/pages/settings_page/about_app_page.dart';
+import 'package:task_manager/pages/settings_page/contact_us_page.dart';
 import 'package:task_manager/pages/settings_page/settings_page.dart';
 import 'package:task_manager/pages/voice_authentication/voice_authentication_page.dart';
 
@@ -33,7 +34,7 @@ class AppRouter {
 
   static void toEditProfile({required BuildContext context, User? user, void Function()? onNext}) {
     Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => AddProfilePage(user: user, isEditing: true, onNext: () => onNext),
+      builder: (context) => AddProfilePage(user: user, isEditing: true, onNext: onNext),
     ));
   }
 
@@ -72,4 +73,6 @@ class AppRouter {
   static toPinPage(BuildContext context, {bool shouldSetupPin = false}) {
     Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PinPage(shouldSetupPin: shouldSetupPin)));
   }
+
+  static toContactUs(BuildContext context) => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => ContactUsPage()));
 }

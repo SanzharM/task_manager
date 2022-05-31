@@ -1,7 +1,5 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/app_info.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -28,35 +26,40 @@ class _AboutAppPageState extends State<AboutAppPage> {
         leading: AppBackButton(),
       ),
       body: SafeArea(
-        child: Stack(
-          children: [
-            // background
-            ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Task Management App',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 36),
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 56)),
-                    FutureBuilder<String>(
-                      future: AppInfo.getAppVersion(),
-                      builder: (context, snapshot) => Text(
-                        'app_version'.tr() + '\n${snapshot.data ?? '-'}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 22),
-                      ),
-                    ),
-                  ],
+        child: Center(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.maxFinite,
+                  child: Text(
+                    'app_name'.tr(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 36, color: AppColors.lightAction, fontWeight: FontWeight.w600),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: const Text(
+                    'Task Management application',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 56)),
+                FutureBuilder<String>(
+                  future: AppInfo.getAppVersion(),
+                  builder: (context, snapshot) => Text(
+                    'app_version'.tr() + '\n${snapshot.data ?? '-'}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

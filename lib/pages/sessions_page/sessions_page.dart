@@ -77,22 +77,36 @@ class _SessionsPageState extends State<SessionsPage> {
           enabled: isLoading,
           child: RefreshIndicator(
             onRefresh: _onRefresh,
-            child: CupertinoScrollbar(
-              child: ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                padding: const EdgeInsets.all(16.0),
-                itemCount: _sessions.length,
-                separatorBuilder: (context, index) => const EmptyBox(height: 12.0),
-                itemBuilder: (context, index) => SessionCard(
-                  session: _sessions[index],
-                  getPlacemark: getPlacemark(_sessions[index].lat, _sessions[index].lng),
-                  onSessionCreated: () {
-                    _bloc.getSessions();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
+            child: _sessions.isEmpty
+                ? SizedBox(
+                    height: double.maxFinite,
+                    width: double.maxFinite,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      padding: const EdgeInsets.all(32.0),
+                      child: Text(
+                        'list_is_empty'.tr(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  )
+                : CupertinoScrollbar(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: _sessions.length,
+                      separatorBuilder: (context, index) => const EmptyBox(height: 12.0),
+                      itemBuilder: (context, index) => SessionCard(
+                        session: _sessions[index],
+                        getPlacemark: getPlacemark(_sessions[index].lat, _sessions[index].lng),
+                        onSessionCreated: () {
+                          _bloc.getSessions();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
           ),
         ),
       ),

@@ -61,7 +61,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(DateTime.now().subtract(Duration(days: 365 * 130)));
     return GestureDetector(
       onTap: () => FocusScope.of(context).hasFocus ? FocusScope.of(context).unfocus() : null,
       child: Scaffold(
@@ -194,7 +193,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     const EmptyBox(height: 12),
                     AppTextField(
                       label: 'total_money'.tr(),
-                      text: '${_user.totalMoney}',
+                      text: _user.totalMoney?.toString(),
                       keyboardType: TextInputType.number,
                       onTap: () => setState(() {}),
                       onChanged: (value) {
@@ -209,6 +208,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
                       color: Application.isDarkMode(context) ? AppColors.darkAction : AppColors.lightAction,
                       title: _isEditing ? 'save'.tr() : 'add'.tr(),
                       onTap: () {
+                        if (!didChanges) {
+                          Navigator.of(context).pop();
+                          return;
+                        }
                         if (_formKey.currentState?.validate() ?? false) _bloc.editProfile(_user);
                       },
                     ),
