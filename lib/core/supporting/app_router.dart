@@ -6,6 +6,7 @@ import 'package:task_manager/pages/login_page/intro_page.dart';
 import 'package:task_manager/pages/login_page/login_page.dart';
 import 'package:task_manager/pages/navigation_bar.dart';
 import 'package:task_manager/pages/organization_page/organization_page.dart';
+import 'package:task_manager/pages/pin_page/pin_page.dart';
 import 'package:task_manager/pages/profile_page/add_profile_page.dart';
 import 'package:task_manager/pages/profile_page/generate_qr_page.dart';
 import 'package:task_manager/pages/profile_page/personal_account_page/personal_account_page.dart';
@@ -66,5 +67,9 @@ class AppRouter {
 
   static toVoiceAuth(BuildContext context) {
     Navigator.of(context).push(CustomPageRoute(child: VoiceAuthenticationPage()));
+  }
+
+  static toPinPage(BuildContext context, {bool shouldSetupPin = false}) {
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PinPage(shouldSetupPin: shouldSetupPin)));
   }
 }

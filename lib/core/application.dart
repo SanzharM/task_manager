@@ -138,6 +138,7 @@ class Application {
 
   static void logout(BuildContext context) async {
     await Application.setToken(null);
+    _storage.deleteAll();
     Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
   }
