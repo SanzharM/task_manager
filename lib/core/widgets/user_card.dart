@@ -131,7 +131,7 @@ class UserRow extends StatelessWidget {
         const EmptyBox(width: 8.0),
         Flexible(
           child: Text(
-            user?.name ?? namePlaceholder ?? 'No user',
+            user?.name ?? user?.phone ?? namePlaceholder ?? 'No user',
             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
         ),
