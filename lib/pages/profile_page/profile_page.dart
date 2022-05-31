@@ -11,8 +11,6 @@ import 'package:task_manager/core/widgets/app_card.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
-import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
-import 'package:task_manager/pages/login_page/intro_page.dart';
 import 'package:task_manager/pages/profile_page/bloc/profile_bloc.dart';
 import 'package:task_manager/pages/settings_page/about_app_page.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -224,11 +222,7 @@ class ProfilePageState extends State<ProfilePage> {
                     const EmptyBox(height: 8.0),
                     AppButton(
                       title: 'logout'.tr(),
-                      onTap: () async {
-                        await Application.setToken(null);
-                        Navigator.of(context).popUntil((route) => route.isFirst);
-                        Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
-                      },
+                      onTap: () => Application.logout(context),
                     ),
                     const EmptyBox(height: 16.0),
                   ],

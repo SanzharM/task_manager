@@ -11,12 +11,14 @@ import 'package:task_manager/core/models/comment.dart';
 import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'api_endpoints.dart';
 import 'api_base.dart';
 
 class ApiClient {
-  static Future<PhoneAuthResponse> getAuth(String phone, String companyCode) async {
+  static Future<PhoneAuthResponse> getAuth(
+      String phone, String companyCode) async {
     final response = await ApiBase.request(
       endpoint: AuthEndpoint(),
       params: {'phone': phone, 'company_code': companyCode},
@@ -25,10 +27,12 @@ class ApiClient {
     if (response.isSuccess)
       return PhoneAuthResponse(success: true);
     else
-      return PhoneAuthResponse(error: await compute(parseError, response.bodyBytes));
+      return PhoneAuthResponse(
+          error: await compute(parseError, response.bodyBytes));
   }
 
-  static Future<VerifySmsAuthResponse> verifySmsCode(String phone, String code, String companyCode) async {
+  static Future<VerifySmsAuthResponse> verifySmsCode(
+      String phone, String code, String companyCode) async {
     final response = await ApiBase.request(
       endpoint: AuthVerifyEndpoint(),
       params: {'phone': phone, 'code': code, 'company_code': companyCode},
@@ -36,13 +40,18 @@ class ApiClient {
 
     if (response.isSuccess) {
       await Application.setPhone(phone);
-      final Map<String, dynamic>? json = await compute(parseVerifySmsAuth, response.bodyBytes);
-      return VerifySmsAuthResponse(token: json?['access_token'], hasAccount: json?['is_exist'] ?? true);
+      final Map<String, dynamic>? json =
+          await compute(parseJson, response.bodyBytes);
+      return VerifySmsAuthResponse(
+          token: json?['access_token'], hasAccount: json?['is_exist'] ?? true);
     } else
-      return VerifySmsAuthResponse(error: await compute(parseError, response.bodyBytes), hasAccount: false);
+      return VerifySmsAuthResponse(
+          error: await compute(parseError, response.bodyBytes),
+          hasAccount: false);
   }
 
-  static Future<VoiceAuthenticationResponse> authenticateByVoice(File file) async {
+  static Future<VoiceAuthenticationResponse> authenticateByVoice(
+      File file) async {
     final _wrongAttempts = await Application.getWrongVoiceAttempts();
     if (_wrongAttempts > 3) {
       return VoiceAuthenticationResponse(error: 'wrong_attempts_limited');
@@ -56,10 +65,16 @@ class ApiClient {
 
     if (response.isSuccess) {
       await Application.setWrongVoiceAttempts(0);
-      return VoiceAuthenticationResponse(successMessage: 'Voice authentication proceeded');
+      final Map<String, dynamic>? json =
+          await compute(parseJson, response.bodyBytes);
+      if (json?['access_token'] != null)
+        await Application.setToken(json!['access_token']);
+      return VoiceAuthenticationResponse(
+          successMessage: 'Voice authentication proceeded');
     } else {
       await Application.setWrongVoiceAttempts(_wrongAttempts + 1);
-      return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
+      return VoiceAuthenticationResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -72,9 +87,11 @@ class ApiClient {
     );
 
     if (response.isSuccess)
-      return VoiceAuthenticationResponse(successMessage: 'Voice successfully recorded and saved');
+      return VoiceAuthenticationResponse(
+          successMessage: 'Voice successfully recorded and saved');
     else
-      return VoiceAuthenticationResponse(error: await compute(parseError, response.bodyBytes));
+      return VoiceAuthenticationResponse(
+          error: await compute(parseError, response.bodyBytes));
   }
 
   static Future<BooleanResponse> verifyCompanyCode(String code) async {
@@ -83,34 +100,54 @@ class ApiClient {
       urlParams: {'{code}': code},
     );
 
-    return BooleanResponse(success: response.isSuccess, error: await compute(parseError, response.bodyBytes));
+    return BooleanResponse(
+        success: response.isSuccess,
+        error: await compute(parseError, response.bodyBytes));
   }
 
   static Future<BoardsResponse> getBoards() async {
     final response = await ApiBase.request(endpoint: GetBoardsEndpoint());
 
     if (response.isSuccess) {
-      return BoardsResponse(boards: await compute(parseBoards, response.bodyBytes));
+      return BoardsResponse(
+          boards: await compute(parseBoards, response.bodyBytes));
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       return BoardsResponse(error: ErrorType.tokenExpired);
     } else {
-      return BoardsResponse(error: await compute(parseError, response.bodyBytes));
+      return BoardsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
-  static Future<BooleanResponse> createBoard({required String name, String? description}) async {
+  static Future<BoardsResponse> createBoard(
+      {required String name, String? description}) async {
     final response = await ApiBase.request(
       endpoint: CreateBoardEndpoint(),
       params: {'name': name, 'description': description},
     );
 
     if (response.isSuccess) {
-      return BooleanResponse(success: true);
+      return BoardsResponse(
+          boards: await compute(parseBoard, response.bodyBytes));
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      return BooleanResponse(success: false, error: 'Token expired');
+      return BoardsResponse(error: ErrorType.tokenExpired);
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BoardsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
+  }
+
+  static Future<void> addUsersToBoard(
+      {required int boardId, required List<int> ids}) async {
+    final response = await ApiBase.request(
+      endpoint: AddUsersBoardEndpoint(),
+      params: {'board_id': boardId, 'user_ids': ids},
+    );
+
+    if (response.isSuccess) {
+      print(response.body);
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+    } else {}
   }
 
   static Future<BooleanResponse> createTask(Task task) async {
@@ -122,7 +159,8 @@ class ApiClient {
     if (response.isSuccess) {
       return BooleanResponse(success: true);
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -130,9 +168,11 @@ class ApiClient {
     final response = await ApiBase.request(endpoint: GetCompanyUsersEndpoint());
 
     if (response.isSuccess) {
-      return UsersResponse(users: await compute(parseUsers, response.bodyBytes));
+      return UsersResponse(
+          users: await compute(parseUsers, response.bodyBytes));
     } else {
-      return UsersResponse(error: await compute(parseError, response.bodyBytes));
+      return UsersResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -153,9 +193,11 @@ class ApiClient {
     final response = await ApiBase.request(endpoint: GetTasksEndpoint());
 
     if (response.isSuccess) {
-      return TasksResponse(tasks: await compute(parseTasks, response.bodyBytes));
+      return TasksResponse(
+          tasks: await compute(parseTasks, response.bodyBytes));
     } else {
-      return TasksResponse(error: await compute(parseError, response.bodyBytes));
+      return TasksResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -168,7 +210,8 @@ class ApiClient {
     if (response.isSuccess) {
       return BooleanResponse(success: true);
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -181,7 +224,8 @@ class ApiClient {
     if (response.isSuccess) {
       return BooleanResponse(success: true);
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -189,9 +233,11 @@ class ApiClient {
     final response = await ApiBase.request(endpoint: GetSessionsEndpoint());
 
     if (response.isSuccess) {
-      return SessionsResponse(sessions: await compute(parseSessions, response.bodyBytes));
+      return SessionsResponse(
+          sessions: await compute(parseSessions, response.bodyBytes));
     } else {
-      return SessionsResponse(error: await compute(parseError, response.bodyBytes));
+      return SessionsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -204,7 +250,8 @@ class ApiClient {
     if (response.isSuccess) {
       return BooleanResponse(success: true);
     } else {
-      return BooleanResponse(error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -219,12 +266,14 @@ class ApiClient {
   }
 
   static Future<BooleanResponse> editProfile(User user) async {
-    final response = await ApiBase.request(endpoint: EditProfileEndpoint(), params: user.toJson());
+    final response = await ApiBase.request(
+        endpoint: EditProfileEndpoint(), params: user.toJson());
 
     if (response.isSuccess) {
       return BooleanResponse(success: true);
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -240,23 +289,30 @@ class ApiClient {
     );
   }
 
-  static Future<BooleanResponse> checkRecordedVoice() async {
+  static Future<BooleanResponse> checkRecordedVoice(String? phone) async {
+    final _phone = phone ?? await Application.getPhone();
+    if (_phone?.isEmpty ?? true)
+      return BooleanResponse(success: false, error: 'error_no_phone'.tr());
+
     final response = await ApiBase.request(
       endpoint: CheckHasRecordedVoiceEndPoint(),
-      urlParams: {'{phone}': await Application.getPhone()},
+      urlParams: {'{phone}': _phone},
     );
 
     if (response.isSuccess) {
       return BooleanResponse(success: response.body == 'true');
     } else {
-      return BooleanResponse(success: false, error: await compute(parseError, response.bodyBytes));
+      return BooleanResponse(
+          success: false, error: await compute(parseError, response.bodyBytes));
     }
   }
 
   static Future<BooleanResponse> deleteVoice() async {
     final response = await ApiBase.request(endpoint: DeleteVoiceEndPoint());
 
-    return BooleanResponse(success: response.isSuccess, error: await compute(parseError, response.bodyBytes));
+    return BooleanResponse(
+        success: response.isSuccess,
+        error: await compute(parseError, response.bodyBytes));
   }
 
   static Future<BooleanResponse> deleteTask(Task task) async {
@@ -267,7 +323,9 @@ class ApiClient {
 
     return BooleanResponse(
       success: response.isSuccess,
-      error: response.isSuccess ? null : await compute(parseError, response.bodyBytes),
+      error: response.isSuccess
+          ? null
+          : await compute(parseError, response.bodyBytes),
     );
   }
 
@@ -275,9 +333,11 @@ class ApiClient {
     final response = await ApiBase.request(endpoint: GetTextsEndpoint());
 
     if (response.isSuccess) {
-      return VoiceAuthTextsResponse(text: await compute(parseTexts, response.bodyBytes));
+      return VoiceAuthTextsResponse(
+          text: await compute(parseTexts, response.bodyBytes));
     } else {
-      return VoiceAuthTextsResponse(error: await compute(parseError, response.bodyBytes));
+      return VoiceAuthTextsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -288,9 +348,11 @@ class ApiClient {
     );
 
     if (response.isSuccess) {
-      return CommentsResponse(comments: await compute(parseComments, response.bodyBytes));
+      return CommentsResponse(
+          comments: await compute(parseComments, response.bodyBytes));
     } else {
-      return CommentsResponse(error: await compute(parseError, response.bodyBytes));
+      return CommentsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 
@@ -301,16 +363,19 @@ class ApiClient {
     );
 
     if (response.isSuccess) {
-      return CommentsResponse(comments: await compute(parseComments, response.bodyBytes));
+      return CommentsResponse(
+          comments: await compute(parseComments, response.bodyBytes));
     } else {
-      return CommentsResponse(error: await compute(parseError, response.bodyBytes));
+      return CommentsResponse(
+          error: await compute(parseError, response.bodyBytes));
     }
   }
 }
 
 Future<String> parseError(Uint8List bodyBytes) async {
   try {
-    final json = convert.json.decode(convert.utf8.decode(bodyBytes)) as Map<String, dynamic>?;
+    final json = convert.json.decode(convert.utf8.decode(bodyBytes))
+        as Map<String, dynamic>?;
     if (json?['detail'] != null) {
       return json!['detail'].toString();
     }
@@ -320,7 +385,7 @@ Future<String> parseError(Uint8List bodyBytes) async {
   }
 }
 
-Future<Map<String, dynamic>?> parseVerifySmsAuth(Uint8List bodyBytes) async {
+Future<Map<String, dynamic>?> parseJson(Uint8List bodyBytes) async {
   try {
     return convert.json.decode(convert.utf8.decode(bodyBytes));
   } catch (e) {
@@ -333,6 +398,16 @@ Future<List<Board>?> parseBoards(Uint8List bodyBytes) async {
     final value = convert.json.decode(convert.utf8.decode(bodyBytes));
     if (value == null || value is! List) return null;
     return value.map((e) => Board.fromJson(e)).toList();
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<List<Board>?> parseBoard(Uint8List bodyBytes) async {
+  try {
+    final value = convert.json.decode(convert.utf8.decode(bodyBytes));
+    if (value == null) return null;
+    return [Board.fromJson(value)];
   } catch (e) {
     return null;
   }

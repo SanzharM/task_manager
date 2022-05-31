@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager/core/app_locales.dart';
 import 'package:task_manager/core/app_theme.dart';
 import 'package:task_manager/core/supporting/app_router.dart';
+import 'package:task_manager/core/widgets/page_routes/custom_page_route.dart';
+import 'package:task_manager/pages/login_page/intro_page.dart';
 import 'package:task_manager/pages/task_board/ui/task_board_builder.dart';
 
 class Application {
@@ -132,6 +134,13 @@ class Application {
   static Future<void> clearStorage({BuildContext? context}) async {
     _storage.deleteAll();
     if (context != null) return AppRouter.toIntroPage(context);
+  }
+
+  static void logout(BuildContext context) async {
+    await Application.setToken(null);
+    _storage.deleteAll();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).pushReplacement(CustomPageRoute(direction: AxisDirection.right, child: IntroPage()));
   }
 
   static Future<void> setWrongVoiceAttempts(int i) async {

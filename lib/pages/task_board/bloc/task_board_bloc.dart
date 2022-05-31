@@ -6,14 +6,19 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:task_manager/core/models/user.dart';
 
 part 'task_board_event.dart';
+
 part 'task_board_state.dart';
 
 class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
   getBoards() => add(GetBoards());
-  createBoard(String name, String? description) => add(CreateBoard(name: name, description: description));
+
+  createBoard(String name, String? description, List<User> users) =>
+      add(CreateBoard(name: name, description: description, users: users));
+
   getCompanyUsers() => add(GetCompanyUsers());
 
   editBoard(Board board) => add(EditBoard(board));
+
   deleteBoard(Board board) => add(DeleteBoard(board));
 
   TaskBoardBloc() : super(TaskBoardInitial()) {
@@ -32,9 +37,15 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
     on<CreateBoard>((event, emit) async {
       emit(TaskBoardInitial());
       emit(Loading());
-      final response = await ApiClient.createBoard(name: event.name, description: event.description);
+      final response = await ApiClient.createBoard(
+          name: event.name, description: event.description);
 
-      if (response.success == true) {
+      if (response.boards != null && response.boards?.first.pk != null) {
+        if (event.users.isNotEmpty) {
+          add(AddUsers(
+              users: event.users, boardId: response.boards!.first.pk!));
+        }
+
         return emit(BoardCreated());
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
@@ -56,7 +67,8 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
 
     on<EditBoard>((event, emit) async {
       emit(TaskBoardInitial());
-      if (event.board.pk == null) return emit(ErrorState('unable_to_find_board_id'..tr()));
+      if (event.board.pk == null)
+        return emit(ErrorState('unable_to_find_board_id'..tr()));
 
       emit(Loading());
 
@@ -71,7 +83,8 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
 
     on<DeleteBoard>((event, emit) async {
       emit(TaskBoardInitial());
-      if (event.board.pk == null) return emit(ErrorState('unable_to_find_board_id'..tr()));
+      if (event.board.pk == null)
+        return emit(ErrorState('unable_to_find_board_id'..tr()));
 
       emit(Loading());
 
@@ -82,6 +95,18 @@ class TaskBoardBloc extends Bloc<TaskBoardEvent, TaskBoardState> {
       } else {
         return emit(ErrorState(response.error ?? 'error'.tr()));
       }
+    });
+
+    on<AddUsers>((event, emit) async {
+      emit(TaskBoardInitial());
+      emit(Loading());
+      var ids = <int>[];
+      for(var user in event.users){
+        if(user.id != null){
+          ids.add(user.id!);
+        }
+      }
+      await ApiClient.addUsersToBoard(boardId: event.boardId, ids: ids);
     });
   }
 }

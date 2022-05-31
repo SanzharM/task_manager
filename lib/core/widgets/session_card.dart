@@ -52,7 +52,7 @@ class SessionCard extends StatelessWidget {
           ),
           stepper.CustomStepper(
             physics: const NeverScrollableScrollPhysics(),
-            controlsBuilder: (context, {onStepCancel, onStepContinue}) => const EmptyBox(),
+            controlsBuilder: (context, details) => const EmptyBox(),
             steps: [
               stepper.Step(
                 title: Text('session_start_time'.tr()),

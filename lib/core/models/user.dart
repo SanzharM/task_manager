@@ -129,4 +129,9 @@ class User {
 
     return placeholder;
   }
+
+  @override
+  String toString() {
+    return '${name ?? phone}';
+  }
 }

@@ -123,7 +123,7 @@ class _IntroPageState extends State<IntroPage> {
                           appContext: context,
                           length: 6,
                           controller: _companyCodeController,
-                          onChanged: (value) => _companyCodeController.text = value,
+                          onChanged: (value) {},
                           onTap: () => setState(() {}),
                           textCapitalization: TextCapitalization.characters,
                           autoDismissKeyboard: true,
@@ -147,7 +147,7 @@ class _IntroPageState extends State<IntroPage> {
                     ),
                   ],
                 ),
-                const Padding(padding: EdgeInsets.only(top: 24.0)),
+                const EmptyBox(height: 24.0),
                 AppButton(
                   title: 'next'.tr(),
                   isLoading: isLoading,
@@ -156,7 +156,7 @@ class _IntroPageState extends State<IntroPage> {
                     _bloc.verifyCodeCompany(_companyCodeController.text.toUpperCase());
                   },
                 ),
-                const Padding(padding: EdgeInsets.only(top: 48.0)),
+                const EmptyBox(height: 48.0),
               ],
             ),
           ),

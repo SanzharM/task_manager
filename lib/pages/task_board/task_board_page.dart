@@ -8,6 +8,7 @@ import 'package:task_manager/core/constants/app_constraints.dart';
 import 'package:task_manager/core/models/board.dart';
 import 'package:task_manager/core/models/task.dart';
 import 'package:task_manager/core/models/user.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:task_manager/core/widgets/custom_shimmer.dart';
 import 'package:task_manager/core/widgets/empty_box.dart';
@@ -35,6 +36,7 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
   final _createBoardKey = GlobalKey<CreateBoardPageState>();
 
   final _boardBloc = TaskBoardBloc();
+
   final _taskBloc = taskBloc.TaskBloc();
 
   int? _currentBoardIndex;
@@ -116,7 +118,8 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
                 }
 
                 if (state is ErrorState) {
-                  AlertController.showResultDialog(context: context, message: state.error, isSuccess: false);
+                  if (Utils.isUnauthorizedStatusCode(state.error)) return Application.logout(context);
+                  AlertController.showResultDialog(context: context, message: state.error, isSuccess: null);
                 }
 
                 if (state is BoardsLoaded) {
@@ -220,10 +223,10 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
         child: CreateBoardPage(onCreate: _onCreateBoard, key: _createBoardKey),
       ));
 
-  void _onCreateBoard(String name, String? description) {
+  void _onCreateBoard(String name, String? description, List<User> users) {
     if (name.isEmpty) return;
     _createBoardKey.currentState?.setIsLoading(true);
-    if (!isLoading) return _boardBloc.createBoard(name, description);
+    if (!isLoading) return _boardBloc.createBoard(name, description, users);
   }
 
   void _showBoardSettings() async {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/core/app_colors.dart';
 import 'package:task_manager/core/application.dart';
@@ -102,6 +101,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
             controller: _boardTabController,
             isScrollable: true,
             enableFeedback: true,
+            labelColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
             indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
             tabs: [
               for (var status in TaskStatus.values) Tab(text: Utils.taskStatusToString(status)),
@@ -136,6 +136,7 @@ class TaskBoardBuilderState extends State<TaskBoardBuilder> with SingleTickerPro
           controller: _boardTabController,
           isScrollable: true,
           enableFeedback: true,
+          labelColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
           indicatorColor: Application.isDarkMode(context) ? AppColors.metal : AppColors.darkGrey,
           tabs: [
             for (var time in TimeSort.values) Tab(text: Utils.getStringTimeSort(time)),

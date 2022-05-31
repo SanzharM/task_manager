@@ -66,6 +66,12 @@ class CreateBoardEndpoint extends ApiEndpoint {
   int statusCode = 200;
 }
 
+class AddUsersBoardEndpoint extends ApiEndpoint {
+  String url = '/boards/users';
+  RequestMethod method = RequestMethod.post;
+  int statusCode = 200;
+}
+
 class DeleteBoardEndpoint extends ApiEndpoint {
   String url = '/boards/delete';
   RequestMethod method = RequestMethod.post;

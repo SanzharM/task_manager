@@ -45,6 +45,7 @@ class _NavigationBarState extends State<NavigationBar> {
       ProfilePage(key: _profileKey, changeLanguage: _updateLanguage, changeTab: _changeTab),
     ];
     _currentIndex = pages.length - 1;
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) => _qrKey.currentState?.stopCamera());
     super.initState();
   }
 
