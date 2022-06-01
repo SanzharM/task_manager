@@ -384,8 +384,8 @@ class DataInfoCell extends StatelessWidget {
       child: Container(
         // height: double.maxFinite,
         // width: double.maxFinite,
-        // padding: padding,
-        // margin: margin,
+        padding: padding,
+        margin: margin,
         decoration: BoxDecoration(
           borderRadius: AppConstraints.borderRadius,
           border: needBorder ? Border.all(width: 0.5) : null,
