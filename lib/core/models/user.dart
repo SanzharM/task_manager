@@ -52,7 +52,6 @@ class User {
       birthday: Utils.parseDate('${json['birthday']}'),
       moneyPerHour: double.tryParse('${json['money_in_hour_kzt']}'),
       totalMoney: double.tryParse('${json['total_money_in_kzt']}'),
-      organization: Organization.fromJson(json),
       companyId: int.tryParse('${json['company_id']}'),
     );
   }

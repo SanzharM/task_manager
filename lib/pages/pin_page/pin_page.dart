@@ -66,7 +66,7 @@ class _PinPageState extends State<PinPage> with TickerProviderStateMixin {
 
   Future<void> _tryLoginWithBiometrics() async {
     try {
-      bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr(), biometricOnly: true);
+      bool didAuthenticate = await _localAuth.authenticate(localizedReason: 'please_authorize'.tr());
       if (didAuthenticate) {
         if (await Application.getWrongVoiceAttempts() > 3) Application.setWrongVoiceAttempts(0);
         if (widget.onNext != null) {
