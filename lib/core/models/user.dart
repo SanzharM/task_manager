@@ -17,6 +17,7 @@ class User {
   DateTime? birthday;
   double? totalMoney;
   double? moneyPerHour;
+  int? companyId;
 
   User({
     this.id,
@@ -31,6 +32,7 @@ class User {
     this.birthday,
     this.moneyPerHour,
     this.totalMoney,
+    this.companyId,
   });
 
   String get fullName => (this.name ?? '');
@@ -50,6 +52,8 @@ class User {
       birthday: Utils.parseDate('${json['birthday']}'),
       moneyPerHour: double.tryParse('${json['money_in_hour_kzt']}'),
       totalMoney: double.tryParse('${json['total_money_in_kzt']}'),
+      organization: Organization.fromJson(json),
+      companyId: int.tryParse('${json['company_id']}'),
     );
   }
 
@@ -68,6 +72,7 @@ class User {
     DateTime? birthday,
     double? totalMoney,
     double? moneyPerHour,
+    int? companyId,
   }) {
     return User(
       id: id ?? this.id,
@@ -82,6 +87,7 @@ class User {
       birthday: birthday ?? this.birthday,
       totalMoney: totalMoney ?? this.totalMoney,
       moneyPerHour: moneyPerHour ?? this.moneyPerHour,
+      companyId: companyId ?? this.companyId,
     );
   }
 
@@ -94,7 +100,7 @@ class User {
       "position": this.position,
       "name": this.name,
       "image_url": this.imageUrl,
-      "company_id": this.organization?.id,
+      "company_id": this.companyId,
       "last_visit_time": now.toIso8601String(),
       "updated_at": now.toIso8601String(),
       "created_at": this.registrationTime?.toIso8601String(),

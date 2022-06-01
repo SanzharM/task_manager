@@ -196,19 +196,16 @@ class TaskBoardState extends State<TaskBoard> with TickerProviderStateMixin {
     );
   }
 
-  void setAnimateTabAfterLoading(int? index) {
-    print('\n\nanimating to $index\n\n');
-    setState(() => animateTabAfterLoading = index);
-  }
+  void setAnimateTabAfterLoading(int? index) => setState(() => animateTabAfterLoading = index);
 
   void _onEditTask(Task editedTask) => _taskBloc.editTask(editedTask);
 
   void _deleteTask(Task task) => _taskBloc.deleteTask(task);
 
   void _onChangeBoard(index) {
-    print('new index: $index');
     setState(() => _currentBoardIndex = index);
     Navigator.of(context).pop();
+    return;
   }
 
   Future<void> _onRefresh() async {

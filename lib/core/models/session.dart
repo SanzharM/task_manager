@@ -14,9 +14,6 @@ class Session {
   bool isActive() => this.finishTime == null;
 
   factory Session.fromJson(Map<String, dynamic> json) {
-    print('\n\nWith offset and without');
-    print(Utils.parseDate(json['started_at'])?.add(DateTime.now().timeZoneOffset));
-    print(Utils.parseDate(json['started_at']));
     return Session(
       pk: int.tryParse('${json['id']}'),
       startTime: Utils.parseDate(json['started_at'])?.add(DateTime.now().timeZoneOffset),

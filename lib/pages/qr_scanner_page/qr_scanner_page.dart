@@ -36,7 +36,6 @@ class QRScannerPageState extends State<QRScannerPage> {
     _qrController = qrViewController;
     _qrController?.scannedDataStream.listen((event) async {
       if (!isLoading && (event.code?.contains(Application.getBaseUrl()) ?? false)) {
-        print('Code: ${event.code} - ${DateTime.now()}');
         isLoading = true;
         _bloc.createSession(await _location.getLocation());
         setState(() {});

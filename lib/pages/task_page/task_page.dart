@@ -100,7 +100,6 @@ class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
         body: BlocListener(
           bloc: _bloc,
           listener: (context, state) {
-            print('state is $state');
             isLoading = state is Loading;
             if (state is CommentsLoading) isCommentsLoading = true;
 

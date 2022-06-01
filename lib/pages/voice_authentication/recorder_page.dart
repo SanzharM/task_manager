@@ -115,7 +115,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
           print('$e');
         }
       } else {
-        print('url is null or empty');
+        print('\nStopRecorder error: url is null or empty');
       }
       setState(() {
         _mplaybackReady = true;

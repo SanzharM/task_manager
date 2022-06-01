@@ -8,7 +8,6 @@ import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/authorization/authorization_controller.dart';
 import 'package:task_manager/pages/login_page/intro_page.dart';
-import 'package:task_manager/pages/navigation_bar.dart' as nav;
 
 import 'core/app_theme.dart';
 
@@ -25,16 +24,17 @@ void main() async {
     if (await Application.useVoiceAuth() && hasVoice) {
       order.add(AuthType.voice);
     }
-    print('\n\nAuth order: $order\n\n');
     if (order.isNotEmpty)
       homeScreen = AuthController(
         authOrder: order,
         shouldSetupPin: await Application.getPin() == null,
       );
   }
-  homeScreen = nav.NavigationBar();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarBrightness: Brightness.dark,
+  ));
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   ThemeMode _themeMode = await Application.getSavedThemeMode() ?? ThemeMode.light;
