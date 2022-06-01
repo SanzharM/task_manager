@@ -244,4 +244,21 @@ class Utils {
     } catch (e) {}
     return '';
   }
+
+  static String getNextBirthdayDaysLeft(DateTime? date) {
+    if (date == null) return '-';
+    final today = DateTime.now();
+    // Is Birthday past in current Year
+    if (date.month < today.month || (date.month == today.month && date.day < today.day)) {
+      final nextBirthday = DateTime(today.year + 1, date.month, date.day);
+      return nextBirthday.difference(today).inDays.toString();
+    } // Is Birthday today
+    else if (date.month == today.month && date.day == today.day) {
+      return '0';
+    } // Is Birthday not past in current Year
+    else {
+      final nextBirthday = DateTime(today.year, date.month, date.day);
+      return nextBirthday.difference(today).inDays.toString();
+    }
+  }
 }

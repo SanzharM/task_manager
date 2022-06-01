@@ -153,8 +153,9 @@
   "wrong_attempts_limited_local_auth": "Maximum attempts of biometrics authentication was reached",
   "too_many_attemps_try_again_later": "Too many wrong attempts. Try again later",
   "token_expired": "Token was expired. Please, relogin.",
-  "renew_voice": "Обновить запись голоса",
-  "register_voice": "Добавить запись голоса",
-  "unable_to_deleted_voice": "Не удалось удалить запись голоса",
-  "voice_deleted": "Запиь голоса удалена"
+  "renew_voice": "Update voice recording",
+  "register_voice": "Register your voice",
+  "unable_to_deleted_voice": "Unable to delete the recording",
+  "voice_deleted": "The voice recording was deleted",
+  "your_birthday_after": "{} days left till your next birthday!"
 }

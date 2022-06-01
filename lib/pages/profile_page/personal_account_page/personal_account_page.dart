@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager/core/alert_controller.dart';
+import 'package:task_manager/core/app_colors.dart';
+import 'package:task_manager/core/application.dart';
+import 'package:task_manager/core/constants/app_constraints.dart';
+import 'package:task_manager/core/models/session.dart';
 import 'package:task_manager/core/models/user.dart';
-// import 'package:task_manager/core/utils.dart';
+import 'package:task_manager/core/utils.dart';
 import 'package:task_manager/core/widgets/app_buttons.dart';
-// import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:task_manager/core/widgets/app_cells.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:task_manager/core/widgets/custom_shimmer.dart';
+import 'package:task_manager/core/widgets/empty_box.dart';
+import 'package:task_manager/pages/qr_scanner_page/bloc/qr_bloc.dart';
 
 class PersonalAccount extends StatefulWidget {
   final User user;
@@ -16,6 +24,23 @@ class PersonalAccount extends StatefulWidget {
 }
 
 class _PersonalAccountState extends State<PersonalAccount> {
+  final _sessionsBloc = QrBloc();
+
+  List<Session> _sessions = [];
+  bool areSessionsLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionsBloc.getSessions();
+  }
+
+  @override
+  void dispose() {
+    _sessionsBloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,31 +51,99 @@ class _PersonalAccountState extends State<PersonalAccount> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 12),
-            Padding(
-              padding: EdgeInsets.only(left: 16.0),
-              child: Text(
-                'attendence'.tr(),
-                textAlign: TextAlign.left,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
+            DataInfoCell(
+              title: 'total_money'.tr(),
+              value: widget.user.totalMoney?.toString() ?? '-',
+              color: Theme.of(context).scaffoldBackgroundColor,
+              padding: const EdgeInsets.all(8.0),
             ),
-            const SizedBox(height: 12),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              width: double.infinity,
-              // child: charts.BarChart(
-              //   // _createData(),
-              //   animationDuration: const Duration(milliseconds: 400),
-              //   animate: true,
-              // ),
+            const EmptyBox(height: 12.0),
+            DataInfoCell(
+              title: 'total_money_per_hour'.tr(),
+              value: widget.user.moneyPerHour?.toString() ?? '-',
+              color: Theme.of(context).scaffoldBackgroundColor,
+              padding: const EdgeInsets.all(8.0),
+            ),
+            const EmptyBox(height: 12.0),
+            DataInfoCell(
+              title: 'birthday'.tr(),
+              value: Utils.toDateString(widget.user.birthday, includeMonthTitles: true),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              padding: const EdgeInsets.all(8.0),
+              onPressed: widget.user.birthday == null
+                  ? null
+                  : () => AlertController.showSimpleDialog(
+                        context: context,
+                        message: 'your_birthday_after'.tr(args: [Utils.getNextBirthdayDaysLeft(widget.user.birthday!)]),
+                      ),
+            ),
+            const EmptyBox(height: 20.0),
+            BlocConsumer(
+              bloc: _sessionsBloc,
+              listener: (context, state) {
+                areSessionsLoading = state is QrLoading;
+                if (state is QrSessionsLoaded) {
+                  _sessions = state.sessions.reversed.toList();
+                }
+                setState(() {});
+              },
+              builder: (context, state) {
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder: (child, animation) => SizeTransition(sizeFactor: animation, child: child),
+                  child: (_sessions.isEmpty && state is! QrLoading)
+                      ? Center(
+                          child: Text('list_is_empty'.tr(), style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
+                        )
+                      : CustomShimmer(
+                          enabled: state is QrLoading,
+                          child: Column(
+                            children: [
+                              Text(
+                                'attendence'.tr(),
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
+                              const EmptyBox(height: 12.0),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.1,
+                                width: double.maxFinite,
+                                child: CupertinoScrollbar(
+                                  child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: _sessions.toList().length,
+                                    separatorBuilder: (_, i) => const EmptyBox(width: 8.0),
+                                    itemBuilder: (context, i) {
+                                      final startDate = Utils.toDateString(_sessions[i].startTime);
+                                      final endDate = Utils.toDateString(_sessions[i].finishTime);
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                        decoration: BoxDecoration(
+                                          color: Application.isDarkMode(context) ? AppColors.grey : AppColors.defaultGrey,
+                                          borderRadius: AppConstraints.borderRadius,
+                                        ),
+                                        child: Text(startDate + ' - ' + endDate),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                );
+              },
             ),
             InfoCell(
               title: 'current_shift'.tr(),
-              value: '10:00 - 19:00',
+              value: '09:00 - 18:00',
               crossAxisAlignment: CrossAxisAlignment.end,
             ),
           ],
@@ -58,30 +151,4 @@ class _PersonalAccountState extends State<PersonalAccount> {
       ),
     );
   }
-
-  // static List<charts.Series<Bar, String>> _createData() {
-  //   final data = [
-  //     Bar(Utils.getMonth(DateTime.now().month - 2), 100),
-  //     Bar(Utils.getMonth(DateTime.now().month - 1), 97),
-  //     Bar(Utils.getMonth(DateTime.now().month), 85),
-  //     Bar(Utils.getMonth(DateTime.now().add(Duration(days: 30)).month), 100),
-  //   ];
-
-  //   return [
-  //     charts.Series<Bar, String>(
-  //       id: 'Attendence',
-  //       colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-  //       domainFn: (Bar bars, _) => bars.label,
-  //       measureFn: (Bar bars, _) => bars.value,
-  //       data: data,
-  //     )
-  //   ];
-  // }
-}
-
-class Bar {
-  final String label;
-  final double value;
-
-  Bar(this.label, this.value);
 }

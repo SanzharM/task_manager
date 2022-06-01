@@ -8,6 +8,7 @@ import 'package:task_manager/core/app_manager.dart';
 import 'package:task_manager/core/application.dart';
 import 'package:task_manager/pages/authorization/authorization_controller.dart';
 import 'package:task_manager/pages/login_page/intro_page.dart';
+import 'package:task_manager/pages/navigation_bar.dart' as nav;
 
 import 'core/app_theme.dart';
 
@@ -31,6 +32,7 @@ void main() async {
         shouldSetupPin: await Application.getPin() == null,
       );
   }
+  homeScreen = nav.NavigationBar();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

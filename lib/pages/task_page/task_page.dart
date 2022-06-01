@@ -134,10 +134,9 @@ class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
                 children: [
                   AppTextField(
                     label: 'title'.tr(),
-                    text: _task.description,
+                    text: _task.title,
                     keyboardType: TextInputType.text,
                     maxLines: 1,
-                    readonly: true,
                     onTap: () => setState(() {}),
                     onChanged: (value) => setState(() => _task = _task.copyWith(title: value)),
                   ),
@@ -153,11 +152,13 @@ class _TaskPageState extends State<TaskPage> with TickerProviderStateMixin {
                         title: Text('description'.tr()),
                         textColor: Theme.of(context).primaryColor,
                         iconColor: Theme.of(context).primaryColor,
-                        childrenPadding: const EdgeInsets.symmetric(vertical: 12.0),
+                        childrenPadding: const EdgeInsets.only(top: 12.0),
                         children: [
-                          Text(
-                            _task.description ?? '',
-                            style: const TextStyle(fontSize: 16.0),
+                          AppTextField(
+                            text: _task.description ?? '',
+                            onTap: () => setState(() {}),
+                            onChanged: (value) => _task = _task.copyWith(description: value),
+                            // style: const TextStyle(fontSize: 16.0),
                           ),
                         ],
                       ),
