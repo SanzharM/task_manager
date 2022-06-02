@@ -37,7 +37,7 @@ class CheckHasRecordedVoiceEndPoint extends ApiEndpoint {
 }
 
 class DeleteVoiceEndPoint extends ApiEndpoint {
-  String url = '/users/voice/';
+  String url = '/users/voice';
   RequestMethod method = RequestMethod.delete;
   int statusCode = 200;
 }

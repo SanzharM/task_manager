@@ -146,14 +146,6 @@ class ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-                    if (_user?.organization != null) const EmptyBox(height: 8),
-                    if (_user?.organization != null)
-                      InfoCell(
-                        title: 'organization'.tr() + ': ',
-                        value: _user?.organization?.name,
-                        onTap: _toOrganization,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                      ),
                     const EmptyBox(height: 16),
                     // Profile cells
                     if (_user != null)

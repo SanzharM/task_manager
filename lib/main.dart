@@ -21,9 +21,10 @@ void main() async {
     if (await Application.usePinCode()) {
       order.add(AuthType.pin);
     }
-    if (await Application.useVoiceAuth() && hasVoice) {
+    if (hasVoice) {
       order.add(AuthType.voice);
     }
+    print('\n\norder: $order');
     if (order.isNotEmpty)
       homeScreen = AuthController(
         authOrder: order,

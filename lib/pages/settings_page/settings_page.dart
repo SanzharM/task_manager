@@ -135,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Text('voice_authentication'.tr(), style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
             const EmptyBox(height: 12.0),
             OneLineCell(
-              title: hasVoice! ? 'renew_voice' : 'register_voice'.tr(),
+              title: hasVoice! ? 'renew_voice'.tr() : 'register_voice'.tr(),
               icon: const Icon(CupertinoIcons.mic_fill),
               onTap: () {
                 Navigator.of(context).pop();

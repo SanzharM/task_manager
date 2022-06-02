@@ -28,7 +28,7 @@ class Application {
   static const _voiceAuthKey = 'TaskManagerVoiceAuthKey';
   static const _pinCodeKey = 'TaskManagerPinCodeKey';
 
-  // static String getBaseUrl() => 'http://192.168.1.103:8000';
+  // static String getBaseUrl() => 'http://192.168.1.107:8000';
   static String getBaseUrl() => 'https://app-bota.org';
 
   static Future<bool> isAuthorized() async {
