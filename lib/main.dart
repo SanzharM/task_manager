@@ -16,14 +16,14 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   StatefulWidget homeScreen = IntroPage();
   if (await Application.isAuthorized()) {
-    final bool hasVoice = (await ApiClient.checkRecordedVoice(null)).success == true;
+    // final bool hasVoice = (await ApiClient.checkRecordedVoice(null)).success == true;
     final List<AuthType> order = [];
     if (await Application.usePinCode()) {
       order.add(AuthType.pin);
     }
-    if (hasVoice) {
-      order.add(AuthType.voice);
-    }
+    // if (hasVoice) {
+    //   order.add(AuthType.voice);
+    // }
     print('\n\norder: $order');
     if (order.isNotEmpty)
       homeScreen = AuthController(

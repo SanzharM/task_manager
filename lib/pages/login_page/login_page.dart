@@ -240,17 +240,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Future<void> _toAuthController() async {
-    await Application.setUseVoiceAuth(true);
+    // await Application.setUseVoiceAuth(true);
     await Application.setUsePinCode(true);
 
     final bool shouldSetupPin = await Application.getPin() == null;
-    final bool hasVoice = (await ApiClient.checkRecordedVoice(_phone)).success == true;
+    // final bool hasVoice = (await ApiClient.checkRecordedVoice(_phone)).success == true;
 
     await Navigator.of(context).pushReplacement(CupertinoPageRoute(
       builder: (context) => AuthController(
-        authOrder: const [AuthType.voice, AuthType.pin],
+        authOrder: const [AuthType.pin],
         shouldSetupPin: shouldSetupPin,
-        shouldSetupVoice: !hasVoice,
+        // shouldSetupVoice: !hasVoice,
       ),
     ));
   }
